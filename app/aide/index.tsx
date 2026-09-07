@@ -1,0 +1,491 @@
+"use client";
+
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { VoiceEngine, type VoiceState } from "./voice-engine";
+import { matchLanguageAnswer, matchLanguageCommand, setSaharaLanguage, hasSaharaLanguagePreference } from "./sahara-recognizer";
+
+const STT_PROVIDER = process.env.NEXT_PUBLIC_STT_PROVIDER || "browser";
+import { streamAgentReply, type Msg } from "./agent-stream";
+import { spokenClientError } from "../../lib/spoken-error";
+
+// Aide lives here, globally. One always-on voice engine, one conversation —
+// mounted in the root layout so Aide keeps listening and talking while the
+// user (or Aide itself) moves between pages. Pages that need dictation
+// (assessment answers, confirm words) borrow the mic with beginCapture/
+// endCapture instead of opening a second recognizer, which browsers don't
+// allow. The mic/TTS machinery itself lives in ./voice-engine.ts; the
+// streaming agent client in ./agent-stream.ts.
+
+type AideContextValue = {
+  active: boolean;
+  listening: boolean;
+  speaking: boolean;
+  dormant: boolean;
+  muted: boolean;
+  thinking: boolean;
+  capturing: boolean;
+  supported: boolean;
+  interim: string;
+  micStatus: string;
+  error: string | null;
+  messages: Msg[];
+  send: (text: string) => void;
+  speak: (text: string) => void;
+  interrupt: () => void;
+  beginCapture: (onText: (t: string) => void) => void;
+  endCapture: () => void;
+};
+
+const AideContext = createContext<AideContextValue | null>(null);
+
+export function useAide() {
+  const ctx = useContext(AideContext);
+  if (!ctx) throw new Error("useAide must be used inside <AideProvider>");
+  return ctx;
+}
+
+// One greeting per page load, even if React remounts the provider (dev
+// strict mode does this).
+let greetedThisLoad = false;
+
+// Nothing the user says is written to storage. The conversation lives in React
+// state for as long as the page is open and is gone the moment it reloads —
+// there is no transcript on disk to leak, inspect, or restore.
+//
+// What survives instead is narrower and deliberate: anything the user asks
+// Aide to remember is saved server-side against their account as a preference
+// (see remember_preference in lib/agent/tools.ts) and replayed into the
+// model's prompt on every turn. That is strictly better memory than the old
+// transcript, which never outlived the browser tab anyway.
+//
+// This key exists only to sweep up transcripts written by earlier builds.
+const LEGACY_TRANSCRIPT_KEY = "aide-transcript";
+
+export function clearSavedTranscript(): void {
+  try {
+    sessionStorage.removeItem(LEGACY_TRANSCRIPT_KEY);
+  } catch {}
+}
+
+// ONE engine per page, ever. React strict mode mounts effects twice in
+// development, and a second engine means two recognizers fighting for the mic
+// and two voices talking over each other — with the orphaned one impossible to
+// silence, because nothing holds a reference to it any more.
+let sharedEngine: VoiceEngine | null = null;
+
+export function AideProvider({ children }: { children: React.ReactNode }) {
+  const [voice, setVoice] = useState<VoiceState>({
+    active: false,
+    listening: false,
+    speaking: false,
+    dormant: false,
+    muted: false,
+    interim: "",
+    micStatus: "starting…",
+    error: null,
+  });
+  const [thinking, setThinking] = useState(false);
+  const [capturing, setCapturing] = useState(false);
+  const [supported, setSupported] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Msg[]>([]);
+  // This browser's account id, used to subscribe to its own reactive event feed.
+  const [accountId, setAccountId] = useState<string | null>(null);
+
+  const engineRef = useRef<VoiceEngine | null>(null);
+  const thinkingRef = useRef(false);
+  const captureRef = useRef<((t: string) => void) | null>(null);
+  // True for exactly the one turn right after Aide has asked "which language
+  // do you speak?" during first-visit onboarding — lets the next utterance
+  // match a bare language name ("Yoruba") with no trigger verb required.
+  const awaitingLanguageAnswerRef = useRef(false);
+  const messagesRef = useRef<Msg[]>([]);
+  messagesRef.current = messages;
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const speak = useCallback((text: string) => engineRef.current?.speak(text), []);
+  const interrupt = useCallback(() => engineRef.current?.interrupt(), []);
+
+  const send = useCallback(
+    async (text: string) => {
+      const next = [...messagesRef.current, { role: "user" as const, content: text }];
+      setMessages(next);
+      setThinking(true);
+      thinkingRef.current = true;
+      setError(null);
+      // Hold the speaking turn open for the whole reply: sentences arrive from
+      // the model slower than Aide speaks them, and without this the turn ends
+      // at the first lull and the rest lands seconds later as a new utterance.
+      engineRef.current?.beginReply();
+      let loggedOut = false;
+      try {
+        // Navigating mid-reply rather than after it: Aide is still saying
+        // "opening that now" when this fires, so the words and the screen
+        // agree. Waiting for the end of the stream made Aide announce a page
+        // it had not moved to yet, which a user who cannot see the screen has
+        // no way to catch.
+        const goTo = (to: string) => {
+          router.push(to);
+          const hash = to.split("#")[1];
+          if (hash) {
+            setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth", block: "start" }), 700);
+          }
+        };
+
+        const result = await streamAgentReply(next, {
+          onDelta: (full) => setMessages([...next, { role: "assistant", content: full }]),
+          onSentence: (s) => engineRef.current?.queueSpeak(s),
+          onNavigate: goTo,
+        });
+        loggedOut = !!result.loggedOut;
+
+        if (result.newUserId) {
+          // A streaming response can't set cookies after it starts — sign the
+          // browser in now, and start a fresh transcript for the new identity.
+          await fetch("/api/account/switch", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: result.newUserId }),
+          }).catch(() => {});
+          setAccountId(result.newUserId);
+          setMessages([{ role: "assistant", content: result.full }]);
+        }
+        // Fallback only: onNavigate has usually already moved the screen, and
+        // agent-stream clears navigateTo when it has, so this fires just for a
+        // destination that arrived only in the final event.
+        if (result.navigateTo && !result.navigated) goTo(result.navigateTo);
+      } catch (e) {
+        const msg = (e as Error).message;
+        setError(msg);
+        // The screen keeps the raw message; the spoken line never does. This
+        // used to read DOMException and fetch text aloud, word for word.
+        speak(spokenClientError(msg));
+      } finally {
+        engineRef.current?.endReply();
+        setThinking(false);
+        thinkingRef.current = false;
+      }
+
+      if (loggedOut) {
+        // The stream couldn't clear cookies — do it now, drop the old
+        // identity's transcript, let Aide finish saying goodbye, then restart
+        // the page clean (fresh greeting, fresh nav, no leaked context).
+        await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+        clearSavedTranscript();
+        const engine = engineRef.current;
+        const started = Date.now();
+        await new Promise<void>((resolve) => {
+          const timer = setInterval(() => {
+            if (!engine || !engine.isSpeakingNow() || Date.now() - started > 20000) {
+              clearInterval(timer);
+              resolve();
+            }
+          }, 400);
+        });
+        window.location.assign("/");
+      }
+    },
+    [router, speak],
+  );
+  const sendRef = useRef(send);
+  sendRef.current = send;
+
+  // Aide wakes up the moment the platform loads — no tap, no gate. The
+  // browser shows its own mic-permission prompt on first ever visit; after
+  // that, startup is fully hands-free.
+  useEffect(() => {
+    if (!VoiceEngine.supported()) {
+      setSupported(false);
+      // Recognition is unavailable, but Aide can still SPEAK — say the way
+      // forward instead of leaving a blind user in silence. The message is
+      // queued until the first tap/keypress (autoplay is blocked until then),
+      // which enableSpeechOnly's unlock listeners handle. Typed messages still
+      // get spoken replies, since send() speaks through this same engine.
+      const speaker = new VoiceEngine({
+        onState: (patch) => {
+          setVoice((v) => ({ ...v, ...patch }));
+          if (patch.error !== undefined) setError(patch.error);
+        },
+        onFinal: () => {},
+      });
+      engineRef.current = speaker;
+      speaker.enableSpeechOnly();
+      const guide =
+        "Welcome to Aide. This browser cannot hear your voice. To talk to me, please open this page in Google Chrome. Otherwise, type your message in the box on the screen and I will still help you.";
+      setMessages((m) => [...m, { role: "assistant", content: guide }]);
+      speaker.speak(guide);
+      return () => {
+        speaker.stop();
+        if (engineRef.current === speaker) engineRef.current = null;
+      };
+    }
+
+    // Reuse the existing engine across remounts rather than starting a rival.
+    const engine =
+      sharedEngine ??
+      (sharedEngine = new VoiceEngine({
+        onState: (patch) => {
+          setVoice((v) => ({ ...v, ...patch }));
+          if (patch.error !== undefined) setError(patch.error);
+        },
+        onFinal: (text) => {
+          if (captureRef.current) {
+            captureRef.current(text);
+            return;
+          }
+          // Answering the first-visit "which language do you speak?"
+          // question — a bare language name is the whole answer here, no
+          // "speak"/"switch" verb needed.
+          if (awaitingLanguageAnswerRef.current) {
+            awaitingLanguageAnswerRef.current = false;
+            const answer = matchLanguageAnswer(text);
+            if (answer) {
+              setSaharaLanguage(answer.code);
+              engineRef.current?.speak(`Got it. ${answer.label} it is.`);
+              return;
+            }
+            // Didn't catch a language in the answer — keep the safe default
+            // rather than getting stuck waiting, and fall through so
+            // whatever they actually said still reaches the agent.
+          }
+          // Language switching is a spoken command, matched here before the
+          // text ever reaches the LLM — a blind user has no mouse to reach a
+          // dropdown with, so this IS the control, and it must be instant
+          // (no model round trip, no "thinking" delay).
+          const langCommand = matchLanguageCommand(text);
+          if (langCommand) {
+            setSaharaLanguage(langCommand.code);
+            engineRef.current?.speak(`Okay, I'll listen for ${langCommand.label} from now on.`);
+            return;
+          }
+          if (!thinkingRef.current) sendRef.current(text);
+        },
+      }));
+    engineRef.current = engine;
+    engine.start();
+
+    if (!greetedThisLoad) {
+      greetedThisLoad = true;
+      // Every load starts a fresh conversation — there is no stored transcript
+      // to restore, by design. Continuity comes from the preferences the user
+      // asked Aide to save, which the server replays into the prompt.
+      // /api/greeting derives the account from the request's own cookies
+      // server-side (userIdFrom(req)) — it never needed the client to await
+      // /api/account first. That was a pure sequential waterfall costing one
+      // full extra round trip before Aide could say a word, which matters a
+      // lot on a slower connection. Fired in parallel instead.
+      clearSavedTranscript();
+      Promise.all([
+        fetch("/api/account")
+          .then((r) => r.json().catch(() => ({})))
+          .catch(() => null),
+        fetch("/api/greeting")
+          .then((res) => res.json().catch(() => ({})))
+          .catch(() => null),
+      ]).then(([d, data]) => {
+        setAccountId(d?.id ?? null);
+        const base = data?.greeting || "Hello, I'm Aide. I'm listening. Just talk to me.";
+        // The gesture has no visual affordance at all, so the only place a
+        // user can learn it is here. Kept to one clause, said once a session.
+        //
+        // Spoken as TWO calls, not one concatenated string: `base` is
+        // personalized (balance, pending jobs) and changes every load, so
+        // it can never hit the TTS cache — but this fixed tap-notice is
+        // byte-identical every single time, across every user, forever.
+        // speak(base) starts synthesizing the short, actually-informative
+        // half immediately; queueSpeak(tapNotice) prefetches the fixed
+        // half in the background while base is still playing (see
+        // primeQueue() in voice-engine.ts), so the notice is normally
+        // ready the instant base finishes. Net effect: first sound lands
+        // in roughly the time to synthesize ONE short sentence instead of
+        // the whole four-sentence greeting concatenated together.
+        // Measured: the old wording (tap notice + switch notice + language
+        // question, every one of them a full sentence or three) ran ~95
+        // words, ~38 seconds of continuous speech before the user could say
+        // anything. Someone impatient enough to tap and interrupt early
+        // (very likely) would cut it off before ever reaching the language
+        // question, since it was placed dead last. Shortened every line and
+        // moved the one thing that's actually load-bearing for a first-time
+        // user, which language to listen for, to come second, right after
+        // the status update, not buried at the end.
+        const tapNotice = "Tap anywhere to stop me. Tap twice to hear that again. Tap three times to mute.";
+        // A one-time onboarding question is fragile: it fires exactly once,
+        // ever, tracked by a localStorage flag, so anyone who already has a
+        // saved preference (including from testing) never hears it again.
+        // Said every session instead, short enough that repeating it forever
+        // isn't a tax, and byte-identical so it still hits the TTS cache.
+        const switchNotice =
+          STT_PROVIDER === "sahara" ? " Say switch to Yoruba, Igbo, or Hausa any time to change my language." : "";
+        // First-ever visit on Sahara: ask which language once, right in the
+        // greeting, instead of silently guessing Pidgin for everyone. The
+        // answer is captured by the very next thing the user says (see
+        // awaitingLanguageAnswerRef in onFinal above) — no menu, no typing.
+        // Placed right after `base`, not after tapNotice/switchNotice: this
+        // is the one line in the whole greeting an impatient tap must not be
+        // allowed to cut off before it's heard.
+        const askLanguage = STT_PROVIDER === "sahara" && !hasSaharaLanguagePreference();
+        const languageQuestion = askLanguage ? "Which language do you speak? English, Pidgin, Yoruba, Igbo, or Hausa." : "";
+        // On the first-ever visit, languageQuestion already puts language
+        // front of mind, so switchNotice (the recurring reminder) is skipped
+        // for just this one turn rather than repeating the same idea twice
+        // in a row.
+        const parts = [base, languageQuestion, tapNotice, askLanguage ? "" : switchNotice.trim()].filter(Boolean);
+        // Logged as separate transcript entries, matching how it's actually
+        // spoken below — one long concatenated paragraph reads as a wall of
+        // text on screen, even though a blind user never sees it either way.
+        setMessages((m) => [...m, ...parts.map((content) => ({ role: "assistant" as const, content }))]);
+        engine.speak(base);
+        if (askLanguage) {
+          engine.queueSpeak(languageQuestion);
+          awaitingLanguageAnswerRef.current = true;
+        }
+        engine.queueSpeak(tapNotice);
+        if (!askLanguage && switchNotice) engine.queueSpeak(switchNotice.trim());
+      });
+    }
+
+    return () => {
+      engine.stop();
+      if (engineRef.current === engine) engineRef.current = null;
+    };
+  }, []);
+
+  // Aide announces confirmed money the moment it lands, without being asked —
+  // the voice equivalent of a bank alert. Delivery is reactive via Convex (see
+  // PaymentAlerts below); this is just what to say when an event arrives.
+  const handleAideEvent = useCallback(
+    (e: { type: string; amount?: number; from?: string; message?: string }) => {
+      if (e.type === "payment") {
+        const line = `Good news. ${e.amount} naira just landed in your account from ${e.from}. Say balance any time to hear your new total.`;
+        setMessages((m) => [...m, { role: "assistant", content: line }]);
+        speak(line);
+      } else if (e.type === "notify" && typeof e.message === "string") {
+        // Hiring decisions, and anything else the server wants said aloud.
+        const message = e.message;
+        setMessages((m) => [...m, { role: "assistant", content: message }]);
+        speak(message);
+      }
+    },
+    [speak],
+  );
+
+  const beginCapture = useCallback((onText: (t: string) => void) => {
+    captureRef.current = onText;
+    setCapturing(true);
+  }, []);
+  const endCapture = useCallback(() => {
+    captureRef.current = null;
+    setCapturing(false);
+  }, []);
+
+  const workerScreen = !pathname.startsWith("/employer");
+
+  return (
+    <AideContext.Provider
+      value={{
+        active: voice.active,
+        listening: voice.listening,
+        speaking: voice.speaking,
+        dormant: voice.dormant,
+        muted: voice.muted,
+        thinking,
+        capturing,
+        supported,
+        interim: voice.interim,
+        micStatus: voice.micStatus,
+        error,
+        messages,
+        send,
+        speak,
+        interrupt,
+        beginCapture,
+        endCapture,
+      }}
+    >
+      {children}
+      {accountId && <PaymentAlerts accountId={accountId} onEvent={handleAideEvent} />}
+      {workerScreen && pathname !== "/" && <MiniAide />}
+    </AideContext.Provider>
+  );
+}
+
+// Reactive money alerts: subscribes to this account's Convex event feed and
+// speaks each new confirmed payment (or server notification) exactly once. The
+// `since` mount-time cutoff keeps page history from being re-announced on
+// reload; `seen` guards against reactive re-delivery within a session.
+function PaymentAlerts({
+  accountId,
+  onEvent,
+}: {
+  accountId: string;
+  onEvent: (e: { type: string; amount?: number; from?: string; message?: string }) => void;
+}) {
+  const since = useRef(Date.now());
+  const seen = useRef<Set<string>>(new Set());
+  const events = useQuery(api.events.forAccount, { accountId, since: since.current });
+
+  useEffect(() => {
+    if (!events) return;
+    for (const e of events) {
+      if (seen.current.has(e._id)) continue;
+      seen.current.add(e._id);
+      onEvent(e);
+    }
+  }, [events, onEvent]);
+
+  return null;
+}
+
+// The small Aide that follows the user onto every other screen. It glows
+// while talking and pulses while listening; tapping it interrupts Aide.
+function MiniAide() {
+  const { listening, speaking, thinking, capturing, muted, interim, messages, interrupt } = useAide();
+  const lastAide = [...messages].reverse().find((m) => m.role === "assistant")?.content;
+  // Held beats everything below it. Announcing "Aide is listening" while the
+  // user has deliberately closed the mic is the one lie that matters here.
+  const status = muted
+    ? "Aide is not listening. Tap three times to start again"
+    : speaking
+      ? "Aide is speaking"
+      : thinking
+        ? "Aide is thinking"
+        : capturing
+          ? "Aide is writing down what you say"
+          : listening
+            ? "Aide is listening"
+            : "Aide is paused";
+
+  return (
+    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2">
+      {(interim || lastAide) && (
+        <div className="dark-surface max-w-xs rounded-xl bg-[var(--panel)] px-4 py-3 text-[var(--panel-ink)] shadow-xl">
+          {interim ? <p className="italic">“{interim}”</p> : <p className="line-clamp-3">{lastAide}</p>}
+        </div>
+      )}
+      <button
+        onClick={interrupt}
+        aria-label={`${status}. Tap to interrupt Aide and speak.`}
+        className={`relative grid h-20 w-20 place-items-center rounded-full bg-[var(--accent)] font-bold text-white shadow-xl ${
+          speaking ? "aide-speaking" : ""
+        }`}
+      >
+        {listening && !speaking && (
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 rounded-full"
+            style={{ background: "var(--accent)", animation: "pulse-ring 2.2s ease-out infinite" }}
+          />
+        )}
+        <span className="relative">Aide</span>
+      </button>
+      <p aria-live="polite" className="sr-only">
+        {status}
+      </p>
+    </div>
+  );
+}

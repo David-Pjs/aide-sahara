@@ -1,0 +1,24 @@
+[
+  {
+    "id": "sample-01",
+    "audioPath": "sample-01.wav",
+    "reference": "REPLACE with the exact ground-truth transcript for this clip",
+    "languagePair": "Yoruba-English",
+    "saharaLanguageHint": "yo",
+    "accentCountry": "Nigeria",
+    "domain": "job-application",
+    "deviceType": "phone-mic",
+    "noiseCondition": "quiet-room"
+  },
+  {
+    "id": "sample-02",
+    "audioPath": "sample-02.wav",
+    "reference": "REPLACE with the exact ground-truth transcript for this clip",
+    "languagePair": "Nigerian Pidgin-English",
+    "saharaLanguageHint": "pcm",
+    "accentCountry": "Nigeria",
+    "domain": "job-application",
+    "deviceType": "phone-mic",
+    "noiseCondition": "street-noise"
+  }
+]
