@@ -13,7 +13,9 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Segment loss | share of reference sentences where under 20% of the words survived. A dropped utterance, not a garbled one |
 | Hallucination | insertions / reference words, plus a repetition-loop detector: an n-gram (n up to 12) repeated 3+ times consecutively. A loop counts as *runaway* only at 10+ repeats or a looped region of 20+ words, so genuine conversational repetition is not counted against a model |
 
-### Averages across the four clips
+### Averages across the 4 fully scored clips
+
+> 4 further clip(s) are extracted and in the manifest but not yet scored by every model, so they are excluded here. Averaging a model over clips its competitors were never run on would compare an easy set against a hard one. Pending: afriswitchcare-igbo-2, afriswitchcare-yoruba-2, afriswitchcare-hausa-2, afriswitchcare-pidgin-2.
 
 | Model | WER | WER (unnormalised) | Accuracy | Transcript loss | Segment loss | Hallucination (insertion rate) | Runaway loops |
 |---|---|---|---|---|---|---|---|

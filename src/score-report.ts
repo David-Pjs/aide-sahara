@@ -57,7 +57,16 @@ for (const item of report) {
 }
 
 const providers = [...new Set(rows.map((r) => r.provider))];
+
+// FAIRNESS GUARD. Every model must be scored on exactly the same clips, or an
+// average silently compares one model's easy set against another's hard set.
+// A clip is only scored once every provider has a real transcript for it;
+// anything short of that is staged, reported as such, and excluded.
+const complete = report.filter((item) => providers.every((p) => item.results.some((r) => r.provider === p && !r.error)));
+const staged = report.filter((item) => !complete.includes(item));
+const completeIds = new Set(complete.map((i) => i.entry.id));
 const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
+const scored = rows.filter((r) => completeIds.has(r.clip));
 
 const lines: string[] = [];
 lines.push("## Extended metrics");
@@ -80,12 +89,16 @@ lines.push("| Transcript loss | deletions / reference words. Content the model n
 lines.push("| Segment loss | share of reference sentences where under 20% of the words survived. A dropped utterance, not a garbled one |");
 lines.push("| Hallucination | insertions / reference words, plus a repetition-loop detector: an n-gram (n up to 12) repeated 3+ times consecutively. A loop counts as *runaway* only at 10+ repeats or a looped region of 20+ words, so genuine conversational repetition is not counted against a model |");
 lines.push("");
-lines.push("### Averages across the four clips");
+lines.push(`### Averages across the ${complete.length} fully scored clips`);
+if (staged.length) {
+  lines.push("");
+  lines.push(`> ${staged.length} further clip(s) are extracted and in the manifest but not yet scored by every model, so they are excluded here. Averaging a model over clips its competitors were never run on would compare an easy set against a hard one. Pending: ${staged.map((s2) => s2.entry.id).join(", ")}.`);
+}
 lines.push("");
 lines.push("| Model | WER | WER (unnormalised) | Accuracy | Transcript loss | Segment loss | Hallucination (insertion rate) | Runaway loops |");
 lines.push("|---|---|---|---|---|---|---|---|");
 for (const p of providers) {
-  const rs = rows.filter((r) => r.provider === p);
+  const rs = scored.filter((r) => r.provider === p);
   const loops = rs.filter((r) => r.hallucination.severe).length;
   lines.push(
     `| ${p} | ${pct(mean(rs.map((r) => r.wer)))} | ${pct(mean(rs.map((r) => r.werUnnorm)))} | ${pct(mean(rs.map((r) => r.accuracy)))} | ` +
@@ -96,13 +109,13 @@ for (const p of providers) {
 lines.push("");
 lines.push("### Per clip");
 lines.push("");
-for (const item of report) {
+for (const item of complete) {
   lines.push(`**${item.entry.id}** (${item.entry.languagePair})`);
   lines.push("");
   lines.push("| Model | WER | Accuracy | Transcript loss | Segment loss | Insertion rate | Repetition loop |");
   lines.push("|---|---|---|---|---|---|---|");
   for (const p of providers) {
-    const r = rows.find((x) => x.clip === item.entry.id && x.provider === p);
+    const r = scored.find((x) => x.clip === item.entry.id && x.provider === p);
     if (!r) continue;
     const loop = r.hallucination.hasLoop
       ? `${r.hallucination.severe ? "runaway" : "minor"}: "${r.hallucination.loopPhrase}" x${r.hallucination.maxRepeat} (${pct(r.hallucination.loopedShare)} of output)`
@@ -135,16 +148,16 @@ R.push("## Results");
 R.push("");
 R.push(`| Clip | Language pair | Diagnosis (simulated) | Duration | Code-mix index | ${providers.map((n) => `${n} WER`).join(" | ")} |`);
 R.push(`|---|---|---|---|---|${providers.map(() => "---").join("|")}|`);
-for (const item of report) {
+for (const item of complete) {
   const m = meta.get(item.entry.id);
-  const cells = providers.map((p) => pct(rows.find((r) => r.clip === item.entry.id && r.provider === p)?.wer ?? 1));
+  const cells = providers.map((p) => pct(scored.find((r) => r.clip === item.entry.id && r.provider === p)?.wer ?? 1));
   R.push(`| ${item.entry.id} | ${item.entry.languagePair} | ${m?.diagnosis ?? ""} | ${mmss(m?.durationSeconds)} | ${(m?.codeMixIndex ?? 0).toFixed(1)} | ${cells.join(" | ")} |`);
 }
 R.push("");
 R.push("## Averages");
 R.push("");
 for (const p of providers) {
-  const rs = rows.filter((r) => r.provider === p);
+  const rs = scored.filter((r) => r.provider === p);
   R.push(`- **${p}**: average WER ${pct(mean(rs.map((r) => r.wer)))}, average CER ${pct(mean(rs.map((r) => r.cer)))}, average latency ${Math.round(mean(rs.map((r) => r.latencyMs)))}ms`);
 }
 R.push("");

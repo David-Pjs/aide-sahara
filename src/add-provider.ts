@@ -68,8 +68,28 @@ async function transcribeWithQwen(audio: Buffer, filename: string): Promise<stri
   return json.text ?? "";
 }
 
+/** OpenAI Whisper through Hugging Face's own inference provider, the same
+ *  route the original harness used, so a clip added later is transcribed
+ *  exactly as the first four were. */
+function hfInference(model: string) {
+  return async (audio: Buffer): Promise<string> => {
+    const key = process.env.HF_API_TOKEN?.trim();
+    if (!key) throw new Error("HF_API_TOKEN not set");
+    const res = await fetch(`https://router.huggingface.co/hf-inference/models/${model}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "audio/wav" },
+      body: new Uint8Array(audio),
+      signal: AbortSignal.timeout(600_000),
+    });
+    if (!res.ok) throw new Error(`HF Inference (${model}) failed (${res.status}): ${(await res.text()).slice(0, 200)}`);
+    return ((await res.json()) as { text?: string }).text ?? "";
+  };
+}
+
 const PROVIDERS: Record<string, { name: string; run: (audio: Buffer, filename: string) => Promise<string> }> = {
   qwen: { name: "Qwen3-ASR-1.7B (Alibaba)", run: transcribeWithQwen },
+  whisper: { name: "OpenAI Whisper large-v3", run: hfInference("openai/whisper-large-v3") },
+  turbo: { name: "OpenAI Whisper large-v3-turbo", run: hfInference("openai/whisper-large-v3-turbo") },
 };
 
 async function main() {
@@ -82,8 +102,13 @@ async function main() {
 
   const report: ReportEntry[] = JSON.parse(await readFile(path.join(BENCHMARK_DIR, "report.json"), "utf-8"));
 
+  const only = process.argv[3] === "--missing";
   for (const item of report) {
     const existing = item.results.findIndex((r) => r.provider === provider.name);
+    if (only && existing >= 0 && !item.results[existing].error) {
+      console.log(`${item.entry.id.padEnd(26)} skipped (already scored)`);
+      continue;
+    }
     const audio = await readFile(path.join(BENCHMARK_DIR, "samples", path.basename(item.entry.audioPath)));
     const started = Date.now();
     let result: ProviderResult;
