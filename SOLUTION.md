@@ -8,17 +8,21 @@ You talk to Aide. It finds you work, proves your skill through a spoken assessme
 
 ## Why we built this
 
-I have low vision. At school I could not see the board. I sat as close to the front as they would let me and still copied most lessons from someone else's notebook. The thing I remember is not the difficulty. It is the question underneath it, which was what this would mean for me later, when the classroom became a workplace and nobody was obliged to help.
+I have low vision. At school I could not see the board. I sat as close to the front as they would let me and still copied most lessons from someone else's notebook.
 
-That question has an answer, and it is worse than I expected when I went looking for the numbers.
+What I remember is not the difficulty. It is the question underneath it, which was how I was going to survive. A classroom has people who are obliged to help you. A workplace has nobody.
+
+I went looking for the answer to that question while building this. It is worse than I expected.
 
 So I am building what I will need. Dillon and I both write the code, but the accessibility decisions in Aide were never researched. They were argued about by the person who has to live with the answer.
 
 ## Who this is for
 
-Blind and low-vision working-age Nigerians who can do the work and are locked out by the interface rather than the task.
+The answer to the question above is 86%.
 
-That distinction is the whole argument, and it is not ours. It is what the research says:
+More than 86% of blind and low-vision Nigerians of working age are unemployed. That is the number I was afraid of before I knew it existed, and it is the reason this product is about work rather than about convenience.
+
+Aide is for those people: blind and low-vision working-age Nigerians who can do the work and are locked out by the interface rather than by the task. That distinction is the whole argument, and it is not ours to claim. It is what the research says:
 
 | | |
 |---|---|
