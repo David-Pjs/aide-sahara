@@ -2,6 +2,8 @@
 
 **Category:** Other High-Impact Use Cases (accessibility)
 **Live:** [aide-ng.vercel.app](https://aide-ng.vercel.app)
+
+> **About the live demo.** The live site currently listens through the browser's built-in speech recogniser, because the Sahara API credit provided for the challenge was used up running the benchmark. The Sahara recogniser is implemented and benchmarked (`app/aide/sahara-recognizer.ts`, [`benchmark/report.md`](benchmark/report.md)) and comes back with one environment variable, `NEXT_PUBLIC_STT_PROVIDER=sahara`, and a redeploy. The browser recogniser handles English well and code-switched speech poorly, which is the gap Sahara exists to close.
 **Benchmark:** [`benchmark/report.md`](benchmark/report.md) (speech recognition) and [`benchmark/tts/report.md`](benchmark/tts/report.md) (speech synthesis)
 
 You talk to Aide. It finds you work, proves your skill through a spoken assessment, gets you hired, and tells you when you have been paid. There is no screen to read, no form to fill, and no code to squint at. It listens in Nigerian Pidgin, Yoruba, Igbo and Hausa mixed into English, the way people actually speak, because the alternative is a recogniser that invents words a blind user cannot catch.
