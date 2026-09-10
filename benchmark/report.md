@@ -6,7 +6,7 @@ Aide (voice-native work-and-pay platform for blind Nigerian workers) benchmarked
 
 - **Source**: [Intron AfriSwitchCare](https://huggingface.co/datasets/intronhealth/AfriSwitchCare), Intron's own published code-switching benchmark dataset. Simulated doctor-patient consultations; no real patient data (explicitly disclosed by the dataset authors).
 - **Clips**: whole conversations (audio + human-transcribed reference are paired 1:1 by the dataset's own construction, so there is zero alignment risk). Sahara's Upload File Sync caps at 120s, so the async Upload File endpoint was used instead (no documented duration limit, live-tested successfully).
-- **Metric**: Word Error Rate (WER) and Character Error Rate (CER), word/character-level Levenshtein edit distance over normalized (lowercased, punctuation-stripped) text. Speaker-turn artifacts (" : " separators left over from the dataset's own transcript format) were stripped from the reference before scoring, since they are not real spoken content and would otherwise penalize every model equally but unfairly.
+- **Metrics**: the five the challenge asks for, WER, accuracy, hallucination, transcript loss and segment loss, all derived from a single word-level alignment per (reference, transcript) pair (see Extended metrics below), plus Character Error Rate. Levenshtein edit distance over normalized (lowercased, punctuation-stripped) text. Speaker-turn artifacts (" : " separators left over from the dataset's own transcript format) were stripped from the reference before scoring, since they are not real spoken content and would otherwise penalize every model equally but unfairly.
 - **Models compared**: Sahara v2.5 (Africa/code-switching-specialized) vs. OpenAI Whisper large-v3 (global flagship, state-of-the-art on most public multilingual ASR benchmarks) vs. Whisper large-v3-turbo (its distilled, faster sibling). One specialized model against the current best general-purpose model at two speed/accuracy points.
 
 ## Results
@@ -24,10 +24,66 @@ Aide (voice-native work-and-pay platform for blind Nigerian workers) benchmarked
 - **OpenAI Whisper large-v3**: average WER 68.9%, average CER 54.8%, average latency 38902ms
 - **OpenAI Whisper large-v3-turbo**: average WER 63.8%, average CER 47.0%, average latency 15021ms
 
+## Extended metrics
+
+The challenge asks for hallucination, transcript loss, segment loss, WER and accuracy. All five are derived from one word-level alignment per (reference, transcript) pair by `src/metrics.ts`, so they stay mutually consistent and every model is scored by the same code against the same reference. `npx tsx src/score-report.ts` regenerates this section from `report.json` without calling any speech API.
+
+### Definitions
+
+| Metric | Definition |
+|---|---|
+| WER | (substitutions + deletions + insertions) / reference words |
+| Accuracy | correct reference words / reference words. Reported because WER exceeds 100% once a model inserts more than it gets right, which reads as nonsense on its own |
+| Transcript loss | deletions / reference words. Content the model never produced at all, separated from content it got wrong |
+| Segment loss | share of reference sentences where under 20% of the words survived. A dropped utterance, not a garbled one |
+| Hallucination | insertions / reference words, plus a repetition-loop detector: an n-gram (n up to 12) repeated 3+ times consecutively. A loop counts as *runaway* only at 10+ repeats or a looped region of 20+ words, so genuine conversational repetition is not counted against a model |
+
+### Averages across the four clips
+
+| Model | WER | Accuracy | Transcript loss | Segment loss | Hallucination (insertion rate) | Runaway loops |
+|---|---|---|---|---|---|---|
+| Sahara v2.5 | 46.3% | 56.4% | 20.4% | 25.9% | 2.7% | 0 of 4 |
+| OpenAI Whisper large-v3 | 68.9% | 38.1% | 27.1% | 53.0% | 7.0% | 2 of 4 |
+| OpenAI Whisper large-v3-turbo | 63.8% | 39.1% | 21.3% | 52.9% | 2.9% | 0 of 4 |
+
+### Per clip
+
+**afriswitchcare-igbo** (Igbo-English)
+
+| Model | WER | Accuracy | Transcript loss | Segment loss | Insertion rate | Repetition loop |
+|---|---|---|---|---|---|---|
+| Sahara v2.5 | 50.1% | 50.2% | 28.2% | 51.8% (72/139) | 0.2% | none |
+| OpenAI Whisper large-v3 | 41.9% | 60.6% | 17.4% | 48.2% (67/139) | 2.5% | none |
+| OpenAI Whisper large-v3-turbo | 39.1% | 64.4% | 16.2% | 49.6% (69/139) | 3.5% | minor: "how" x3 (0.4% of output) |
+
+**afriswitchcare-yoruba** (Yoruba-English)
+
+| Model | WER | Accuracy | Transcript loss | Segment loss | Insertion rate | Repetition loop |
+|---|---|---|---|---|---|---|
+| Sahara v2.5 | 58.5% | 42.7% | 25.2% | 21.2% (14/66) | 1.2% | none |
+| OpenAI Whisper large-v3 | 76.3% | 34.6% | 37.2% | 50.0% (33/66) | 10.9% | runaway: "ținăt" x72 (13.4% of output) |
+| OpenAI Whisper large-v3-turbo | 85.2% | 17.2% | 8.5% | 75.8% (50/66) | 2.5% | minor: "no" x3 (0.4% of output) |
+
+**afriswitchcare-hausa** (Hausa-English)
+
+| Model | WER | Accuracy | Transcript loss | Segment loss | Insertion rate | Repetition loop |
+|---|---|---|---|---|---|---|
+| Sahara v2.5 | 50.8% | 53.8% | 19.7% | 25.0% (2/8) | 4.5% | none |
+| OpenAI Whisper large-v3 | 87.1% | 18.2% | 47.0% | 75.0% (6/8) | 5.3% | none |
+| OpenAI Whisper large-v3-turbo | 82.6% | 20.5% | 29.5% | 75.0% (6/8) | 3.0% | none |
+
+**afriswitchcare-pidgin** (Nigerian Pidgin-English)
+
+| Model | WER | Accuracy | Transcript loss | Segment loss | Insertion rate | Repetition loop |
+|---|---|---|---|---|---|---|
+| Sahara v2.5 | 25.7% | 79.1% | 8.5% | 5.6% (1/18) | 4.8% | minor: "yes" x4 (0.7% of output) |
+| OpenAI Whisper large-v3 | 70.3% | 39.1% | 6.9% | 38.9% (7/18) | 9.4% | runaway: "mwenye" x136 (22.2% of output) |
+| OpenAI Whisper large-v3-turbo | 48.3% | 54.2% | 31.1% | 11.1% (2/18) | 2.6% | minor: "yes" x3 (0.7% of output) |
+
 ## Strengths and weaknesses
 
 **Sahara v2.5**
-- *Strength, never hallucinates.* Across all four clips, every Sahara transcript is a plausible (if sometimes garbled) rendering of what was actually said. It never invents content that wasn't spoken. This matters more than the raw WER number in a clinical-adjacent domain: a wrong-but-faithful transcript is a recoverable error, a fabricated one is not.
+- *Strength, does not fabricate.* Sahara records the lowest insertion rate of the three models (2.7% average against 7.0% and 2.9%) and, crucially, produces **no runaway repetition loops at all** across the four clips, where Whisper large-v3 produces two. Its only flagged repetition is a four-times "yes" on the Pidgin clip, 0.7% of that output, which is plausibly real conversational speech rather than a degenerate loop. Every Sahara transcript is a plausible if sometimes garbled rendering of what was actually said. This matters more than the raw WER number in a clinical-adjacent domain: a wrong-but-faithful transcript is a recoverable error, a fabricated one is not.
 - *Strength, handles the switch itself, not just one side of it.* On the Yoruba and Hausa clips, where the reference is dense with mid-sentence language switching (CMI 38.8-38.9), Sahara is the only model that keeps producing recognizable text in *both* languages through the switch points, e.g. correctly rendering `iṣẹ́ wo le ṣe` and `oníyàwó, ìyàwó méjì` back to back with the English `"retired traffic coordinator"` around them (Yoruba clip). Whisper, on the same passage, drops into transliterated nonsense the moment it hits the Yoruba side.
 - *Weakness, loses accuracy on longer medical-English stretches.* On the Igbo clip specifically (the one clip that is mostly extended English clinical dialogue with only occasional Igbo interjections, lowest CMI of the four at 12.0), Sahara's WER (50.1%) is worse than either Whisper variant. Its failure mode here is dropped/merged words in fast English speech ("PID that a pelvic inflammatory disease" losing "'s"), not fabrication, but it is a real accuracy gap on this specific pattern.
 - *Latency:* averaged 17.4s per clip (full multi-minute conversations, LLM corrections **on** for benchmark accuracy), still faster than Whisper large-v3 (38.9s) despite Whisper running as a single-shot local-style inference call with no polling round trip.
