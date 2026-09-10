@@ -18,6 +18,7 @@ required.
 | [`SOLUTION.md`](SOLUTION.md) | Problem, users, solution, and the key technical decisions |
 | [`benchmark/report.md`](benchmark/report.md) | Speech recognition: 4 models, 3 vendors, 5 metrics, full transcripts |
 | [`benchmark/tts/report.md`](benchmark/tts/report.md) | Speech synthesis: 3 systems, round-trip intelligibility |
+| [`benchmark/AFRISWITCH.md`](benchmark/AFRISWITCH.md) | 20 short natural-speech clips staged from AfriSwitch, and a sample-rate defect found in the source data |
 | [`ETHICS.md`](ETHICS.md) | Consent, privacy, bias, dignity, and where we are still exposed |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Speech pipeline, latency figures, security mechanisms |
 
