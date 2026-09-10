@@ -12,7 +12,7 @@ I have low vision. At school I could not see the board. I sat as close to the fr
 
 That question has an answer, and it is worse than I expected when I went looking for the numbers.
 
-Aide is built by the people it is for. I am the low-vision half of that; Dillon is the engineer alongside me. Not a product designed for a population studied from the outside.
+Aide is built by two developers, Dillon and me. We both write the code. The difference is that one of us cannot read the screen we are building, which means the accessibility decisions in this product were not researched, they were argued about by someone who has to live with the answer. This is not a population studied from the outside.
 
 ## Who this is for
 
