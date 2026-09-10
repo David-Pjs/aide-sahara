@@ -5,13 +5,13 @@ export const runtime = "nodejs";
 
 // Neural speech via Microsoft Edge's neural voices, reached through Python's
 // edge_tts library instead of Node. The Node ws-based npm package (msedge-tts)
-// gets a 403 at the WebSocket handshake — Microsoft blocks that client's
-// fingerprint — but Python's aiohttp-based edge_tts is not blocked. Cloud
+// gets a 403 at the WebSocket handshake, Microsoft blocks that client's
+// fingerprint, but Python's aiohttp-based edge_tts is not blocked. Cloud
 // alternatives (Azure Speech, Google Cloud TTS) were ruled out by signup
 // friction (Azure AD access_denied, Google requires a non-prepaid card).
 //
 // The connection handshake to Microsoft's server is itself slow (~5-6s cold,
-// ~2.5-3s warm — measured directly, not a Node overhead artifact). Spawning
+// ~2.5-3s warm, measured directly, not a Node overhead artifact). Spawning
 // a fresh Python interpreter per utterance paid that cold cost on every
 // single reply. Instead we keep ONE long-lived Python worker process (see
 // scripts/tts_worker.py) alive for the server's whole lifetime, so only the
@@ -36,7 +36,7 @@ const WORKER_SCRIPT = path.join(process.cwd(), "scripts", "tts_worker.py");
 // because a cold worker's first request can take 6s+; a wedged worker is
 // killed and respawned rather than left to hang future requests forever.
 const REQUEST_TIMEOUT_MS = 30000;
-// A worker that dies is recoverable — a request is only text — so pending work
+// A worker that dies is recoverable, a request is only text, so pending work
 // is replayed on a fresh process rather than failed. This caps the replaying,
 // so a process that dies instantly every time cannot spin forever.
 const MAX_ATTEMPTS = 2;
@@ -120,14 +120,14 @@ function spawnWorker(): ChildProcessWithoutNullStreams {
   proc.stdout.on("data", onWorkerData);
   proc.stderr.on("data", (c) => console.warn("edge_tts worker stderr:", c.toString().trim()));
   proc.on("exit", (code) => {
-    console.warn(`edge_tts worker exited (code ${code}) — will respawn on next request`);
+    console.warn(`edge_tts worker exited (code ${code}), will respawn on next request`);
     if (worker === proc) worker = null;
     if (frontTimer) clearTimeout(frontTimer);
     frontTimer = null;
     const pending = queue;
     queue = [];
     // The framing protocol has no way to cancel a single request, so escaping a
-    // slow synthesis means killing the whole process — which used to reject
+    // slow synthesis means killing the whole process, which used to reject
     // every OTHER sentence queued behind it as well. A user hears that as Aide
     // dropping to the robotic fallback voice partway through a reply, seemingly
     // at random. A request is only text, so replay it instead of failing it.
@@ -156,7 +156,7 @@ function getWorker(): ChildProcessWithoutNullStreams {
 // Pre-warm at module load (server boot / first import): spawning the worker
 // alone only pays Python's ~1.4s import cost. The real cold-start expense is
 // the TLS/session handshake inside edge_tts's first call to Microsoft's
-// server (~5-6s) — only a real synthesis call pays that down, so fire one at
+// server (~5-6s), only a real synthesis call pays that down, so fire one at
 // boot with a throwaway phrase, discarding the result, so the user's actual
 // first turn hits the ~2.5-3s warm path instead.
 // Skipped on Vercel: a serverless function can't keep a child process alive, so
@@ -164,7 +164,7 @@ function getWorker(): ChildProcessWithoutNullStreams {
 // Spawning here would only throw ModuleNotFoundError into the build logs.
 if (process.env.NEXT_RUNTIME !== "edge" && !process.env.VERCEL) {
   requestSynthesis("Aide is starting up.", VOICE).catch(() => {
-    /* boot-time warm-up failure isn't fatal — the first real request will retry */
+    /* boot-time warm-up failure isn't fatal, the first real request will retry */
   });
 }
 

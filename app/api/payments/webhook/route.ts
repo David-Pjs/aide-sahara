@@ -8,7 +8,7 @@ export const maxDuration = 30;
 
 // Monnify webhook receiver. Signature-checked (SHA-512 HMAC of the raw body),
 // and the transaction is ALWAYS re-fetched server-side before anything is
-// announced — a webhook payload alone is never trusted about money. The
+// announced, a webhook payload alone is never trusted about money. The
 // event is delivered only to the wallet that was actually paid, resolved
 // from the reserved account's reference in the payload.
 export async function POST(req: Request) {
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         });
       }
     } catch {
-      /* verification failed — announce nothing */
+      /* verification failed, announce nothing */
     }
   }
   return Response.json({ ok: true });

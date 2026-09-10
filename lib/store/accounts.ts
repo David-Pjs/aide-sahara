@@ -5,7 +5,7 @@ import { ensureSeeded } from "./seed";
 
 // Accounts are now backed by Convex (shared across serverless instances). The
 // legacy in-memory `worker` record is still kept in sync for the demo worker
-// only — it backs applications and the employer's applicant view until those
+// only, it backs applications and the employer's applicant view until those
 // domains move to Convex too.
 
 type ConvexAccount = {
@@ -49,7 +49,8 @@ const FALLBACK_WORKER: Account = {
 
 // The only shape of an account that may be serialized to the browser.
 export function publicAccount(a: Account): Omit<Account, "passwordHash"> & { authenticated: boolean } {
-  const { passwordHash, ...rest } = a;
+  const { passwordHash,
+  ...rest } = a;
   return { ...rest, authenticated: !!passwordHash };
 }
 
@@ -59,7 +60,7 @@ export async function findAccountByEmail(email: string): Promise<Account | undef
 }
 
 export async function createAccount(name: string, role: Role, email?: string, passwordHash?: string): Promise<Account> {
-  // Profile starts completely empty — Aide's spoken onboarding (or the profile
+  // Profile starts completely empty, Aide's spoken onboarding (or the profile
   // page) fills skills and bio afterwards.
   const acc: Account = { id: `u-${newId()}`, name: name.trim(), email, role, createdAt: Date.now(), skills: [], bio: "", passwordHash };
   await convexClient().mutation(api.accounts.create, {
@@ -77,7 +78,7 @@ export async function createAccount(name: string, role: Role, email?: string, pa
 
 export async function getAccount(id?: string | null): Promise<Account> {
   // Every request path reaches here, so this is where a brand-new deployment
-  // gets its demo identities — no manual seeding step to discover.
+  // gets its demo identities, no manual seeding step to discover.
   await ensureSeeded().catch(() => {});
   const key = id || "demo-worker";
   let a = (await convexClient().query(api.accounts.getByKey, { key })) as ConvexAccount | null;
@@ -119,8 +120,7 @@ export function getWorker(): Worker {
 // legacy global worker record is kept in sync for the demo worker only.
 export async function updateProfile(
   userId: string,
-  input: { name?: string; email?: string; skills?: string[]; bio?: string },
-): Promise<{ account: Account | undefined; worker: Worker }> {
+  input: { name?: string; email?: string; skills?: string[]; bio?: string }): Promise<{ account: Account | undefined; worker: Worker }> {
   await convexClient().mutation(api.accounts.updateProfile, {
     key: userId,
     name: input.name,

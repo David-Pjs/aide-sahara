@@ -6,7 +6,7 @@ import { getFunctionName } from "convex/server";
 // about what the store decides to ask for, and what it does with the answer.
 //
 // Every call is recorded, so a test can assert not just the outcome but that
-// the right thing was written — "no transfer was armed" is a different claim
+// the right thing was written, "no transfer was armed" is a different claim
 // from "the caller was told no".
 
 export type ConvexCall = { name: string; args: any };
@@ -20,8 +20,7 @@ export function makeDispatch(handlers: Handlers, calls: ConvexCall[]) {
     if (!handler) {
       throw new Error(
         `fake convex: no handler for "${name}". Add one to the test so the ` +
-          `call is deliberate rather than silently mocked away.`,
-      );
+          `call is deliberate rather than silently mocked away.`);
     }
     return Promise.resolve(handler(args));
   };

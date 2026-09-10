@@ -9,9 +9,9 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 // Two-step, voice-confirmable withdrawal from the signed-in user's own
-// wallet — the same gate the agent uses.
+// wallet, the same gate the agent uses.
 //   { action: "prepare", amount, accountNumber?, bankCode?, beneficiaryName? }
-//       arms it — the destination can be a new (name-enquiry verified) account
+//       arms it, the destination can be a new (name-enquiry verified) account
 //       or a saved beneficiary; returns the confirm mode (word vs the worker's
 //       own security phrase).
 //   { action: "confirm", spokenPhrase }  verifies, then really transfers

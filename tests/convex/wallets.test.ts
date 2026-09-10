@@ -5,7 +5,7 @@ import schema from "../../convex/schema";
 import { api } from "../../convex/_generated/api";
 
 // These run the REAL Convex handlers against an in-memory database, so what is
-// asserted here is the code that actually authorizes payments — not a stand-in.
+// asserted here is the code that actually authorizes payments, not a stand-in.
 //
 // This is the sharpest edge in the product. A worker confirms a withdrawal by
 // speaking, in a room where anyone present can hear the confirmation. The
@@ -41,7 +41,7 @@ const consume = (t: Awaited<ReturnType<typeof setup>>, spoken: string, over: Rec
     ...over,
   });
 
-describe("withdrawal confirmation — the double-spend gate", () => {
+describe("withdrawal confirmation, the double-spend gate", () => {
   it("authorizes the transfer when the spoken word matches", async () => {
     const t = await setup();
     await arm(t);
@@ -51,7 +51,7 @@ describe("withdrawal confirmation — the double-spend gate", () => {
     expect(r.ok && r.payoutAccount).toBe("0123456789");
   });
 
-  it("CANNOT be consumed twice — one confirmation, one transfer", async () => {
+  it("CANNOT be consumed twice, one confirmation, one transfer", async () => {
     // The whole point of doing check-and-clear in a single mutation. If this
     // ever regresses, a repeated confirmation sends the money again.
     const t = await setup();
@@ -79,7 +79,7 @@ describe("withdrawal confirmation — the double-spend gate", () => {
   });
 
   it("rejects a wrong word WITHOUT burning the pending withdrawal", async () => {
-    // A misheard word must cost a retry, not the whole withdrawal — otherwise
+    // A misheard word must cost a retry, not the whole withdrawal, otherwise
     // speech recognition errors become lost money.
     const t = await setup();
     await arm(t);
@@ -108,7 +108,7 @@ describe("withdrawal confirmation — the double-spend gate", () => {
   });
 });
 
-describe("worker passphrase mode — the accessible replacement for an SMS code", () => {
+describe("worker passphrase mode, the accessible replacement for an SMS code", () => {
   const hashOf = (s: string) => createHash("sha256").update(s).digest("hex");
   // The server hashes every contiguous word-window of what was spoken, so
   // "my phrase is sunny garden gate" still matches a stored "sunny garden gate".
@@ -170,7 +170,7 @@ describe("worker passphrase mode — the accessible replacement for an SMS code"
   });
 });
 
-describe("withdrawal ledger — what makes the balance honest", () => {
+describe("withdrawal ledger, what makes the balance honest", () => {
   it("starts at zero", async () => {
     const t = await setup();
     expect(await t.query(api.wallets.withdrawnTotal, { accountId: "u-worker" })).toBe(0);

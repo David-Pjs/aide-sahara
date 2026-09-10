@@ -6,7 +6,7 @@ import { makeDispatch, walletDoc, type ConvexCall, type Handlers } from "../help
 // AIDE_DEMO_BALANCE stands in for a figure this app otherwise refuses to
 // invent, so it exists on sufferance: it must do nothing unless deliberately
 // switched on, it must never override a number the bank actually returned, and
-// it must still behave like money — withdrawals come off it.
+// it must still behave like money, withdrawals come off it.
 //
 // Delete this file when the stand-in goes.
 
@@ -106,7 +106,7 @@ describe("with the stand-in switched on", () => {
   });
 
   it("never overrides a real balance the bank did return", async () => {
-    // The bank answering wins, always — even when it says something small.
+    // The bank answering wins, always, even when it says something small.
     bank.transactions.mockResolvedValue({
       content: [{ amount: 250, paymentStatus: "PAID", transactionReference: "TX" }],
     });

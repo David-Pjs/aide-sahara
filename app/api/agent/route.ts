@@ -77,7 +77,7 @@ function routeFor(toolName: string, result: ToolResult): string | undefined {
   if (toolName === "open_page" && result.page) {
     return PAGE_ROUTES[result.page] + (result.section ? `#${result.section}` : "");
   }
-  // Reading or sending a message opens that gig's thread on screen — the
+  // Reading or sending a message opens that gig's thread on screen, the
   // threads sit collapsed, so without this Aide narrates a conversation the
   // user cannot see.
   if ((toolName === "read_messages" || toolName === "send_message") && result.ok && result.jobId) {
@@ -98,10 +98,10 @@ function routeFor(toolName: string, result: ToolResult): string | undefined {
 
 // Streams the reply as newline-delimited JSON so the browser can start
 // speaking the first sentence while the rest is still generating:
-//   { t: "delta", text }                        — a chunk of the reply text
-//   { t: "nav", navigateTo }                     — move the screen, mid-reply
-//   { t: "done", navigateTo?, newUserId?, state } — final metadata
-//   { t: "error", message }                     — something broke mid-stream
+//   { t: "delta", text }, a chunk of the reply text
+//   { t: "nav", navigateTo }, move the screen, mid-reply
+//   { t: "done", navigateTo?, newUserId?, state }, final metadata
+//   { t: "error", message }, something broke mid-stream
 // Cookies can't be set once streaming has begun, so on account switches the
 // client receives `newUserId` and signs in via POST /api/account/switch.
 export async function POST(req: Request) {
@@ -111,8 +111,7 @@ export async function POST(req: Request) {
   if (!process.env.DEEPSEEK_API_KEY && !usingFallbackProvider()) {
     return Response.json(
       { error: "No language model is configured. Set DEEPSEEK_API_KEY, or AIDE_OPENAI_BASE_URL with AIDE_API_KEY." },
-      { status: 500 },
-    );
+      { status: 500 });
   }
 
   let messages: Msg[];
@@ -130,7 +129,7 @@ export async function POST(req: Request) {
 
   // streamText does NOT throw when the model call fails. It reports the error
   // here, ends textStream without emitting anything, and leaves result.steps
-  // permanently unsettled — so the `catch` below never fires and the response
+  // permanently unsettled, so the `catch` below never fires and the response
   // is never closed. That turned any upstream failure (rejected key, rate
   // limit, no credit) into a connection that streamed nothing forever, which
   // the browser renders as "Aide is thinking" with no way out. To a user who
@@ -138,7 +137,7 @@ export async function POST(req: Request) {
   // the failure has to be captured and spoken.
   const failure: { error: Error | null } = { error: null };
   // Aide's durable memory, restated on every turn. Cheaper and far more
-  // reliable than making the model call a tool to find out what it knows —
+  // reliable than making the model call a tool to find out what it knows,
   // and since the transcript is no longer persisted anywhere, this is the
   // only thing carrying context in from an earlier session.
   const saved = account.preferences ?? [];
@@ -164,7 +163,7 @@ export async function POST(req: Request) {
     controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
 
   // Where a turn's time actually goes. Aide feeling slow is a bug report with
-  // no detail in it — the model, the tool calls, the steps deadline and the
+  // no detail in it, the model, the tool calls, the steps deadline and the
   // snapshot are four different waits and they need telling apart.
   const t0 = Date.now();
   let firstTokenAt = 0;
@@ -174,7 +173,7 @@ export async function POST(req: Request) {
       try {
         // Read the FULL stream, not just the text. Tool results arrive here the
         // instant the tool returns, while the model is still writing the
-        // sentence about it — which is the only moment early enough to be
+        // sentence about it, which is the only moment early enough to be
         // useful. Waiting for the end of the stream meant Aide said "you're on
         // the jobs page" and the screen moved several seconds later, after the
         // remaining text, the steps deadline and a snapshot. To someone who
@@ -195,7 +194,7 @@ export async function POST(req: Request) {
             }
           }
         }
-        // An empty stream means failure, not a short reply — see above.
+        // An empty stream means failure, not a short reply, see above.
         if (failure.error) throw failure.error;
 
         // result.steps is also left unsettled by a half-failed call, so it is
@@ -207,8 +206,7 @@ export async function POST(req: Request) {
             s.toolResults as {
               toolName: string;
               result?: { page?: string; section?: string; userId?: string; jobId?: string; ok?: boolean; filters?: Record<string, unknown> };
-            }[],
-        );
+            }[]);
 
         // Belt and braces: if a tool result somehow never reached the stream
         // above, recover the destination from the finished steps. The client
@@ -223,8 +221,7 @@ export async function POST(req: Request) {
         // If the model created or switched to an account, the client signs
         // this browser in via /api/account/switch.
         const newUserId = toolResults.find(
-          (t) => (t.toolName === "create_account" || t.toolName === "switch_account") && t.result?.userId,
-        )?.result?.userId;
+          (t) => (t.toolName === "create_account" || t.toolName === "switch_account") && t.result?.userId)?.result?.userId;
 
         // Logout: cookies can't be cleared mid-stream, so the client calls
         // POST /api/auth/logout and restarts when it sees this flag.
@@ -237,8 +234,7 @@ export async function POST(req: Request) {
         // the model; the gap after it is ours.
         console.log(
           `[agent] first token ${firstTokenAt ? firstTokenAt - t0 : -1}ms · stream ${streamedAt - t0}ms · ` +
-            `snapshot ${doneAt - streamedAt}ms · total ${doneAt - t0}ms`,
-        );
+            `snapshot ${doneAt - streamedAt}ms · total ${doneAt - t0}ms`);
         emit(controller, { t: "done", navigateTo, newUserId, loggedOut, state });
       } catch (e) {
         emit(controller, { t: "error", message: spokenError(e as Error) });

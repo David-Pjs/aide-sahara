@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import type { QueryCtx, MutationCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 
-// Wallets and the withdrawal ledger in Convex — shared across instances so a
+// Wallets and the withdrawal ledger in Convex, shared across instances so a
 // wallet provisioned (or a withdrawal recorded) on one serverless instance is
 // visible everywhere. Fintech safety lives here: the confirm-word consume is a
 // single atomic mutation, and balances are computed from the shared ledger.
@@ -54,7 +54,8 @@ export const setProvisioned = mutation({
     const w = await walletDoc(ctx, a.accountId);
     const patch = { status: "active" as const, accountNumber: a.accountNumber, bankName: a.bankName, lastError: undefined };
     if (w) await ctx.db.patch(w._id, patch);
-    else await ctx.db.insert("wallets", { accountId: a.accountId, accountReference: a.accountReference, knownTxRefs: [], txSeeded: false, ...patch });
+    else await ctx.db.insert("wallets", { accountId: a.accountId, accountReference: a.accountReference, knownTxRefs: [], txSeeded: false,
+    ...patch });
   },
 });
 
@@ -71,7 +72,7 @@ export const setPayout = mutation({
   args: { accountId: v.string(), accountReference: v.string(), payoutAccount: v.string(), payoutBankCode: v.string(), payoutAccountName: v.string() },
   handler: async (ctx, a) => {
     const w = await walletDoc(ctx, a.accountId);
-    // Re-saving the SAME destination doesn't restart the hold — only pointing
+    // Re-saving the SAME destination doesn't restart the hold, only pointing
     // the money somewhere new does.
     const changed = w?.payoutAccount !== a.payoutAccount || w?.payoutBankCode !== a.payoutBankCode;
     const patch = {
@@ -81,11 +82,12 @@ export const setPayout = mutation({
       payoutSetAt: changed ? Date.now() : (w?.payoutSetAt ?? Date.now()),
     };
     if (w) await ctx.db.patch(w._id, patch);
-    else await ctx.db.insert("wallets", { accountId: a.accountId, accountReference: a.accountReference, status: "unprovisioned", knownTxRefs: [], txSeeded: false, ...patch });
+    else await ctx.db.insert("wallets", { accountId: a.accountId, accountReference: a.accountReference, status: "unprovisioned", knownTxRefs: [], txSeeded: false,
+    ...patch });
   },
 });
 
-// Worker's spoken security phrase — stored only as a hash of the normalized
+// Worker's spoken security phrase, stored only as a hash of the normalized
 // text; the Next server hashes candidate word-windows of what was spoken and
 // the compare happens here.
 export const setSecurityPhrase = mutation({
@@ -185,8 +187,7 @@ export const listBeneficiaries = query({
   args: { accountId: v.string() },
   handler: async (ctx, { accountId }) =>
     (await ctx.db.query("beneficiaries").withIndex("by_account", (q) => q.eq("accountId", accountId)).collect()).sort(
-      (a, b) => b.at - a.at,
-    ),
+      (a, b) => b.at - a.at),
 });
 
 // Idempotent by (accountNumber, bankCode) per account.
@@ -223,7 +224,7 @@ export const listWithdrawals = query({
     (await ctx.db.query("withdrawals").withIndex("by_account", (q) => q.eq("accountId", accountId)).collect()).sort((a, b) => b.at - a.at),
 });
 
-// Total already withdrawn (excludes FAILED) — the debit side of available balance.
+// Total already withdrawn (excludes FAILED), the debit side of available balance.
 export const withdrawnTotal = query({
   args: { accountId: v.string() },
   handler: async (ctx, { accountId }) => {

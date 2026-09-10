@@ -3,7 +3,7 @@ import { v } from "convex/values";
 
 // The reactive event feed that replaces the in-process subscriber set + SSE +
 // setInterval poller. The webhook (or the local poller) calls `publish`; every
-// browser running `forAccount` for that account receives the new row live —
+// browser running `forAccount` for that account receives the new row live,
 // even when the webhook and the browser hit different serverless instances,
 // which is exactly what broke the old design on Vercel.
 
@@ -24,8 +24,7 @@ export const publish = mutation({
       const existing = await ctx.db
         .query("events")
         .withIndex("by_account_ref", (q) =>
-          q.eq("accountId", args.accountId).eq("reference", args.reference),
-        )
+          q.eq("accountId", args.accountId).eq("reference", args.reference))
         .first();
       if (existing) return null;
     }

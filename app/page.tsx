@@ -4,19 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useAide } from "./aide";
 
-// Language switching is voice-only, on purpose — see matchLanguageCommand
+// Language switching is voice-only, on purpose, see matchLanguageCommand
 // and the first-visit onboarding question in app/aide/index.tsx. A blind
 // user has no mouse and no reason to ever see a dropdown, so there isn't
 // one: this product's own premise is "no screen required," and a
 // mouse-driven control here would directly contradict that for the one
 // piece of setup every user needs. (A visual selector briefly lived here
-// during development — removed once the voice path covered the same job.)
+// during development, removed once the voice path covered the same job.)
 
-// Live input level straight from getUserMedia — separate from speech
+// Live input level straight from getUserMedia, separate from speech
 // recognition, so it shows whether the microphone is delivering ANY audio.
 // If this stays at zero while the user talks, Chrome is capturing the wrong
 // (or a muted) input device.
-// `closed` covers both ways the mic can be shut — asleep after a quiet spell,
+// `closed` covers both ways the mic can be shut, asleep after a quiet spell,
 // or held closed by the user's three taps. Either way this must let go too.
 function MicMeter({ closed }: { closed: boolean }) {
   const [level, setLevel] = useState<number | null>(null);
@@ -74,8 +74,8 @@ function MicMeter({ closed }: { closed: boolean }) {
   );
 }
 
-// Aide's home: two halves. Left — Aide itself, always listening, glowing
-// while it speaks. Right — the running transcript of this session.
+// Aide's home: two halves. Left, Aide itself, always listening, glowing
+// while it speaks. Right, the running transcript of this session.
 export default function AidePage() {
   const { active, listening, speaking, dormant, muted, thinking, supported, interim, micStatus, error, messages, send, interrupt } = useAide();
   const logRef = useRef<HTMLDivElement>(null);
@@ -102,7 +102,7 @@ export default function AidePage() {
 
   return (
     <main id="main" className="grid min-h-[calc(100vh-4rem)] grid-cols-1 lg:grid-cols-2">
-      {/* Left half — Aide, glowing while it speaks. min-w-0 lets the grid
+      {/* Left half, Aide, glowing while it speaks. min-w-0 lets the grid
           track shrink to the viewport instead of blowing out on narrow phones. */}
       <section aria-label="Talk to Aide" className="flex min-w-0 flex-col items-center justify-center gap-8 p-5 sm:p-8 lg:p-14">
         <div className="max-w-md text-center">
@@ -185,18 +185,13 @@ export default function AidePage() {
         </p>
       </section>
 
-      {/* Right half — the session transcript */}
+      {/* Right half, the session transcript */}
       <aside aria-label="Conversation transcript" className="dark-surface flex min-w-0 flex-col bg-[var(--panel)] p-5 text-[var(--panel-ink)] sm:p-8 lg:p-12">
         <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--panel-soft)]">Transcript</h2>
         <div ref={logRef} role="log" className="dark-scrollbar mt-4 flex-1 space-y-4 overflow-y-auto pr-2" style={{ maxHeight: "calc(100vh - 12rem)" }}>
           {messages.length === 0 && <p className="text-[var(--panel-soft)]">Your conversation with Aide will appear here.</p>}
           {messages.map((m, i) => (
-            // --glow (orange) is reserved for the one moment it actually means
-            // something: the live "Aide is speaking" animation on the button.
-            // Reusing it as a static border on every message turned a
-            // meaningful signal into repeated decoration, so this uses a
-            // quieter, permanent border color instead.
-            <div key={i} className={m.role === "assistant" ? "border-l-4 border-[var(--accent)] pl-3" : "border-l-4 border-transparent pl-3"}>
+            <div key={i} className={m.role === "assistant" ? "border-l-4 border-[var(--glow)] pl-3" : "border-l-4 border-transparent pl-3"}>
               <p className="text-sm font-bold text-[var(--panel-soft)]">{m.role === "user" ? "You said" : "Aide said"}</p>
               <p className="text-lg leading-relaxed break-words">{m.content}</p>
             </div>
@@ -230,7 +225,7 @@ function TypeFallback({ onSend, disabled }: { onSend: (t: string) => void; disab
         onChange={(e) => setV(e.target.value)}
         placeholder="…or type to Aide"
         // Stop the browser keeping its own copy of everything typed here and
-        // offering it back as a dropdown later — on a shared machine that is
+        // offering it back as a dropdown later, on a shared machine that is
         // a log of the user's requests, and a blind user cannot see it appear.
         autoComplete="off"
         autoCorrect="off"

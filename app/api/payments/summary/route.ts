@@ -13,7 +13,7 @@ export const maxDuration = 30;
 //
 // Only the BALANCE needs the bank. The account number, the bank name, the
 // payout details and the pending withdrawal all live in Convex. When the rail
-// is slow or down, the whole page used to fail with whatever the fetch threw —
+// is slow or down, the whole page used to fail with whatever the fetch threw,
 // which is how a blind user ended up being read "The operation was aborted due
 // to timeout". Now the page still loads with everything we actually know, and
 // the balance alone comes back unknown, with something worth hearing.
@@ -28,9 +28,9 @@ export async function GET(req: Request) {
 
   const [balanceResult, wallet] = await Promise.all([
     getBalance(acc.id).then(
-      (b) => ({ ok: true as const, ...b }),
-      (e) => ({ ok: false as const, message: spokenProviderError(e) }),
-    ),
+      (b) => ({ ok: true as const,
+      ...b }),
+      (e) => ({ ok: false as const, message: spokenProviderError(e) })),
     getWallet(acc.id).catch(() => null),
   ]);
 

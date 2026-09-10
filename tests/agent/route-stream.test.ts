@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 // The agent route is Aide's voice. Its one non-negotiable duty is to ALWAYS
 // finish: emit something and close. A route that hangs shows the user "Aide is
 // thinking" forever, and a user who cannot see the screen has no way to tell
-// that apart from an app that has died. This exact failure shipped — the SDK
+// that apart from an app that has died. This exact failure shipped, the SDK
 // reports a failed call through onError, ends the text stream without throwing,
 // and leaves result.steps permanently unsettled.
 
@@ -35,7 +35,8 @@ const { POST } = await import("../../app/api/agent/route");
 const streamOf = (text: string[], steps: any, midStreamTools: { toolName: string; result: any }[] = []) => ({
   fullStream: (async function* () {
     for (const t of text) yield { type: "text-delta", textDelta: t };
-    for (const tr of midStreamTools) yield { type: "tool-result", ...tr };
+    for (const tr of midStreamTools) yield { type: "tool-result",
+    ...tr };
   })(),
   steps,
 });
@@ -43,7 +44,7 @@ const streamOf = (text: string[], steps: any, midStreamTools: { toolName: string
 const ask = (body: unknown = { messages: [{ role: "user", content: "find me work" }] }) =>
   POST(new Request("http://localhost/api/agent", { method: "POST", body: JSON.stringify(body) }));
 
-// Drain the NDJSON body, refusing to wait forever — the point of these tests.
+// Drain the NDJSON body, refusing to wait forever, the point of these tests.
 async function drain(res: Response, ms = 8000) {
   const events: any[] = [];
   const reader = res.body!.getReader();
@@ -204,8 +205,8 @@ describe("request validation", () => {
 
 describe("moving the screen while Aide is still speaking", () => {
   // Aide announces the page as it streams, sentence by sentence. Navigation
-  // used to be sent only in the final `done` event — after the rest of the
-  // text, after the steps deadline, after a snapshot — so Aide said "you are
+  // used to be sent only in the final `done` event, after the rest of the
+  // text, after the steps deadline, after a snapshot, so Aide said "you are
   // on the jobs page" seconds before the screen moved. Someone who cannot see
   // the screen has no way to catch that; to them Aide simply lied.
   const navEvents = (events: any[]) => events.filter((e) => e.t === "nav");

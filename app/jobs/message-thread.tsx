@@ -31,7 +31,7 @@ const time = (at: number) => {
   }
 };
 
-// The speech-bubble marker on a collapsed thread. Purely decorative — the
+// The speech-bubble marker on a collapsed thread. Purely decorative, the
 // button's own text is what a screen reader announces.
 export function MessageIcon() {
   return (

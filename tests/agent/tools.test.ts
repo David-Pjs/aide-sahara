@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Aide's tools are the only way the model can touch anything real. The model
-// is instructed to behave, but instructions are not a security boundary — a
+// is instructed to behave, but instructions are not a security boundary, a
 // user can say anything, and gig text and messages are attacker-controlled
 // data the model reads. So every guard has to live in the tool itself.
 
@@ -42,14 +42,12 @@ beforeEach(() => {
   vi.clearAllMocks();
   store.getWorker.mockReturnValue({ id: "demo-worker", name: "Ada Okafor", skills: [], bio: "", applications: [] });
   store.getJob.mockImplementation(async (id: string) =>
-    id === "g-own" ? OWN_GIG : id === "g-other" ? OTHER_GIG : undefined,
-  );
+    id === "g-own" ? OWN_GIG : id === "g-other" ? OTHER_GIG : undefined);
   store.listJobs.mockResolvedValue([OWN_GIG, OTHER_GIG]);
   store.getApplications.mockResolvedValue([]);
   store.messagingUnlocked.mockResolvedValue(true);
   store.ownsJob.mockImplementation((acc: any, job: any) =>
-    acc.role === "employer" && job.employer.toLowerCase() === acc.name.toLowerCase(),
-  );
+    acc.role === "employer" && job.employer.toLowerCase() === acc.name.toLowerCase());
   store.resolveApplicant.mockResolvedValue({
     ok: true,
     accountId: "demo-worker",
@@ -157,7 +155,7 @@ describe("the onboarding channel stays shut until someone is hired", () => {
   });
 
   it("sends a message verbatim once unlocked", async () => {
-    // Credentials pass through here and get read aloud — altering them would
+    // Credentials pass through here and get read aloud, altering them would
     // hand the worker something that does not work.
     const secret = "Portal login: Ada_O / Tr0ub4dor&3";
     store.sendMessage.mockResolvedValue({});
@@ -258,7 +256,7 @@ describe("money tools", () => {
   });
 });
 
-describe("preferences — Aide's only durable memory", () => {
+describe("preferences, Aide's only durable memory", () => {
   it("saves what the user asked to be remembered", async () => {
     store.addPreference.mockResolvedValue({ ok: true, added: true, preferences: ["I can only work mornings"] });
     const r = await run(worker, "remember_preference", { text: "I can only work mornings" });

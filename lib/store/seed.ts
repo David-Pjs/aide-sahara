@@ -2,8 +2,8 @@ import { api } from "../../convex/_generated/api";
 import { convexClient } from "../convex-server";
 import { worker } from "./state";
 
-// A freshly created Convex deployment — a teammate's, a judge's, a preview
-// branch's — starts completely empty, so the demo identities that every
+// A freshly created Convex deployment, a teammate's, a judge's, a preview
+// branch's, starts completely empty, so the demo identities that every
 // signed-out visitor falls back to would not exist and the account switcher
 // would be blank. Seeding runs automatically on first use instead of being a
 // setup step someone has to know about. The mutation is idempotent, so this is
@@ -37,7 +37,7 @@ export function ensureSeeded(): Promise<void> {
       })
       .then(() => undefined)
       .catch((e) => {
-        seeded = null; // transient failure — let the next request try again
+        seeded = null; // transient failure, let the next request try again
         throw e;
       });
   }

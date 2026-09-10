@@ -3,7 +3,7 @@ import { userIdFrom } from "@/lib/session";
 
 export const runtime = "nodejs";
 
-// Employers post gigs here — from the modal form or anywhere else. The voice
+// Employers post gigs here, from the modal form or anywhere else. The voice
 // path goes through the agent's post_gig tool; both validate through the same
 // validateGig() so a gig accepted by voice is accepted on screen and vice versa.
 export async function POST(req: Request) {

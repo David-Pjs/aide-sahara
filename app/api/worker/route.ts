@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 // calls, which the platform default is short enough to cut off.
 export const maxDuration = 30;
 
-// The employer screen needs the worker's real earnings account to pay into —
+// The employer screen needs the worker's real earnings account to pay into,
 // that is the demo worker's own wallet (applications belong to them).
 export async function GET() {
   try {

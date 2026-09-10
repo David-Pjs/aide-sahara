@@ -4,7 +4,7 @@ import { cacheWalletBalance, listActiveWallets } from "./payments";
 import { publishConvexEvent } from "../convex-server";
 
 // Live events: confirmed payments announced the moment they land, unprompted.
-// The reactive fan-out lives in Convex (see convex/events.ts) — writing an
+// The reactive fan-out lives in Convex (see convex/events.ts), writing an
 // event row there reaches every subscribed browser, across serverless
 // instances. This module is the Node-side WRITER: the webhook and the local
 // poller both call publishEvent, which forwards to Convex.
@@ -25,7 +25,7 @@ export function publishEvent(accountId: string, e: AideEvent, at?: number): void
 // How often the poller asks the payment provider for new transactions, and how
 // far it backs off when the provider cannot be reached at all. A fixed interval
 // meant an outage produced a doomed request every fifteen seconds forever, each
-// one burning its full connect timeout — so the machine spent more time waiting
+// one burning its full connect timeout, so the machine spent more time waiting
 // on a host that was not answering than doing anything else.
 const POLL_BASE_MS = 15_000;
 const POLL_MAX_MS = 5 * 60_000;
@@ -35,8 +35,8 @@ const nextPollDelay = () =>
   pollFailures === 0 ? POLL_BASE_MS : Math.min(POLL_BASE_MS * 2 ** pollFailures, POLL_MAX_MS);
 
 export function ensurePolling(): void {
-  // state.pollTimer stays set for the life of the loop — including while a tick
-  // is in flight — so repeat calls from other requests cannot start a second one.
+  // state.pollTimer stays set for the life of the loop, including while a tick
+  // is in flight, so repeat calls from other requests cannot start a second one.
   if (state.pollTimer) return;
 
   const schedule = () => {
@@ -48,7 +48,7 @@ export function ensurePolling(): void {
     try {
       watched = await listActiveWallets();
     } catch {
-      schedule(); // Convex unreachable this tick — try again later
+      schedule(); // Convex unreachable this tick, try again later
       return;
     }
     if (watched.length === 0) {
@@ -74,11 +74,10 @@ export function ensurePolling(): void {
               from: t.customerDTO?.name ?? "a bank transfer",
               reference: t.transactionReference,
             },
-            Number.isNaN(parsed) ? Date.now() : parsed,
-          );
+            Number.isNaN(parsed) ? Date.now() : parsed);
         }
       } catch {
-        /* transient for this wallet — the backoff below decides how soon to retry */
+        /* transient for this wallet, the backoff below decides how soon to retry */
       }
     }
 

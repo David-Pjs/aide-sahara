@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAide } from "../aide";
 
-// The screen path for posting a gig. The voice path is Aide's post_gig tool —
+// The screen path for posting a gig. The voice path is Aide's post_gig tool,
 // both call the same /api/jobs/post → postJob code. The assessment question
 // can also be dictated right here, borrowing Aide's mic.
 
@@ -50,8 +50,7 @@ export function PostGigModal({ onClose, onPosted }: { onClose: () => void; onPos
       }
       if (e.key !== "Tab" || !dialogRef.current) return;
       const focusables = [...dialogRef.current.querySelectorAll<HTMLElement>("button, input, select, textarea, a[href]")].filter(
-        (n) => !n.hasAttribute("disabled"),
-      );
+        (n) => !n.hasAttribute("disabled"));
       if (focusables.length === 0) return;
       const first = focusables[0];
       const last = focusables[focusables.length - 1];

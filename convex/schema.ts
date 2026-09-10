@@ -5,7 +5,7 @@ import { v } from "convex/values";
 // The whole point: on Vercel serverless, instances don't share memory, so the
 // webhook that records a payment and the browser's live subscription land on
 // different machines. Convex tables + reactive queries make that cross-instance
-// by construction — the "money just landed" alert fires no matter which
+// by construction, the "money just landed" alert fires no matter which
 // instance the webhook hit.
 //
 // Our own string ids ("demo-worker", "u-xxxx", "aide-<id>") are kept as plain
@@ -20,8 +20,7 @@ const applicationStatus = v.union(
   v.literal("hired"),
   v.literal("rejected"),
   v.literal("paid"),
-  v.literal("cancelled"),
-);
+  v.literal("cancelled"));
 
 export default defineSchema({
   accounts: defineTable({
@@ -35,7 +34,7 @@ export default defineSchema({
     // Durable facts the user has asked Aide to remember ("I can only work
     // mornings"). Deliberately separate from the conversation: the transcript
     // is a verbatim log and is no longer persisted anywhere, while these are
-    // the few things worth keeping — said once, and still here tomorrow.
+    // the few things worth keeping, said once, and still here tomorrow.
     // Optional so accounts written before this field existed still validate.
     preferences: v.optional(v.array(v.string())),
     passwordHash: v.optional(v.string()), // never leaves the server
@@ -66,13 +65,12 @@ export default defineSchema({
         // "word": match the random word in `phrase` (employers).
         // "passphrase": match the wallet's securityPhraseHash (workers).
         mode: v.optional(v.union(v.literal("word"), v.literal("passphrase"))),
-        // Per-withdrawal destination — users are not locked to one account.
+        // Per-withdrawal destination, users are not locked to one account.
         destAccount: v.optional(v.string()),
         destBankCode: v.optional(v.string()),
         destAccountName: v.optional(v.string()),
         createdAt: v.number(),
-      }),
-    ),
+      })),
     // knownTxRefs is a Set in memory; Convex stores it as an array we treat as a set.
     knownTxRefs: v.array(v.string()),
     txSeeded: v.boolean(),
@@ -87,7 +85,7 @@ export default defineSchema({
   }).index("by_account", ["accountId"]),
 
   // Saved withdrawal destinations ("beneficiaries"), per account. Offered for
-  // saving after a successful payment to a new account — voice or screen.
+  // saving after a successful payment to a new account, voice or screen.
   beneficiaries: defineTable({
     accountId: v.string(),
     accountName: v.string(),
@@ -115,8 +113,7 @@ export default defineSchema({
     assessmentType: v.optional(v.union(v.literal("oral"), v.literal("mcq"))),
     assessmentQuestion: v.optional(v.string()),
     mcqQuestions: v.optional(
-      v.array(v.object({ question: v.string(), options: v.array(v.string()), correctIndex: v.number() })),
-    ),
+      v.array(v.object({ question: v.string(), options: v.array(v.string()), correctIndex: v.number() }))),
     timeLimit: v.optional(v.number()),
     at: v.number(),
   })
@@ -145,7 +142,7 @@ export default defineSchema({
 
   // The post-hire onboarding channel. Once an employer hires an applicant, this
   // is the only place they can pass job-specific directives, credentials, or
-  // next steps. Keyed by the gig (jobId) — one applicant per gig in this demo —
+  // next steps. Keyed by the gig (jobId), one applicant per gig in this demo,
   // and reactive, so each new message reaches the other party's browser (and
   // their Aide, which reads it aloud) across serverless instances, exactly like
   // the events feed. `from` records which side spoke; workerAccountId ties the
@@ -164,7 +161,7 @@ export default defineSchema({
 
   // The reactive replacement for the subscriber-set + SSE + poller. The webhook
   // (or the poller) inserts an event row; the browser's useQuery on this table
-  // reactively receives it — even across serverless instances. Payment events
+  // reactively receives it, even across serverless instances. Payment events
   // are deduped per account by (accountId, reference) before insert.
   events: defineTable({
     accountId: v.string(),
@@ -179,7 +176,7 @@ export default defineSchema({
     .index("by_account_ref", ["accountId", "reference"]),
 
   // External listings Aide scraped from the open web, and the ones the worker
-  // is tracking — both were per-session arrays on globalThis.
+  // is tracking, both were per-session arrays on globalThis.
   externalJobs: defineTable({
     accountId: v.string(),
     extId: v.string(),

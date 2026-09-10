@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     if (app) {
       publishEvent(workerId, {
         type: "notify",
-        message: `An update on ${job.title} from ${job.employer}: they went with another applicant this time. Your assessment result stays on your profile — I can find you more jobs whenever you're ready.`,
+        message: `An update on ${job.title} from ${job.employer}: they went with another applicant this time. Your assessment result stays on your profile, I can find you more jobs whenever you're ready.`,
       });
     }
   } else if (action === "pay") {

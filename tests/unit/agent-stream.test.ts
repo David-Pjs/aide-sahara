@@ -33,7 +33,7 @@ describe("extractSentences", () => {
 
   it("speaks a finished sentence sitting at the end of the buffer", () => {
     // The opening line is the last thing emitted before a tool runs, so it has
-    // no trailing space. It must still be spoken — covering that pause is the
+    // no trailing space. It must still be spoken, covering that pause is the
     // only reason it exists. Waiting for the tool to return defeats it.
     const { spoken, unspoken } = feed(["Let me pull those up for you."]);
     expect(spoken).toEqual(["Let me pull those up for you."]);
@@ -68,7 +68,7 @@ describe("extractSentences", () => {
 
   // The invariant that matters most: whatever the chunk boundaries, every word
   // the model produced must end up either spoken or still buffered. Nothing may
-  // silently vanish — a dropped sentence is invisible to a user who cannot see
+  // silently vanish, a dropped sentence is invisible to a user who cannot see
   // the transcript.
   it("never loses text, at any chunk size", () => {
     const text =
@@ -77,8 +77,8 @@ describe("extractSentences", () => {
       const chunks: string[] = [];
       for (let i = 0; i < text.length; i += size) chunks.push(text.slice(i, i + size));
       const { spoken, unspoken } = feed(chunks);
-      // Whitespace may legitimately change — splitting a fused pair inserts a
-      // gap the original did not have — but no other character may vanish.
+      // Whitespace may legitimately change, splitting a fused pair inserts a
+      // gap the original did not have, but no other character may vanish.
       const roundTrip = (spoken.join("") + unspoken).replace(/\s+/g, "");
       expect(roundTrip, `chunk size ${size}`).toBe(text.replace(/\s+/g, ""));
     }

@@ -2,13 +2,13 @@
 // Sahara's code-switching STT instead of Chrome's English-only recognizer.
 // Implements the same shape voice-engine.ts already talks to
 // (onaudiostart/onsoundstart/onspeechstart/onresult/onend/onerror, start(),
-// abort()) so the rest of that file — echo defense, idle/mute timers, restart
-// backoff — needs zero changes to run on Sahara.
+// abort()) so the rest of that file, echo defense, idle/mute timers, restart
+// backoff, needs zero changes to run on Sahara.
 //
 // Why not stream: Sahara's streaming STT is a separate real-time protocol;
 // Upload File Sync (one HTTP call per finished utterance) is simpler, still
 // fast enough for a conversational loop, and is the same call path the
-// benchmark script uses — so what wins the demo is exactly what's benchmarked.
+// benchmark script uses, so what wins the demo is exactly what's benchmarked.
 //
 // Voice activity detection (RMS over a Web Audio AnalyserNode) stands in for
 // the interim/final events Web Speech provides natively, since Sahara only
@@ -16,7 +16,7 @@
 
 type AnyHandler = ((ev: any) => void) | null;
 
-// Sahara has no auto-detect mode — every request must declare ONE language or
+// Sahara has no auto-detect mode, every request must declare ONE language or
 // code-switch pair (checked directly against their docs: the STT "Supported
 // Languages" list has no "auto" entry). Guessing by firing the same audio at
 // several language hints in parallel would only make every turn slower, the
@@ -34,7 +34,7 @@ export const SAHARA_LANGUAGE_OPTIONS: { code: string; label: string }[] = [
   { code: "en", label: "English only" },
 ];
 
-// True only once a preference has actually been set — distinct from
+// True only once a preference has actually been set, distinct from
 // getSaharaLanguage(), which always returns a usable default. Used to decide
 // whether a brand-new user has ever been asked at all.
 export function hasSaharaLanguagePreference(): boolean {
@@ -59,14 +59,14 @@ export function setSaharaLanguage(code: string): void {
   try {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, code);
   } catch {
-    /* private browsing / storage disabled — falls back to the default every load */
+    /* private browsing / storage disabled, falls back to the default every load */
   }
 }
 
-// A blind user cannot use a mouse-driven dropdown to change this — the whole
+// A blind user cannot use a mouse-driven dropdown to change this, the whole
 // product's premise is "no screen required." So this is the real control:
 // spoken commands, matched BEFORE the text ever reaches the LLM agent (see
-// index.tsx's onFinal handler), so switching language is instant — no model
+// index.tsx's onFinal handler), so switching language is instant, no model
 // round trip, no "thinking" delay, just an immediate spoken confirmation.
 // Deliberately keyword-based rather than an LLM intent classifier: latency
 // here should be near-zero, and these phrases are unambiguous enough that a
@@ -110,7 +110,7 @@ export function matchLanguageCommand(text: string): { code: string; label: strin
   return matchLanguageAnswer(normalized);
 }
 
-// Looser match with no required intent verb — for the one moment a bare
+// Looser match with no required intent verb, for the one moment a bare
 // language name IS the whole answer: right after Aide has directly asked
 // "which language do you speak?" during first-visit onboarding.
 export function matchLanguageAnswer(text: string): { code: string; label: string } | null {
@@ -124,8 +124,40 @@ export function matchLanguageAnswer(text: string): { code: string; label: string
   return null;
 }
 
+// iOS WebKit (Safari AND every iOS browser, since Apple requires them all to
+// run on WebKit, including "Chrome" on iPhone) does not support the WebM
+// container at all, MediaRecorder.isTypeSupported("audio/webm") is false
+// there. The old code only tried "audio/webm;codecs=opus" then blindly fell
+// back to the literal string "audio/webm" with no support check, which
+// throws on construction on iOS. This tries real candidates in order and
+// lets the browser's own default apply only if none of them match, iOS
+// lands on "audio/mp4" (AAC), which both MediaRecorder AND Sahara's upload
+// endpoint accept fine once the filename/extension actually says mp4 (see
+// the extension map below and the upload() call).
+const MIME_CANDIDATES = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4;codecs=mp4a.40.2", "audio/mp4", "audio/aac"];
+function pickSupportedMimeType(): string {
+  if (typeof MediaRecorder === "undefined" || !MediaRecorder.isTypeSupported) return "";
+  for (const type of MIME_CANDIDATES) {
+    if (MediaRecorder.isTypeSupported(type)) return type;
+  }
+  return ""; // none matched, let MediaRecorder pick its own platform default
+}
+
+// Sahara's upload endpoint reads the audio format from the filename
+// extension, not from the multipart part's Content-Type. Sending an AAC/MP4
+// recording under a ".webm" name (the previous behavior, hardcoded) is
+// exactly the kind of mismatch that produces silently wrong or empty
+// transcripts, this is very likely a real cause of "it doesn't hear me" on
+// iPhone specifically, since that's the one platform that never records webm.
+function extensionFor(mimeType: string): string {
+  if (mimeType.includes("mp4")) return "mp4";
+  if (mimeType.includes("aac")) return "aac";
+  if (mimeType.includes("ogg")) return "ogg";
+  return "webm";
+}
+
 const VAD_INTERVAL_MS = 100;
-// Never actually tuned against a real microphone — this was a guess. Chrome's
+// Never actually tuned against a real microphone, this was a guess. Chrome's
 // default getUserMedia noise suppression can attenuate a normal speaking
 // voice well below what feels like an obviously loud threshold, so if speech
 // still isn't being detected, this is the first thing to lower. See the
@@ -134,16 +166,16 @@ const SOUND_RMS_THRESHOLD = 0.01;
 const SILENCE_TO_FINALIZE_MS = 700;
 // Sahara's Upload File Sync rejects anything under 1 real second of audio
 // ("audio file duration of Ns is less than minimum of 1s"). This must clear
-// that bar with margin — it's measured from when speech actually starts, not
+// that bar with margin, it's measured from when speech actually starts, not
 // from when the recorder was armed, so a stray blip right after a previous
 // utterance can't undercount it.
 const MIN_UTTERANCE_MS = 1100;
 // Below this, a "detected speech" segment is almost certainly noise (a click,
-// a chair creak) rather than real speech — skip the upload instead of paying
+// a chair creak) rather than real speech, skip the upload instead of paying
 // a guaranteed-to-fail Sahara call for it.
 const MIN_BLOB_BYTES = 4_000;
 // If ambient noise sits above SOUND_RMS_THRESHOLD, lastLoudAt keeps
-// resetting and silence-based finalize never fires — the recorder can run
+// resetting and silence-based finalize never fires, the recorder can run
 // away indefinitely, capturing minutes of noise-plus-a-few-words that Sahara
 // then has to guess a transcript for (this is very likely what produced
 // fluent-sounding but unrelated text like "Since farmers, I'm not sure what
@@ -221,6 +253,16 @@ export class SaharaRecognizer {
 
     const Ctx = window.AudioContext || (window as any).webkitAudioContext;
     this.ctx = new Ctx();
+    // iOS WebKit creates a new AudioContext in "suspended" state whenever
+    // the creation happens after an await (as it does here, after awaiting
+    // getMicStream()), by then the tap that started this has fallen outside
+    // WebKit's user-gesture activation window. A suspended context still
+    // exists and won't throw, it just silently never delivers real analyser
+    // data, so VAD reads near-zero forever and it looks exactly like "the
+    // mic doesn't hear me" even though permission was granted correctly.
+    if (this.ctx.state === "suspended") {
+      await this.ctx.resume().catch(() => {});
+    }
     const source = this.ctx.createMediaStreamSource(this.stream);
     this.analyser = this.ctx.createAnalyser();
     this.analyser.fftSize = 512;
@@ -252,8 +294,11 @@ export class SaharaRecognizer {
 
   private armRecorder(): void {
     if (!this.stream || this.stopped) return;
-    const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm";
-    const recorder = new MediaRecorder(this.stream, { mimeType: mime });
+    const mime = pickSupportedMimeType();
+    // Passing no mimeType at all (rather than one MediaRecorder.isTypeSupported
+    // rejected) lets every browser, including whatever future engine shows up
+    // next, fall back to its own real default instead of throwing.
+    const recorder = mime ? new MediaRecorder(this.stream, { mimeType: mime }) : new MediaRecorder(this.stream);
     this.chunks = [];
     recorder.ondataavailable = (e) => {
       if (e.data.size > 0) this.chunks.push(e.data);
@@ -263,8 +308,20 @@ export class SaharaRecognizer {
     this.recordingStartedAt = Date.now();
   }
 
+  private lastResumeAttemptAt = 0;
+
   private tick(): void {
     if (!this.analyser || this.stopped) return;
+    // Belt-and-braces recovery: on some OS/browser combination we haven't
+    // hit yet, the context can end up suspended after the fact (locking the
+    // screen, backgrounding the tab, an OS audio-session interruption from a
+    // phone call). A suspended context reads as permanent silence with no
+    // error thrown, so retry resume() every 2s rather than require a full
+    // page reload to notice the mic went deaf.
+    if (this.ctx && this.ctx.state !== "running" && Date.now() - this.lastResumeAttemptAt > 2000) {
+      this.lastResumeAttemptAt = Date.now();
+      void this.ctx.resume().catch(() => {});
+    }
     const data = new Uint8Array(this.analyser.frequencyBinCount);
     this.analyser.getByteTimeDomainData(data);
     let sumSquares = 0;
@@ -274,7 +331,7 @@ export class SaharaRecognizer {
     }
     const rms = Math.sqrt(sumSquares / data.length);
 
-    // Throttled to 2x/sec — enough to read live, not enough to flood the
+    // Throttled to 2x/sec, enough to read live, not enough to flood the
     // console. This is the number to watch in devtools while testing: if it
     // never gets close to SOUND_RMS_THRESHOLD while you're clearly talking,
     // that threshold (or the mic input itself) is the actual problem.
@@ -312,12 +369,12 @@ export class SaharaRecognizer {
       if (silentFor < SILENCE_TO_FINALIZE_MS) return; // still mid-utterance
       // The user has stopped talking. A short word ("hello", "yes") can
       // still leave the RECORDED CLIP under Sahara's 1s minimum even though
-      // it's a completely valid utterance — that must never be silently
+      // it's a completely valid utterance, that must never be silently
       // dropped (a blind user has no idea their "hello" vanished). Instead,
       // keep the recorder running a little longer: MediaRecorder is still
       // capturing dead air, so recordedFor keeps climbing on its own with
       // every tick, and the moment it clears the bar this finalizes with a
-      // few hundred ms of harmless trailing silence — never thrown away.
+      // few hundred ms of harmless trailing silence, never thrown away.
       const recordedFor = Date.now() - this.recordingStartedAt;
       if (recordedFor >= MIN_UTTERANCE_MS) {
         this.finalizeUtterance();
@@ -354,7 +411,10 @@ export class SaharaRecognizer {
     }
     try {
       const form = new FormData();
-      form.append("audio", blob, "utterance.webm");
+      // The filename's extension is what tells Sahara's upload endpoint how
+      // to decode the file, it has to match what was actually recorded
+      // (webm on desktop/Android, mp4/AAC on iOS), not a hardcoded guess.
+      form.append("audio", blob, `utterance.${extensionFor(blob.type)}`);
       form.append("language", getSaharaLanguage());
       const res = await fetch("/api/stt/sahara", { method: "POST", body: form });
       const json = (await res.json().catch(() => ({}))) as { transcript?: string; error?: string };

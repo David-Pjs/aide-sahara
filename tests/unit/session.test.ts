@@ -30,7 +30,7 @@ describe("signed session cookies", () => {
 
   it("rejects a tampered expiry", () => {
     const raw = decodeURIComponent(valueOf(sessionCookie("u-abc123")));
-    const [id, , sig] = raw.split(":");
+    const [id, sig] = raw.split(":");
     const farFuture = Date.now() + 10 * 365 * 24 * 3600 * 1000;
     const forged = encodeURIComponent(`${id}:${farFuture}:${sig}`);
     expect(userIdFrom(asRequest(`${SESSION_COOKIE}=${forged}`))).toBeUndefined();
@@ -80,7 +80,7 @@ describe("device identity cookie", () => {
 
   it("refuses a signature lifted from a different account", () => {
     // Splicing another account's id onto a signature that was issued for this
-    // one must not verify — the id is inside the signed payload.
+    // one must not verify, the id is inside the signed payload.
     const mine = decodeURIComponent(valueOf(userCookie("u-mine")));
     const sig = mine.slice(mine.lastIndexOf(":") + 1);
     const exp = mine.split(":")[1];
@@ -104,7 +104,7 @@ describe("device identity cookie", () => {
 
   it("expires, so an abandoned device does not stay signed in forever", () => {
     const raw = decodeURIComponent(valueOf(userCookie("u-abc123")));
-    const [id, , sig] = raw.split(":");
+    const [id, sig] = raw.split(":");
     const stale = encodeURIComponent(`${id}:${Date.now() - 1000}:${sig}`);
     expect(userIdFrom(asRequest(`${USER_COOKIE}=${stale}`))).toBeUndefined();
   });
@@ -133,7 +133,7 @@ describe("logout", () => {
     const c = userCookie("u-new");
     expect(c).toMatch(/^aide-user=/);
     expect(c).toMatch(/HttpOnly/);
-    // The id must not sit in the cookie unsigned — that was the bug.
+    // The id must not sit in the cookie unsigned, that was the bug.
     expect(c).not.toMatch(/^aide-user=u-new;/);
     expect(userIdFrom(asRequest(`${USER_COOKIE}=${valueOf(c)}`))).toBe("u-new");
   });

@@ -7,11 +7,11 @@ export const metadata: Metadata = {
     "Aide is a voice-native work-and-pay platform for blind and visually impaired workers in Nigeria. Find work, prove your skill, get hired, and get paid, without a screen.",
 };
 
-// The About page is the front door for anyone who has not talked to Aide yet —
+// The About page is the front door for anyone who has not talked to Aide yet,
 // a judge, an employer, a curious visitor. It is written as a landing page, not
 // a spec sheet: the argument is made through the product's own arc (find work →
 // prove it → get hired → get paid), with the honest engineering detail kept for
-// ARCHITECTURE.md and the README. Same design language as the rest of Aide —
+// ARCHITECTURE.md and the README. Same design language as the rest of Aide,
 // Atkinson Hyperlegible, the accessible tokens, the dark transcript-panel band.
 
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
@@ -104,7 +104,7 @@ export default function AboutPage() {
         </ol>
       </section>
 
-      {/* Value props — what makes a voice money product trustworthy */}
+      {/* Value props, what makes a voice money product trustworthy */}
       <section aria-labelledby="trust" className="mx-auto max-w-5xl px-6 pb-16 sm:px-10">
         <h2 id="trust" className="text-3xl font-bold tracking-tight sm:text-4xl">
           Built to be trusted with money

@@ -4,7 +4,7 @@ import { userCookie, clearSessionCookie, userIdFrom } from "@/lib/session";
 export const runtime = "nodejs";
 
 // Demo-identity switcher. Only passwordless demo accounts are listed or
-// switchable — real credentialed users log in with email and password, and
+// switchable, real credentialed users log in with email and password, and
 // never appear in this list.
 export async function GET(req: Request) {
   const current = await getAccount(userIdFrom(req));

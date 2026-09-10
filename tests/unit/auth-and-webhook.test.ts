@@ -42,7 +42,7 @@ describe("password hashing", () => {
 
 describe("payment webhook signature", () => {
   // The webhook is how the platform learns money arrived. An unsigned or
-  // forged one must never be believed — anyone can POST to a public URL.
+  // forged one must never be believed, anyone can POST to a public URL.
   const secret = process.env.MONNIFY_SECRET_KEY as string;
   const sign = (body: string) => createHmac("sha512", secret).update(body).digest("hex");
   const body = JSON.stringify({ eventType: "SUCCESSFUL_TRANSACTION", eventData: { transactionReference: "TX-1" } });
@@ -60,7 +60,7 @@ describe("payment webhook signature", () => {
   });
 
   it("rejects a payload altered after signing", () => {
-    // Same signature, bigger amount — the attack this check exists to stop.
+    // Same signature, bigger amount, the attack this check exists to stop.
     const signature = sign(body);
     const tampered = body.replace("TX-1", "TX-2");
     expect(isValidWebhook(tampered, signature)).toBe(false);

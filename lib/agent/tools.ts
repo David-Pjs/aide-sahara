@@ -6,7 +6,7 @@ import type { Account } from "../store";
 
 // Aide's tools, built per-request around the signed-in account so the model
 // acts as the right person (worker vs employer). Every money fact comes from
-// a real server call — the model never decides financial truth, it only
+// a real server call, the model never decides financial truth, it only
 // narrates what a tool returns.
 export function makeTools(account: Account) {
   return {
@@ -19,15 +19,14 @@ export function makeTools(account: Account) {
           .enum(["listings", "external", "balance", "receive", "send", "history", "bio", "skills", "applications"])
           .optional()
           .describe(
-            "scroll to the part being discussed — jobs: listings|external; payments: balance|receive|send|history; profile: bio|skills|applications",
-          ),
+            "scroll to the part being discussed, jobs: listings|external; payments: balance|receive|send|history; profile: bio|skills|applications"),
       }),
       execute: async ({ page, section }) => ({ ok: true, page, section }),
     }),
 
     filter_jobs: tool({
       description:
-        "Filter the jobs page for the worker — by keyword (e.g. 'virtual assistant', 'transcription'), pay range in Naira, and whether an assessment is required. The jobs page opens with the filters applied; the worker can also adjust them on screen. Use when they ask things like 'show VA jobs paying between 12 and 20 thousand'.",
+        "Filter the jobs page for the worker, by keyword (e.g. 'virtual assistant', 'transcription'), pay range in Naira, and whether an assessment is required. The jobs page opens with the filters applied; the worker can also adjust them on screen. Use when they ask things like 'show VA jobs paying between 12 and 20 thousand'.",
       parameters: z.object({
         keyword: z.string().optional().describe("skill or title keyword"),
         minPay: z.number().optional().describe("minimum pay in Naira"),
@@ -73,16 +72,15 @@ export function makeTools(account: Account) {
       parameters: z.object({ query: z.string().describe("account name, or 'worker'/'employer' if unambiguous") }),
       execute: async ({ query }) => {
         const q = query.trim().toLowerCase();
-        // Voice switching covers only passwordless demo identities — real
+        // Voice switching covers only passwordless demo identities, real
         // credentialed accounts require typing a password on the login page.
         const all = (await store.listAccounts()).filter((a) => !a.passwordHash);
         const matches = all.filter(
-          (a) => a.name.toLowerCase().includes(q) || a.role === q || a.id === query.trim(),
-        );
+          (a) => a.name.toLowerCase().includes(q) || a.role === q || a.id === query.trim());
         if (matches.length === 0)
           return { ok: false, message: "No account matches that.", accounts: all.map((a) => `${a.name} (${a.role})`) };
         if (matches.length > 1)
-          return { ok: false, message: "More than one account matches — ask which one.", accounts: matches.map((a) => `${a.name} (${a.role})`) };
+          return { ok: false, message: "More than one account matches, ask which one.", accounts: matches.map((a) => `${a.name} (${a.role})`) };
         const acc = matches[0];
         return { ok: true, userId: acc.id, name: acc.name, role: acc.role };
       },
@@ -90,7 +88,7 @@ export function makeTools(account: Account) {
 
     post_gig: tool({
       description:
-        "Post a new gig for the employer, fully by voice — including multiple-choice assessments and time limits, everything the on-screen form can do. Collect the title, skill, and pay. Ask whether applicants must pass an assessment; if so, ask whether it is a spoken (oral) question or multiple choice. For oral, collect the exact question. For multiple choice, collect each question with its options and which option is correct (build the mcqQuestions array). Optionally collect a time limit. Read everything back and get a spoken yes before calling. Only works for employer accounts.",
+        "Post a new gig for the employer, fully by voice, including multiple-choice assessments and time limits, everything the on-screen form can do. Collect the title, skill, and pay. Ask whether applicants must pass an assessment; if so, ask whether it is a spoken (oral) question or multiple choice. For oral, collect the exact question. For multiple choice, collect each question with its options and which option is correct (build the mcqQuestions array). Optionally collect a time limit. Read everything back and get a spoken yes before calling. Only works for employer accounts.",
       parameters: z.object({
         title: z.string().describe("gig title, e.g. 'Transcribe a 20 minute podcast'"),
         skill: z.string().describe("the skill or gig type, e.g. transcription"),
@@ -107,8 +105,7 @@ export function makeTools(account: Account) {
               question: z.string().describe("the question text"),
               options: z.array(z.string()).min(2).max(6).describe("2 to 6 answer options, in the order read aloud"),
               correctIndex: z.number().int().describe("0-based index of the correct option"),
-            }),
-          )
+            }))
           .optional()
           .describe("the questions for a multiple choice assessment"),
         timeLimitMinutes: z.number().optional().describe("optional time limit for the assessment, in minutes (up to 60)"),
@@ -172,8 +169,7 @@ export function makeTools(account: Account) {
                   workerBio: applicant.bio ?? "",
                 };
               })()),
-            })),
-        );
+            })));
         return { ok: true, applications };
       },
     }),
@@ -228,7 +224,7 @@ export function makeTools(account: Account) {
         if (!app) return { ok: false, message: "No application on that gig yet." };
         store.publishEvent(chosen.accountId, {
           type: "notify",
-          message: `An update on ${job.title} from ${job.employer}: they went with another applicant this time. Your assessment result stays on your profile — I can find you more jobs whenever you're ready.`,
+          message: `An update on ${job.title} from ${job.employer}: they went with another applicant this time. Your assessment result stays on your profile, I can find you more jobs whenever you're ready.`,
         });
         return { ok: true, status: app.status, gig: job.title };
       },
@@ -242,9 +238,9 @@ export function makeTools(account: Account) {
         const { searchExternalJobs } = await import("../external");
         const verified = (await store.getApplications(account.id)).filter((a) => a.verified);
         const verifiedSkills = (await Promise.all(verified.map(async (a) => (await store.getJob(a.jobId))?.skill))).filter(
-          (s): s is string => !!s,
-        );
-        const skills = [...new Set([...(account.skills ?? []), ...verifiedSkills])];
+          (s): s is string => !!s);
+        const skills = [...new Set([...(account.skills ?? []),
+        ...verifiedSkills])];
         const jobs = await searchExternalJobs(skills);
         await store.setExternalJobs(store.getWorker().id, jobs);
         return {
@@ -257,18 +253,18 @@ export function makeTools(account: Account) {
 
     track_external_job: tool({
       description:
-        "Record that the worker is applying to one of the external listings found by scan_external_jobs, so their submission is tracked on the jobs page. You cannot fill the external site's form for them — tell them the listing is open on their jobs page and you've tracked the application.",
+        "Record that the worker is applying to one of the external listings found by scan_external_jobs, so their submission is tracked on the jobs page. You cannot fill the external site's form for them, tell them the listing is open on their jobs page and you've tracked the application.",
       parameters: z.object({ externalJobId: z.string() }),
       execute: async ({ externalJobId }) => {
         const app = await store.trackExternalJob(store.getWorker().id, externalJobId);
-        if (!app) return { ok: false, message: "No external listing with that id — scan for jobs first." };
+        if (!app) return { ok: false, message: "No external listing with that id, scan for jobs first." };
         return { ok: true, tracked: { title: app.title, company: app.company, url: app.url } };
       },
     }),
 
     mark_gig_paid: tool({
       description:
-        "For employers: mark one of their gigs as paid. This ONLY succeeds when a confirmed live API payment actually covers the gig's pay — if it fails, tell the employer to send the money from the payout desk first. Never claim a gig is paid unless this returns ok.",
+        "For employers: mark one of their gigs as paid. This ONLY succeeds when a confirmed live API payment actually covers the gig's pay, if it fails, tell the employer to send the money from the payout desk first. Never claim a gig is paid unless this returns ok.",
       parameters: z.object({
         jobId: z.string(),
         workerAccountId: z
@@ -323,7 +319,7 @@ export function makeTools(account: Account) {
 
     withdraw_application: tool({
       description:
-        "Withdraw the worker's application to a job they applied for but have not started the assessment on. Confirm aloud first. If the assessment has already begun this is refused — say so plainly rather than implying it worked.",
+        "Withdraw the worker's application to a job they applied for but have not started the assessment on. Confirm aloud first. If the assessment has already begun this is refused, say so plainly rather than implying it worked.",
       parameters: z.object({ jobId: z.string() }),
       execute: async ({ jobId }) => {
         const job = await store.getJob(jobId);
@@ -348,7 +344,7 @@ export function makeTools(account: Account) {
 
     delete_message: tool({
       description:
-        "Delete a message the user themselves sent in a gig's onboarding thread. Read the message back and get a spoken yes first. Only their own messages can be deleted — pass the messageId from read_messages.",
+        "Delete a message the user themselves sent in a gig's onboarding thread. Read the message back and get a spoken yes first. Only their own messages can be deleted, pass the messageId from read_messages.",
       parameters: z.object({ messageId: z.string() }),
       execute: async ({ messageId }) => {
         const r = await store.deleteMessage(account.id, messageId);
@@ -377,7 +373,7 @@ export function makeTools(account: Account) {
 
     log_out: tool({
       description:
-        "Sign the user out of this device when they ask to log out or sign out. Confirm aloud first. The browser clears the session right after this returns — tell them they are signed out and that the page will start fresh.",
+        "Sign the user out of this device when they ask to log out or sign out. Confirm aloud first. The browser clears the session right after this returns, tell them they are signed out and that the page will start fresh.",
       parameters: z.object({}),
       execute: async () => ({ ok: true, loggedOut: true, message: "The browser will clear the session now." }),
     }),
@@ -402,10 +398,12 @@ export function makeTools(account: Account) {
       }),
       execute: async ({ jobId, answer, answers }) => {
         if (answers !== undefined) {
-          return { ok: true, ...(await store.gradeMcqAssessment(account.id, jobId, answers)) };
+          return { ok: true,
+          ...(await store.gradeMcqAssessment(account.id, jobId, answers)) };
         }
         if (answer !== undefined) {
-          return { ok: true, ...(await store.gradeOralAssessment(account.id, jobId, answer)) };
+          return { ok: true,
+          ...(await store.gradeOralAssessment(account.id, jobId, answer)) };
         }
         return { ok: false, message: "Either 'answer' or 'answers' must be provided." };
       },
@@ -429,7 +427,7 @@ export function makeTools(account: Account) {
 
     set_security_phrase: tool({
       description:
-        "Set the worker's spoken security phrase — the accessible replacement for SMS codes. It confirms every withdrawal, so treat it like a PIN: collect a short memorable phrase of at least two words, read it back once for confirmation, then call this. Never suggest a phrase yourself and never repeat it in later conversation.",
+        "Set the worker's spoken security phrase, the accessible replacement for SMS codes. It confirms every withdrawal, so treat it like a PIN: collect a short memorable phrase of at least two words, read it back once for confirmation, then call this. Never suggest a phrase yourself and never repeat it in later conversation.",
       parameters: z.object({ phrase: z.string().describe("the phrase exactly as the user said it") }),
       execute: async ({ phrase }) => {
         if (account.role !== "worker") return { ok: false, message: "Only worker accounts use a spoken security phrase." };
@@ -445,7 +443,7 @@ export function makeTools(account: Account) {
 
     save_beneficiary: tool({
       description:
-        "Save a withdrawal destination as a beneficiary so future withdrawals can go to it by name. Call after the user says yes to saving — typically right after a successful withdrawal to a new account (pass the accountName from that result), or with details they dictate (the account is then re-verified).",
+        "Save a withdrawal destination as a beneficiary so future withdrawals can go to it by name. Call after the user says yes to saving, typically right after a successful withdrawal to a new account (pass the accountName from that result), or with details they dictate (the account is then re-verified).",
       parameters: z.object({
         accountNumber: z.string(),
         bankCode: z.string().describe("3-digit NIP bank code"),
@@ -458,7 +456,7 @@ export function makeTools(account: Account) {
             const { validateBankAccount } = await import("../monnify");
             name = (await validateBankAccount(accountNumber, bankCode)).accountName;
           } catch {
-            return { ok: false, message: "Bank details not found — check the account number and bank." };
+            return { ok: false, message: "Bank details not found, check the account number and bank." };
           }
         }
         const r = await store.saveBeneficiary(account.id, { accountName: name, accountNumber, bankCode });
@@ -468,7 +466,7 @@ export function makeTools(account: Account) {
 
     prepare_withdrawal: tool({
       description:
-        "Step 1 of 2 for a withdrawal from this user's own wallet. The destination can be: a new account (pass accountNumber + bankCode — it is verified by name enquiry), a saved beneficiary (pass beneficiaryName), or omitted to use their only/last saved destination. Fails if the amount exceeds the wallet balance. Do NOT move money here. After calling, read the amount and the verified account NAME back. Then: if mode is 'passphrase' (workers), tell them to say THEIR OWN security phrase to confirm — never say or guess it. If mode is 'word' (employers), give them the returned `phrase` word to say.",
+        "Step 1 of 2 for a withdrawal from this user's own wallet. The destination can be: a new account (pass accountNumber + bankCode, it is verified by name enquiry), a saved beneficiary (pass beneficiaryName), or omitted to use their only/last saved destination. Fails if the amount exceeds the wallet balance. Do NOT move money here. After calling, read the amount and the verified account NAME back. Then: if mode is 'passphrase' (workers), tell them to say THEIR OWN security phrase to confirm, never say or guess it. If mode is 'word' (employers), give them the returned `phrase` word to say.",
       parameters: z.object({
         amount: z.number().describe("amount in Naira to withdraw"),
         accountNumber: z.string().optional().describe("destination account number, for a new destination"),
@@ -504,7 +502,7 @@ export function makeTools(account: Account) {
 
     remember_preference: tool({
       description:
-        "Remember one thing about this user permanently. Use it whenever they ask you to remember something, or state a standing preference in passing — 'I can only work mornings', 'don't offer me phone support', 'read amounts back slowly'. The conversation itself is never saved, so this is the ONLY way anything survives until next time: if it is worth knowing tomorrow, it has to go here. Save one short fact in their own words, and say briefly that you'll remember it.",
+        "Remember one thing about this user permanently. Use it whenever they ask you to remember something, or state a standing preference in passing, 'I can only work mornings', 'don't offer me phone support', 'read amounts back slowly'. The conversation itself is never saved, so this is the ONLY way anything survives until next time: if it is worth knowing tomorrow, it has to go here. Save one short fact in their own words, and say briefly that you'll remember it.",
       parameters: z.object({
         text: z.string().describe("the preference as one short sentence, in the user's own words"),
       }),
@@ -515,14 +513,14 @@ export function makeTools(account: Account) {
           ok: true,
           saved: r.added,
           preferences: r.preferences,
-          message: r.added ? "Saved — I'll remember that." : "That was already remembered.",
+          message: r.added ? "Saved, I'll remember that." : "That was already remembered.",
         };
       },
     }),
 
     forget_preference: tool({
       description:
-        "Delete something the user previously asked you to remember, when they say to forget it or that it no longer applies. Pass roughly what they said — the match is loose. Confirm aloud what was forgotten.",
+        "Delete something the user previously asked you to remember, when they say to forget it or that it no longer applies. Pass roughly what they said, the match is loose. Confirm aloud what was forgotten.",
       parameters: z.object({ text: z.string().describe("the preference to forget, as the user described it") }),
       execute: async ({ text }) => {
         const r = await store.removePreference(account.id, text);
@@ -533,7 +531,7 @@ export function makeTools(account: Account) {
 
     read_messages: tool({
       description:
-        "Read aloud the onboarding message thread for a hired gig. This channel opens only after the worker is hired. For a worker it is their onboarding conversation with the employer; for an employer it is the channel with the worker they hired. Pass the jobId — for workers, the jobId of a hired application (get_applications); for employers, a gig they hired on (review_applicants). Read each message with who sent it.",
+        "Read aloud the onboarding message thread for a hired gig. This channel opens only after the worker is hired. For a worker it is their onboarding conversation with the employer; for an employer it is the channel with the worker they hired. Pass the jobId, for workers, the jobId of a hired application (get_applications); for employers, a gig they hired on (review_applicants). Read each message with who sent it.",
       parameters: z.object({ jobId: z.string() }),
       execute: async ({ jobId }) => {
         const job = await store.getJob(jobId);
@@ -554,7 +552,7 @@ export function makeTools(account: Account) {
 
     send_message: tool({
       description:
-        "Send a message in a hired gig's onboarding channel, entirely by voice. Employers use this to send onboarding directives, credentials, or next steps to the worker they hired; workers use it to reply or ask a question. Only works after the worker is hired. Always read the exact message back and get a spoken yes before sending — especially anything sensitive like credentials or account details. Pass the jobId (get_applications for workers, review_applicants for employers) and the message text as dictated.",
+        "Send a message in a hired gig's onboarding channel, entirely by voice. Employers use this to send onboarding directives, credentials, or next steps to the worker they hired; workers use it to reply or ask a question. Only works after the worker is hired. Always read the exact message back and get a spoken yes before sending, especially anything sensitive like credentials or account details. Pass the jobId (get_applications for workers, review_applicants for employers) and the message text as dictated.",
       parameters: z.object({
         jobId: z.string(),
         text: z.string().describe("the message to send, exactly as the user dictated it"),

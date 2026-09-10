@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // eight-second budget turns that into "I could not check your balance" for a
 // worker whose money is sitting there fine.
 //
-// So reads retry once. Transfers must NEVER retry — a timeout on a
+// So reads retry once. Transfers must NEVER retry, a timeout on a
 // disbursement means we do not know whether the money moved, and asking again
 // could move it twice. That asymmetry is the whole point of this file.
 
@@ -100,8 +100,7 @@ describe("a provider that actually answered", () => {
       if (path === AUTH) return token();
       return new Response(
         JSON.stringify({ requestSuccessful: false, responseMessage: "Invalid account reference", responseBody: null }),
-        { status: 400 },
-      );
+        { status: 400 });
     });
     const { getReservedAccountTransactions } = await load();
     await expect(getReservedAccountTransactions("ref-1")).rejects.toThrow(/Invalid account reference/);
@@ -127,8 +126,7 @@ describe("moving money", () => {
         destinationAccountNumber: "0123456789",
         destinationBankCode: "058",
         destinationAccountName: "Ada Okafor",
-      }),
-    ).rejects.toThrow();
+      })).rejects.toThrow();
     expect(calls.filter((c) => c.includes("disbursements"))).toHaveLength(1);
   });
 });
@@ -138,7 +136,7 @@ describe("a provider that has stopped answering entirely", () => {
     // Measured during a real sandbox outage: the connection opened in 0.15s
     // and then returned zero bytes for thirty seconds, every single time.
     // Retrying that is a page that takes sixteen seconds to show a dash. The
-    // user gets the same message either way — they should get it now.
+    // user gets the same message either way, they should get it now.
     respond((path) => {
       if (path === AUTH) return token();
       throw timeout();
@@ -160,7 +158,7 @@ describe("a provider that has stopped answering entirely", () => {
 
   it("still says something a person can act on", async () => {
     const { spokenProviderError } = await load();
-    const said = spokenProviderError(new Error("Monnify is not responding — not retrying yet"));
+    const said = spokenProviderError(new Error("Monnify is not responding, not retrying yet"));
     expect(said).toMatch(/not responding/i);
     expect(said).toMatch(/safe/i);
     expect(said).not.toMatch(/Monnify|retrying yet/);

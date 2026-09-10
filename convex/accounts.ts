@@ -2,7 +2,7 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 // Accounts in Convex: shared across serverless instances so an account created
-// (or a profile edited) on one instance is visible everywhere — the in-memory
+// (or a profile edited) on one instance is visible everywhere, the in-memory
 // Map behind the old store forked per instance on Vercel. Our own string id
 // lives in `key`; Convex's _id is internal.
 
@@ -28,7 +28,7 @@ export const list = query({
   handler: async (ctx) => await ctx.db.query("accounts").collect(),
 });
 
-// Idempotent create — safe to retry, and never clobbers an existing account.
+// Idempotent create, safe to retry, and never clobbers an existing account.
 export const create = mutation({
   args: {
     key: v.string(),
@@ -80,8 +80,7 @@ export const seedDefaults = mutation({
         skills: v.array(v.string()),
         bio: v.string(),
         createdAt: v.number(),
-      }),
-    ),
+      })),
   },
   handler: async (ctx, { accounts }) => {
     for (const a of accounts) {
@@ -95,8 +94,8 @@ export const seedDefaults = mutation({
 //
 // The conversation transcript is not persisted anywhere any more, so anything
 // worth having next time has to be stated as a preference and kept here, on
-// the account. Unlike the old sessionStorage transcript — which died with the
-// browser tab — this survives reloads, new tabs, and tomorrow.
+// the account. Unlike the old sessionStorage transcript, which died with the
+// browser tab, this survives reloads, new tabs, and tomorrow.
 
 // Every preference is injected into the model's prompt on every turn, so this
 // cap is a token budget as much as a storage one.

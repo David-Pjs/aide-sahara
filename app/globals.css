@@ -4,26 +4,26 @@
   Accessibility-first design tokens.
 
   - Font: Atkinson Hyperlegible (Braille Institute, made for low-vision
-    readers) — loaded via google fonts import at runtime.
+    readers), loaded via google fonts import at runtime.
   - Palette: Okabe-Ito colorblind-safe hues, darkened where needed so body
     text hits WCAG AAA (≥ 7:1) on the paper background. No red/green pairs.
   - Color never carries meaning alone: every status also has a text label.
 */
 :root {
-  --paper: #fffdf7;      /* warm off-white — less glare than pure white */
+  --paper: #fffdf7;      /* warm off-white, less glare than pure white */
   --ink: #191919;        /* ~15.8:1 on paper */
   --ink-soft: #474e58;   /* secondary text, ~8.4:1 */
-  --accent: #005a9e;     /* blue — safe in all common CVD types, ~7.3:1 */
+  --accent: #005a9e;     /* blue, safe in all common CVD types, ~7.3:1 */
   --accent-ink: #ffffff;
   --alert: #9e3900;      /* dark vermillion for errors, ~7:1 */
-  --good: #006b54;       /* dark teal for success — always paired with text */
+  --good: #006b54;       /* dark teal for success, always paired with text */
   --warn-bg: #fff1cf;    /* amber notice background */
   --warn-ink: #5f4a00;
   --line: #b9b3a4;       /* borders on paper */
   --panel: #10141a;      /* dark transcript panel */
   --panel-ink: #f2efe6;
   --panel-soft: #aab2bd;
-  --glow: #e69f00;       /* Okabe-Ito orange — Aide's speaking glow */
+  --glow: #e69f00;       /* Okabe-Ito orange, Aide's speaking glow */
   --focus: #005a9e;
 }
 
@@ -42,7 +42,7 @@ html, body {
 
 /*
   Interactive cursor feedback, applied application-wide so every control signals
-  what it does on hover — a pointer for anything clickable, a not-allowed cursor
+  what it does on hover, a pointer for anything clickable, a not-allowed cursor
   for anything disabled. Component-level Tailwind utilities (cursor-pointer /
   cursor-not-allowed) layer on top of this for the primary actions; this base
   rule is the safety net that guarantees nothing is left as a default arrow.

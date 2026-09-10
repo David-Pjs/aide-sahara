@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeDispatch, type ConvexCall, type Handlers } from "../helpers/fake-convex";
 
 // Grading decides whether someone gets the job. It has to be exact about the
-// pass mark, honest about the clock, and — above all — it must never let the
+// pass mark, honest about the clock, and, above all, it must never let the
 // correct answers escape to the worker or to the model.
 
 const hoisted = vi.hoisted(() => ({
@@ -205,7 +205,7 @@ describe("starting an assessment", () => {
   it("hands out the questions without starting the clock", async () => {
     // Preparing an assessment is not beginning one. The clock used to start
     // the instant this returned, while Aide was still explaining the rules and
-    // reading every question and option aloud — on a two-minute assessment
+    // reading every question and option aloud, on a two-minute assessment
     // that can be most of the time, spent before the worker has heard the
     // first question, with no countdown they can see to notice.
     await startAssessment("demo-worker", "g-quiz");
@@ -242,8 +242,7 @@ describe("oral grading without a model configured", () => {
     const r = await gradeOralAssessment(
       "demo-worker",
       "g-quiz",
-      "I would listen through the whole recording first, then transcribe in short passages and check the speaker labels carefully.",
-    );
+      "I would listen through the whole recording first, then transcribe in short passages and check the speaker labels carefully.");
     restore();
     expect(r.verified).toBe(true);
   });

@@ -11,8 +11,7 @@ import { spokenClientError } from "./spoken-error";
 export async function registerPayout(
   accountId: string,
   accountNumber: string,
-  bankCode: string,
-): Promise<{ ok: true; accountName: string } | { ok: false; message: string }> {
+  bankCode: string): Promise<{ ok: true; accountName: string } | { ok: false; message: string }> {
   try {
     const r = await validateBankAccount(accountNumber, bankCode);
     await store.setPayout(accountId, accountNumber, bankCode, r.accountName);
@@ -33,7 +32,7 @@ export async function confirmWithdrawal(accountId: string, spokenPhrase: string)
       pending: boolean;
       amount: number;
       message: string;
-      // Set when the destination is not yet a saved beneficiary — the UI and
+      // Set when the destination is not yet a saved beneficiary, the UI and
       // Aide both offer to save it after the successful payment.
       offerSaveBeneficiary?: { accountName: string; accountNumber: string; bankCode: string };
     }
@@ -54,8 +53,7 @@ export async function confirmWithdrawal(accountId: string, spokenPhrase: string)
     await store.recordWithdrawal(accountId, { amount: check.amount, accountName: check.accountName, status: r.status });
 
     const known = (await store.listBeneficiaries(accountId)).some(
-      (b) => b.accountNumber === check.account && b.bankCode === check.bankCode,
-    );
+      (b) => b.accountNumber === check.account && b.bankCode === check.bankCode);
     return {
       ok: true,
       status: r.status,

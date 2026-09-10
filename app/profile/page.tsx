@@ -96,8 +96,7 @@ export default function ProfilePage() {
               speak(
                 profile.role === "worker"
                   ? `You are ${acc.name}, a worker on Aide. You have completed ${profile.completedJobs} jobs and verified ${profile.verifiedSkills.length} skills.`
-                  : `You are ${acc.name}, an employer on Aide. You have posted ${profile.jobsPosted.length} jobs.`,
-              )
+                  : `You are ${acc.name}, an employer on Aide. You have posted ${profile.jobsPosted.length} jobs.`)
             }
             className="min-h-12 rounded-lg bg-[var(--accent)] px-5 py-3 font-bold text-white"
           >
@@ -122,8 +121,7 @@ export default function ProfilePage() {
             This is the shared demo account.{" "}
             <Link href="/signup" className="font-bold text-[var(--accent)] underline underline-offset-2">
               Create your own
-            </Link>{" "}
-            — or just tell Aide “sign me up”.
+            </Link>{" "}, or just tell Aide “sign me up”.
           </p>
           <button
             onClick={() => {
@@ -156,7 +154,7 @@ export default function ProfilePage() {
           <section aria-label="Work summary" className="mt-8 grid gap-4 sm:grid-cols-3">
             <Stat label="Completed jobs" value={String(profile.completedJobs)} />
             <Stat label="Verified skills" value={String(profile.verifiedSkills.length)} />
-            <Stat label="Confirmed earnings" value={profile.balance === null ? "—" : naira(profile.balance)} />
+            <Stat label="Confirmed earnings" value={profile.balance === null ? ", " : naira(profile.balance)} />
           </section>
 
           {/* Spoken Bio / Resume Summary */}
@@ -200,7 +198,7 @@ export default function ProfilePage() {
             <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--ink-soft)]">Applications</h2>
             {profile.applications.length === 0 ? (
               <p className="mt-3 text-lg text-[var(--ink-soft)]">
-                No applications yet — ask Aide to find you work, or browse{" "}
+                No applications yet, ask Aide to find you work, or browse{" "}
                 <Link href="/jobs" className="font-bold text-[var(--accent)] underline underline-offset-2">
                   jobs
                 </Link>
@@ -235,7 +233,7 @@ export default function ProfilePage() {
                   <span className="font-mono">{profile.accountNumber}</span> · {profile.bankName}
                 </>
               ) : (
-                "Created the first time money is involved — ask Aide for your balance."
+                "Created the first time money is involved, ask Aide for your balance."
               )}
             </p>
           </section>

@@ -15,7 +15,7 @@ export type AgentStreamResult = {
 };
 
 export type AgentStreamHandlers = {
-  // The reply so far — called on every delta for live transcript updates.
+  // The reply so far, called on every delta for live transcript updates.
   onDelta: (full: string) => void;
   // Called as soon as Aide actually moves the screen, mid-reply.
   onNavigate?: (to: string) => void;
@@ -25,13 +25,13 @@ export type AgentStreamHandlers = {
 
 // What separates one sentence from the next. Three forms, and the last two
 // matter more than they look:
-//   ". "  — the ordinary case.
-//   ".A"  — no space at all. The SDK concatenates the text a model emits
+//   ". ", the ordinary case.
+//   ".A", no space at all. The SDK concatenates the text a model emits
 //           before a tool call with the text it emits after, and the join has
-//           no separator, giving "...for you.I found...". Left alone the
+//           no separator, giving ", ...for you.I found...". Left alone the
 //           neural voice reads that period aloud as "dot", the way it would
 //           in a domain name.
-//   ".$"  — punctuation at the end of the buffer, nothing after it yet. This
+//   ".$", punctuation at the end of the buffer, nothing after it yet. This
 //           is how a reply's opening line arrives: it is the last thing said
 //           before the tool runs, so it has no trailing space and, without
 //           this, sat unspoken until the tool came back. The opener exists
@@ -59,7 +59,7 @@ export function extractSentences(buffer: string): { sentences: string[]; rest: s
       continue;
     }
     if (/(^|\s)\d+[.!?…]$/.test(sentence) || sentence.replace(/[^a-zA-Z]/g, "").length < 3) {
-      searchFrom = punctAt + 1; // a list marker or an initial — keep looking
+      searchFrom = punctAt + 1; // a list marker or an initial, keep looking
       continue;
     }
     rest = rest.slice(punctAt + m[0].length);
@@ -101,7 +101,7 @@ export async function streamAgentReply(messages: Msg[], handlers: AgentStreamHan
       // Mid-reply: move the screen the moment the tool that moved it returns,
       // rather than after the whole reply has finished streaming. Aide is
       // usually still saying "opening that now" as this fires, which is the
-      // point — the words and the screen should agree.
+      // point, the words and the screen should agree.
       if (ev.navigateTo && ev.navigateTo !== result.navigateTo) {
         result.navigateTo = ev.navigateTo;
         result.navigated = true;
@@ -133,7 +133,7 @@ export async function streamAgentReply(messages: Msg[], handlers: AgentStreamHan
   handleLine(lineBuf);
   if (unspoken.trim()) handlers.onSentence(unspoken.trim());
 
-  if (!full.trim()) throw new Error("Aide had a problem — no reply arrived.");
+  if (!full.trim()) throw new Error("Aide had a problem, no reply arrived.");
   result.full = full;
   return result;
 }

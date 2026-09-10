@@ -110,7 +110,7 @@ describe("amount guards", () => {
   });
 
   it("counts money already withdrawn against the balance", async () => {
-    // 50,000 in, 45,000 already out — only 5,000 is really available.
+    // 50,000 in, 45,000 already out, only 5,000 is really available.
     handlers["wallets:withdrawnTotal"] = () => 45_000;
     handlers["wallets:listBeneficiaries"] = trusted;
     const r = await armWithdrawal(acct, 10_000, { beneficiaryName: "ADA" });
@@ -217,7 +217,7 @@ describe("destination resolution", () => {
 });
 
 describe("new-beneficiary cooling-off hold", () => {
-  // A spoken confirmation cannot defend against someone standing in the room —
+  // A spoken confirmation cannot defend against someone standing in the room,
   // they hear the word. What protects the money is that it can only go to a
   // destination registered earlier, so redirecting it costs time.
   it("holds an account typed in for the first time, even with the right phrase", async () => {

@@ -20,6 +20,6 @@ export async function POST(req: Request) {
     const r = await validateBankAccount(accountNumber.trim(), bankCode.trim());
     return Response.json({ ok: true, accountName: r.accountName, accountNumber: r.accountNumber });
   } catch {
-    return Response.json({ ok: false, error: "Bank details not found — check the account number and bank." }, { status: 404 });
+    return Response.json({ ok: false, error: "Bank details not found, check the account number and bank." }, { status: 404 });
   }
 }

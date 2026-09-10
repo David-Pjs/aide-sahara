@@ -44,7 +44,7 @@ function SignupForm() {
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error || "Could not create the account.");
       // Full navigation, not router.push: the whole app must restart as the
-      // new identity — fresh transcript, fresh greeting (which offers the
+      // new identity, fresh transcript, fresh greeting (which offers the
       // new-account onboarding), fresh nav auth state. The greeting speaks
       // the welcome, so nothing needs to be said here.
       window.location.assign("/");
@@ -129,7 +129,7 @@ function SignupForm() {
 
         <div>
           <label htmlFor="su-password" className="block text-xl font-bold">
-            Password <span className="font-normal text-[var(--ink-soft)]">(at least 8 characters — leave blank for a demo identity)</span>
+            Password <span className="font-normal text-[var(--ink-soft)]">(at least 8 characters, leave blank for a demo identity)</span>
           </label>
           <input
             id="su-password"

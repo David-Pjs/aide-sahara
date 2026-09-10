@@ -16,12 +16,12 @@ const CALL_TIMEOUT_MS = 8000;
 // One retry, because that spread means a slow attempt says almost nothing
 // about the next one. A second try usually lands in well under a second, and a
 // user staring at a dash would rather wait than be told to come back.
-// Retried ONLY on a timeout or a connection failure — never on an HTTP error,
+// Retried ONLY on a timeout or a connection failure, never on an HTTP error,
 // which is the provider answering, and never on a POST that moves money.
 const RETRY_ATTEMPTS = 2;
 
-// When the provider is hard down — not slow, not flaky, but not answering at
-// all — retrying is worse than useless: it doubles how long the user waits to
+// When the provider is hard down, not slow, not flaky, but not answering at
+// all, retrying is worse than useless: it doubles how long the user waits to
 // be told the same thing. Measured against the sandbox during an outage, an
 // authenticated login opened its connection in 0.15s and then returned zero
 // bytes for thirty seconds, every time. Two attempts of that is a page that
@@ -42,7 +42,7 @@ function breakerOpen(): boolean {
 class ProviderDown extends Error {
   readonly transient = true;
   constructor() {
-    super("Monnify is not responding — not retrying yet");
+    super("Monnify is not responding, not retrying yet");
   }
 }
 
@@ -57,7 +57,7 @@ function isTransient(e: unknown): boolean {
 // of identical traces every fifteen seconds and buried every other log on the
 // machine. Repeats now collapse into a counter, and recovery says so.
 const failing = new Map<string, { reason: string; count: number }>();
-// Consecutive transient failures across ALL paths — one provider, one verdict.
+// Consecutive transient failures across ALL paths, one provider, one verdict.
 let consecutive = 0;
 
 function reasonOf(e: unknown): string {
@@ -72,7 +72,7 @@ function noteFailure(path: string, e: unknown): void {
     prev.count += 1;
     // Occasional reminders that it is still down, not one per attempt.
     if (prev.count % 20 === 0) {
-      console.error(`[Monnify] ${path} still unreachable (${reason}) — ${prev.count} consecutive failures`);
+      console.error(`[Monnify] ${path} still unreachable (${reason}), ${prev.count} consecutive failures`);
     }
     return;
   }
@@ -89,22 +89,22 @@ function noteSuccess(path: string): void {
 
 // What to SAY when the bank rail is unreachable. The raw failures here are
 // DOMException("The operation was aborted due to timeout"), ENOTFOUND and
-// friends — text that means nothing to anyone and less than nothing read
+// friends, text that means nothing to anyone and less than nothing read
 // aloud to someone who cannot see a retry button. It also has to be honest:
 // the balance is unknown, which is not the same as zero, and must never be
 // presented as one.
 export function spokenProviderError(e: unknown): string {
   const reason = reasonOf(e);
   if (/not responding/i.test(reason)) {
-    return "The bank is not responding at the moment, so I could not check your balance. Your money is safe — I will keep trying, and you can ask me again shortly.";
+    return "The bank is not responding at the moment, so I could not check your balance. Your money is safe, I will keep trying, and you can ask me again shortly.";
   }
   if (/abort|timeout|ETIMEDOUT|UND_ERR_CONNECT_TIMEOUT/i.test(reason)) {
-    return "The bank did not answer in time, so I could not check your balance. Your money is safe — this is only my connection to them. Try again in a moment.";
+    return "The bank did not answer in time, so I could not check your balance. Your money is safe, this is only my connection to them. Try again in a moment.";
   }
   if (/ENOTFOUND|ECONNREFUSED|ECONNRESET|fetch failed|network/i.test(reason)) {
-    return "I could not reach the bank just now, so I could not check your balance. Your money is safe — try again in a moment.";
+    return "I could not reach the bank just now, so I could not check your balance. Your money is safe, try again in a moment.";
   }
-  return "I could not get your balance from the bank just now. Your money is safe — try again in a moment.";
+  return "I could not get your balance from the bank just now. Your money is safe, try again in a moment.";
 }
 
 async function attempt<T>(path: string, init: RequestInit): Promise<T> {
@@ -150,12 +150,11 @@ async function call<T>(path: string, init: RequestInit, retry = false): Promise<
       if (consecutive >= BREAKER_AFTER) {
         openUntil = Date.now() + BREAKER_COOLDOWN_MS;
         console.error(
-          `[Monnify] not responding after ${consecutive} attempts — failing fast for ${BREAKER_COOLDOWN_MS / 1000}s`,
-        );
+          `[Monnify] not responding after ${consecutive} attempts, failing fast for ${BREAKER_COOLDOWN_MS / 1000}s`);
         break;
       }
       if (i === tries - 1) break;
-      console.warn(`[Monnify] ${path} ${reasonOf(e)} — retrying once`);
+      console.warn(`[Monnify] ${path} ${reasonOf(e)}, retrying once`);
     }
   }
   noteFailure(path, last);
@@ -167,12 +166,11 @@ export async function getToken(): Promise<string> {
   if (cached && Date.now() < cached.expiresAt) return cached.token;
   const basic = Buffer.from(`${env.apiKey}:${env.secretKey}`).toString("base64");
   // Retried: this is a read of a token, it moves nothing, and it is the call
-  // most likely to be the slow one — everything else waits behind it.
+  // most likely to be the slow one, everything else waits behind it.
   const body = await call<{ accessToken: string; expiresIn: number }>(
     "/api/v1/auth/login",
     { method: "POST", headers: { Authorization: `Basic ${basic}` } },
-    true,
-  );
+    true);
   cached = { token: body.accessToken, expiresAt: Date.now() + (body.expiresIn - 60) * 1000 };
   return body.accessToken;
 }
@@ -186,8 +184,7 @@ async function authed<T>(path: string, method: string, payload?: unknown, retry 
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: payload ? JSON.stringify(payload) : undefined,
     },
-    retry,
-  );
+    retry);
 }
 
 export type ReservedAccount = {
@@ -196,7 +193,7 @@ export type ReservedAccount = {
   accounts: { bankCode: string; bankName: string; accountNumber: string }[];
 };
 
-// Create a dedicated virtual NUBAN for one user — their wallet. Monnify
+// Create a dedicated virtual NUBAN for one user, their wallet. Monnify
 // requires a BVN or NIN on every reserved account (compliance); at least one
 // must be provided.
 export function createReservedAccount(input: {
@@ -220,7 +217,7 @@ export function createReservedAccount(input: {
   });
 }
 
-// Fetch an existing reserved account by its reference — lets the app reuse
+// Fetch an existing reserved account by its reference, lets the app reuse
 // the same NUBAN across server restarts instead of trying to mint a new one
 // (Monnify allows only one reserved account per customer).
 export function getReservedAccount(accountReference: string): Promise<ReservedAccount> {
@@ -228,8 +225,7 @@ export function getReservedAccount(accountReference: string): Promise<ReservedAc
     `/api/v2/bank-transfer/reserved-accounts/${encodeURIComponent(accountReference)}`,
     "GET",
     undefined,
-    true,
-  );
+    true);
 }
 
 export type ReservedTxn = {
@@ -255,8 +251,7 @@ export async function getReservedAccountTransactions(accountReference: string): 
       `/api/v1/bank-transfer/reserved-accounts/transactions?accountReference=${ref}&page=${page}&size=100`,
       "GET",
       undefined,
-      true,
-    );
+      true);
     all.push(...res.content);
     if (res.content.length < 100) break;
     page++;
@@ -270,7 +265,7 @@ export function verifyTransaction(transactionReference: string): Promise<{ payme
   return authed(`/api/v2/transactions/${ref}`, "GET");
 }
 
-// Name enquiry — confirm the destination account before Aide reads it back.
+// Name enquiry, confirm the destination account before Aide reads it back.
 export function validateBankAccount(accountNumber: string, bankCode: string): Promise<{ accountName: string; accountNumber: string; bankCode: string }> {
   return authed(`/api/v1/disbursements/account/validate?accountNumber=${accountNumber}&bankCode=${bankCode}`, "GET");
 }

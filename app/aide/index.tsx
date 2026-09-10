@@ -11,7 +11,7 @@ const STT_PROVIDER = process.env.NEXT_PUBLIC_STT_PROVIDER || "browser";
 import { streamAgentReply, type Msg } from "./agent-stream";
 import { spokenClientError } from "../../lib/spoken-error";
 
-// Aide lives here, globally. One always-on voice engine, one conversation —
+// Aide lives here, globally. One always-on voice engine, one conversation,
 // mounted in the root layout so Aide keeps listening and talking while the
 // user (or Aide itself) moves between pages. Pages that need dictation
 // (assessment answers, confirm words) borrow the mic with beginCapture/
@@ -52,7 +52,7 @@ export function useAide() {
 let greetedThisLoad = false;
 
 // Nothing the user says is written to storage. The conversation lives in React
-// state for as long as the page is open and is gone the moment it reloads —
+// state for as long as the page is open and is gone the moment it reloads,
 // there is no transcript on disk to leak, inspect, or restore.
 //
 // What survives instead is narrower and deliberate: anything the user asks
@@ -72,7 +72,7 @@ export function clearSavedTranscript(): void {
 
 // ONE engine per page, ever. React strict mode mounts effects twice in
 // development, and a second engine means two recognizers fighting for the mic
-// and two voices talking over each other — with the orphaned one impossible to
+// and two voices talking over each other, with the orphaned one impossible to
 // silence, because nothing holds a reference to it any more.
 let sharedEngine: VoiceEngine | null = null;
 
@@ -99,7 +99,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
   const thinkingRef = useRef(false);
   const captureRef = useRef<((t: string) => void) | null>(null);
   // True for exactly the one turn right after Aide has asked "which language
-  // do you speak?" during first-visit onboarding — lets the next utterance
+  // do you speak?" during first-visit onboarding, lets the next utterance
   // match a bare language name ("Yoruba") with no trigger verb required.
   const awaitingLanguageAnswerRef = useRef(false);
   const messagesRef = useRef<Msg[]>([]);
@@ -145,7 +145,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         loggedOut = !!result.loggedOut;
 
         if (result.newUserId) {
-          // A streaming response can't set cookies after it starts — sign the
+          // A streaming response can't set cookies after it starts, sign the
           // browser in now, and start a fresh transcript for the new identity.
           await fetch("/api/account/switch", {
             method: "POST",
@@ -172,7 +172,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (loggedOut) {
-        // The stream couldn't clear cookies — do it now, drop the old
+        // The stream couldn't clear cookies, do it now, drop the old
         // identity's transcript, let Aide finish saying goodbye, then restart
         // the page clean (fresh greeting, fresh nav, no leaked context).
         await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
@@ -190,25 +190,25 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         window.location.assign("/");
       }
     },
-    [router, speak],
-  );
+    [router, speak]);
   const sendRef = useRef(send);
   sendRef.current = send;
 
-  // Aide wakes up the moment the platform loads — no tap, no gate. The
+  // Aide wakes up the moment the platform loads, no tap, no gate. The
   // browser shows its own mic-permission prompt on first ever visit; after
   // that, startup is fully hands-free.
   useEffect(() => {
     if (!VoiceEngine.supported()) {
       setSupported(false);
-      // Recognition is unavailable, but Aide can still SPEAK — say the way
+      // Recognition is unavailable, but Aide can still SPEAK, say the way
       // forward instead of leaving a blind user in silence. The message is
       // queued until the first tap/keypress (autoplay is blocked until then),
       // which enableSpeechOnly's unlock listeners handle. Typed messages still
       // get spoken replies, since send() speaks through this same engine.
       const speaker = new VoiceEngine({
         onState: (patch) => {
-          setVoice((v) => ({ ...v, ...patch }));
+          setVoice((v) => ({ ...v,
+          ...patch }));
           if (patch.error !== undefined) setError(patch.error);
         },
         onFinal: () => {},
@@ -230,7 +230,8 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
       sharedEngine ??
       (sharedEngine = new VoiceEngine({
         onState: (patch) => {
-          setVoice((v) => ({ ...v, ...patch }));
+          setVoice((v) => ({ ...v,
+          ...patch }));
           if (patch.error !== undefined) setError(patch.error);
         },
         onFinal: (text) => {
@@ -239,7 +240,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
             return;
           }
           // Answering the first-visit "which language do you speak?"
-          // question — a bare language name is the whole answer here, no
+          // question, a bare language name is the whole answer here, no
           // "speak"/"switch" verb needed.
           if (awaitingLanguageAnswerRef.current) {
             awaitingLanguageAnswerRef.current = false;
@@ -249,12 +250,12 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
               engineRef.current?.speak(`Got it. ${answer.label} it is.`);
               return;
             }
-            // Didn't catch a language in the answer — keep the safe default
+            // Didn't catch a language in the answer, keep the safe default
             // rather than getting stuck waiting, and fall through so
             // whatever they actually said still reaches the agent.
           }
           // Language switching is a spoken command, matched here before the
-          // text ever reaches the LLM — a blind user has no mouse to reach a
+          // text ever reaches the LLM, a blind user has no mouse to reach a
           // dropdown with, so this IS the control, and it must be instant
           // (no model round trip, no "thinking" delay).
           const langCommand = matchLanguageCommand(text);
@@ -271,11 +272,11 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
 
     if (!greetedThisLoad) {
       greetedThisLoad = true;
-      // Every load starts a fresh conversation — there is no stored transcript
+      // Every load starts a fresh conversation, there is no stored transcript
       // to restore, by design. Continuity comes from the preferences the user
       // asked Aide to save, which the server replays into the prompt.
       // /api/greeting derives the account from the request's own cookies
-      // server-side (userIdFrom(req)) — it never needed the client to await
+      // server-side (userIdFrom(req)), it never needed the client to await
       // /api/account first. That was a pure sequential waterfall costing one
       // full extra round trip before Aide could say a word, which matters a
       // lot on a slower connection. Fired in parallel instead.
@@ -295,7 +296,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         //
         // Spoken as TWO calls, not one concatenated string: `base` is
         // personalized (balance, pending jobs) and changes every load, so
-        // it can never hit the TTS cache — but this fixed tap-notice is
+        // it can never hit the TTS cache, but this fixed tap-notice is
         // byte-identical every single time, across every user, forever.
         // speak(base) starts synthesizing the short, actually-informative
         // half immediately; queueSpeak(tapNotice) prefetches the fixed
@@ -319,12 +320,15 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         // saved preference (including from testing) never hears it again.
         // Said every session instead, short enough that repeating it forever
         // isn't a tax, and byte-identical so it still hits the TTS cache.
-        const switchNotice =
-          STT_PROVIDER === "sahara" ? " Say switch to Yoruba, Igbo, or Hausa any time to change my language." : "";
+        // matchLanguageCommand already accepts a bare language name with no
+        // verb for short utterances (see sahara-recognizer.ts), saying just
+        // "Yoruba" already works. The instruction now matches that: one word
+        // to remember instead of a fixed phrase to get exactly right.
+        const switchNotice = STT_PROVIDER === "sahara" ? " Say Yoruba, Igbo, or Hausa any time to change my language." : "";
         // First-ever visit on Sahara: ask which language once, right in the
         // greeting, instead of silently guessing Pidgin for everyone. The
         // answer is captured by the very next thing the user says (see
-        // awaitingLanguageAnswerRef in onFinal above) — no menu, no typing.
+        // awaitingLanguageAnswerRef in onFinal above), no menu, no typing.
         // Placed right after `base`, not after tapNotice/switchNotice: this
         // is the one line in the whole greeting an impatient tap must not be
         // allowed to cut off before it's heard.
@@ -336,9 +340,10 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         // in a row.
         const parts = [base, languageQuestion, tapNotice, askLanguage ? "" : switchNotice.trim()].filter(Boolean);
         // Logged as separate transcript entries, matching how it's actually
-        // spoken below — one long concatenated paragraph reads as a wall of
+        // spoken below, one long concatenated paragraph reads as a wall of
         // text on screen, even though a blind user never sees it either way.
-        setMessages((m) => [...m, ...parts.map((content) => ({ role: "assistant" as const, content }))]);
+        setMessages((m) => [...m,
+        ...parts.map((content) => ({ role: "assistant" as const, content }))]);
         engine.speak(base);
         if (askLanguage) {
           engine.queueSpeak(languageQuestion);
@@ -355,7 +360,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Aide announces confirmed money the moment it lands, without being asked —
+  // Aide announces confirmed money the moment it lands, without being asked,
   // the voice equivalent of a bank alert. Delivery is reactive via Convex (see
   // PaymentAlerts below); this is just what to say when an event arrives.
   const handleAideEvent = useCallback(
@@ -371,8 +376,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         speak(message);
       }
     },
-    [speak],
-  );
+    [speak]);
 
   const beginCapture = useCallback((onText: (t: string) => void) => {
     captureRef.current = onText;

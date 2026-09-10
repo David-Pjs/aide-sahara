@@ -8,7 +8,7 @@ import edge_tts
 # Neural TTS as a native Vercel Python function.
 #
 # The Node route (app/api/tts/route.ts) keeps ONE warm Python subprocess alive
-# for fast local dev — but a serverless function can't own a long-lived child
+# for fast local dev, but a serverless function can't own a long-lived child
 # process, so that approach cannot ship to Vercel. Here edge_tts runs directly
 # inside the Python runtime instead, which Vercel supports natively.
 #
@@ -17,7 +17,7 @@ import edge_tts
 DEFAULT_VOICE = os.environ.get("EDGE_TTS_VOICE", "en-NG-EzinneNeural")
 
 # Aide speaks sentence by sentence, so a cap this size never truncates a real
-# utterance — it just bounds abuse of a public endpoint.
+# utterance, it just bounds abuse of a public endpoint.
 MAX_CHARS = 1000
 
 

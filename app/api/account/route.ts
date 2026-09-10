@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     }
     const acc = await createAccount(name, role as Role, email.trim(), hashPassword(password));
     // Per Monnify's guidance, the wallet (dedicated reserved NUBAN) is minted
-    // at signup — in the background, so signing up never waits on the API.
+    // at signup, in the background, so signing up never waits on the API.
     provisionWalletInBackground(acc.id);
     const headers = new Headers();
     headers.append("Set-Cookie", sessionCookie(acc.id));

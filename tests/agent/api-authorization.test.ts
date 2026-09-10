@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // The screen path is a SECOND way into the same actions, with its own
 // authorization checks. Someone can curl these routes directly, so the guards
-// on Aide's tools protect nothing here — these have to hold on their own.
+// on Aide's tools protect nothing here, these have to hold on their own.
 
 const store = vi.hoisted(() => ({
   getAccount: vi.fn(), getJob: vi.fn(), getWorker: vi.fn(),
@@ -36,8 +36,7 @@ beforeEach(() => {
   // A gig is yours when your account id posted it, or (for the seeded demo
   // gigs, which have no owner) when the display name matches.
   store.ownsJob.mockImplementation((acc: any, job: any) =>
-    acc.role === "employer" && job.employer.toLowerCase() === acc.name.toLowerCase(),
-  );
+    acc.role === "employer" && job.employer.toLowerCase() === acc.name.toLowerCase());
   store.resolveApplicant.mockResolvedValue({
     ok: true,
     accountId: "demo-worker",
@@ -50,8 +49,7 @@ beforeEach(() => {
     return acc.id === "demo-worker" && jobId === "g-own" ? "worker" : null;
   });
   store.getJob.mockImplementation(async (id: string) =>
-    id === "g-own" ? OWN_GIG : id === "g-other" ? OTHER_GIG : undefined,
-  );
+    id === "g-own" ? OWN_GIG : id === "g-other" ? OTHER_GIG : undefined);
   store.messagingUnlocked.mockResolvedValue(true);
 });
 
@@ -86,7 +84,7 @@ describe("POST /api/jobs/status", () => {
     store.hireWorker.mockResolvedValue({ id: "a1", jobId: "g-own", status: "hired", verified: true });
     const res = await post(status, { jobId: "g-own", action: "hire" });
     expect(res.status).toBe(200);
-    // Being hired is news the worker cannot see on screen — it must be spoken.
+    // Being hired is news the worker cannot see on screen, it must be spoken.
     expect(store.publishEvent).toHaveBeenCalled();
     expect(JSON.stringify(store.publishEvent.mock.calls[0])).toMatch(/hired/i);
   });
@@ -178,7 +176,7 @@ describe("/api/messages", () => {
     store.sendMessage.mockResolvedValue({ id: "m1" });
     await post(messages, { jobId: "g-own", text: "When do I start?" });
     // The author's ACCOUNT travels with the message now, not just their display
-    // name — it is what decides who may later delete it.
+    // name, it is what decides who may later delete it.
     expect(store.sendMessage).toHaveBeenCalledWith("g-own", "worker", "demo-worker", "Ada Okafor", "When do I start?");
   });
 });
@@ -195,8 +193,7 @@ describe("DELETE /api/messages", () => {
     store.getAccount.mockResolvedValue(WORKER);
     store.deleteMessage.mockResolvedValue({ ok: true, message: "Message deleted." });
     const res = await messages.DELETE(
-      new Request("http://localhost/x?messageId=m1&accountId=u-someone-else", { method: "DELETE" }),
-    );
+      new Request("http://localhost/x?messageId=m1&accountId=u-someone-else", { method: "DELETE" }));
     expect(res.status).toBe(200);
     expect(store.deleteMessage).toHaveBeenCalledWith("demo-worker", "m1");
   });

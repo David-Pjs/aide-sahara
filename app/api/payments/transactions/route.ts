@@ -11,7 +11,7 @@ export const maxDuration = 30;
 // straight from Monnify (real inbound payments to their reserved account);
 // money out is the app's own withdrawal ledger for that wallet.
 // Money OUT is our own ledger and always available. Money IN comes from the
-// bank, so it can be missing while the rest is fine — half a history is more
+// bank, so it can be missing while the rest is fine, half a history is more
 // use than a 500, and the withdrawals half is the half we can always vouch for.
 export async function GET(req: Request) {
   const acc = await getAccount(userIdFrom(req)).catch(() => null);
@@ -33,7 +33,7 @@ export async function GET(req: Request) {
     return Response.json({ inbound, outbound });
   } catch (e) {
     // Not an error the page should fail on: say what is missing and show the
-    // rest. Never an empty list presented as "no payments" — that reads as
+    // rest. Never an empty list presented as "no payments", that reads as
     // "nobody paid you", which is a different and much worse claim.
     return Response.json({ inbound: null, inboundUnavailable: spokenProviderError(e), outbound });
   }

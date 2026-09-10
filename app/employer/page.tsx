@@ -9,7 +9,7 @@ export default function Employer() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [job, setJob] = useState<{ title: string; employer: string; pay: number }>({
-    title: "Audio transcription — 30 min interview",
+    title: "Audio transcription, 30 min interview",
     employer: "ClearVoice Media",
     pay: 12000,
   });
@@ -108,7 +108,7 @@ export default function Employer() {
 
         <p className="mt-6 text-sm leading-relaxed text-[var(--ink-soft)]">
           Real sandbox money. Pay from the bank that matches the account above, then the worker
-          hears Aide announce the confirmed amount — no screen, no OTP.
+          hears Aide announce the confirmed amount, no screen, no OTP.
         </p>
       </div>
     </main>

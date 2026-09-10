@@ -39,7 +39,7 @@ describe("spokenClientError", () => {
   });
 
   it("passes a real sentence through untouched", () => {
-    const real = "Bank details not found — check the account number and bank, then try again.";
+    const real = "Bank details not found, check the account number and bank, then try again.";
     expect(spokenClientError(real)).toBe(real);
   });
 

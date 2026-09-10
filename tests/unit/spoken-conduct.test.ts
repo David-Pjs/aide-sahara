@@ -3,13 +3,13 @@ import { CONTINUING_FILLERS, OPENING_FILLERS, THINKING_FILLERS } from "../../app
 import { SYSTEM_PROMPT } from "../../lib/agent/system";
 
 // Aide is only ever heard, never read. These guard the handful of rules that
-// make it bearable to listen to — each one is here because the opposite
+// make it bearable to listen to, each one is here because the opposite
 // shipped and a user had to sit through it.
 
 describe("the engine filler must not collide with Aide's own opener", () => {
   // The filler covers a stalled reply. Aide also opens its turns with a short
-  // covering sentence. When both fired the user heard them stacked —
-  // "Let me check. Let me check that for you." — which is what this prevents.
+  // covering sentence. When both fired the user heard them stacked,
+  // "Let me check. Let me check that for you.", which is what this prevents.
   it("never phrases a mid-reply cover as the start of a turn", () => {
     // These fire AFTER Aide has spoken. "One moment" there sounds like it is
     // starting over, which is how a wait turns into apparent repetition.
@@ -47,7 +47,7 @@ describe("the engine filler must not collide with Aide's own opener", () => {
 });
 
 describe("the prompt forbids what a blind user cannot do", () => {
-  // Not a test of the model — a test that the rules survive future edits to a
+  // Not a test of the model, a test that the rules survive future edits to a
   // long prompt, where a deletion is easy to miss in review.
   it("bans asking whether the user can see something", () => {
     expect(SYSTEM_PROMPT).toMatch(/can you see it/i);

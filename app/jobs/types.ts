@@ -1,5 +1,5 @@
 // Shapes shared by the jobs page and its extracted components. These mirror
-// the sanitized server responses (publicJob — no MCQ correctIndex).
+// the sanitized server responses (publicJob, no MCQ correctIndex).
 
 export type Job = {
   id: string;

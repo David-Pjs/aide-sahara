@@ -1,7 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-// Employer-posted gigs, external listings, and assessment attempt timestamps —
+// Employer-posted gigs, external listings, and assessment attempt timestamps,
 // all shared across instances. The four seeded demo jobs stay static in code.
 
 const mcq = v.object({ question: v.string(), options: v.array(v.string()), correctIndex: v.number() });
@@ -70,8 +70,8 @@ export const getAttempt = query({
 
 // Start the clock, but only if it is not already running. The assessment is
 // prepared (questions handed out) before it begins (clock started), and
-// several things can signal the beginning — the panel appearing, Aide
-// finishing its explanation — so this has to be safe to call more than once.
+// several things can signal the beginning, the panel appearing, Aide
+// finishing its explanation, so this has to be safe to call more than once.
 // Overwriting would hand back the full time limit on every repeat.
 export const beginAttempt = mutation({
   args: { key: v.string(), startedAt: v.number() },
@@ -113,13 +113,13 @@ export const setExternalJobs = mutation({
   args: {
     accountId: v.string(),
     jobs: v.array(
-      v.object({ extId: v.string(), title: v.string(), company: v.string(), url: v.string(), skill: v.string(), source: v.string() }),
-    ),
+      v.object({ extId: v.string(), title: v.string(), company: v.string(), url: v.string(), skill: v.string(), source: v.string() })),
   },
   handler: async (ctx, { accountId, jobs }) => {
     const old = await ctx.db.query("externalJobs").withIndex("by_account", (q) => q.eq("accountId", accountId)).collect();
     for (const row of old) await ctx.db.delete(row._id);
-    for (const j of jobs) await ctx.db.insert("externalJobs", { accountId, ...j });
+    for (const j of jobs) await ctx.db.insert("externalJobs", { accountId,
+    ...j });
   },
 });
 
@@ -134,12 +134,10 @@ export const trackExternal = mutation({
   args: { accountId: v.string(), externalJobId: v.string() },
   handler: async (ctx, { accountId, externalJobId }) => {
     const existing = (await ctx.db.query("externalApps").withIndex("by_account", (q) => q.eq("accountId", accountId)).collect()).find(
-      (a) => a.externalJobId === externalJobId,
-    );
+      (a) => a.externalJobId === externalJobId);
     if (existing) return existing;
     const job = (await ctx.db.query("externalJobs").withIndex("by_account", (q) => q.eq("accountId", accountId)).collect()).find(
-      (j) => j.extId === externalJobId,
-    );
+      (j) => j.extId === externalJobId);
     if (!job) return null;
     const id = await ctx.db.insert("externalApps", {
       accountId,

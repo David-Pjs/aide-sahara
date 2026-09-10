@@ -3,7 +3,7 @@ import { userIdFrom } from "@/lib/session";
 
 export const runtime = "nodejs";
 
-// Set the worker's spoken security phrase — the accessible replacement for
+// Set the worker's spoken security phrase, the accessible replacement for
 // SMS OTP on withdrawals. Only the hash is stored, and only workers use it
 // (employer withdrawals keep the per-withdrawal random word).
 export async function POST(req: Request) {

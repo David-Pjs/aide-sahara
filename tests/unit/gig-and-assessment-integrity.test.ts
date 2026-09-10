@@ -69,8 +69,8 @@ describe("validateGig", () => {
 // Assessment integrity. publicJob is the only thing keeping correct answers on
 // the server. It feeds both the jobs API and the snapshot sent to the browser
 // with every agent reply, so a regression here hands every answer to anyone
-// who opens devtools — and to the model, which is told never to reveal them.
-describe("publicJob — answers must never leave the server", () => {
+// who opens devtools, and to the model, which is told never to reveal them.
+describe("publicJob, answers must never leave the server", () => {
   const job: Job = {
     id: "g-1",
     title: "Bank codes quiz",
@@ -124,8 +124,7 @@ describe("assessmentPromptFor", () => {
 
   it("prefers the employer's own wording", () => {
     expect(assessmentPromptFor({ ...job, assessmentQuestion: "How do you handle accents?" })).toBe(
-      "How do you handle accents?",
-    );
+      "How do you handle accents?");
   });
 
   it("falls back to a prompt derived from the task", () => {

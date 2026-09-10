@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAide } from "../aide";
 
-// External jobs — real listings Aide found on the open web, self-contained:
+// External jobs, real listings Aide found on the open web, self-contained:
 // this section owns its own data and scanning state.
 
 type ExtJob = { id: string; title: string; company: string; url: string; skill: string; source: string };
@@ -42,8 +42,7 @@ export function ExternalJobsSection() {
       speak(
         data.jobs?.length
           ? `I found ${data.jobs.length} listings on the web matching your skills. They are under external jobs.`
-          : "I could not find external listings matching your skills right now.",
-      );
+          : "I could not find external listings matching your skills right now.");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -76,7 +75,7 @@ export function ExternalJobsSection() {
         </button>
       </div>
       <p className="mt-1 text-[var(--ink-soft)]">
-        Real remote listings from the open web, matched to your skills. Aide opens the listing and tracks your application — or
+        Real remote listings from the open web, matched to your skills. Aide opens the listing and tracks your application, or
         just say “find me jobs on the web”.
       </p>
 
@@ -87,7 +86,7 @@ export function ExternalJobsSection() {
       )}
 
       {extJobs.length === 0 ? (
-        <p className="mt-4 text-lg text-[var(--ink-soft)]">No external listings yet — run a scan.</p>
+        <p className="mt-4 text-lg text-[var(--ink-soft)]">No external listings yet, run a scan.</p>
       ) : (
         <ul className="mt-4 divide-y divide-[var(--line)]">
           {extJobs.map((j) => {
@@ -116,7 +115,7 @@ export function ExternalJobsSection() {
                       onClick={() => track(j.id, j.title)}
                       className="min-h-10 rounded-lg border-2 border-[var(--accent)] px-4 py-1 font-bold text-[var(--accent)]"
                     >
-                      I applied — track it
+                      I applied, track it
                     </button>
                   )}
                 </div>
@@ -132,7 +131,7 @@ export function ExternalJobsSection() {
           <ul className="mt-2 space-y-1">
             {extApps.map((a) => (
               <li key={a.externalJobId} className="text-[var(--ink-soft)]">
-                {a.title} at {a.company} — {new Date(a.at).toLocaleDateString("en-NG", { day: "numeric", month: "short" })} ·{" "}
+                {a.title} at {a.company}, {new Date(a.at).toLocaleDateString("en-NG", { day: "numeric", month: "short" })} ·{" "}
                 <span className="font-bold text-[var(--good)]">✓ tracked</span>
               </li>
             ))}

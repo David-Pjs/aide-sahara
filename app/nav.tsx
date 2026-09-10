@@ -12,17 +12,17 @@ const LINKS = [
 ];
 
 // Just the page links. Account switching and logging out live on the Profile
-// page (and, for demo accounts, by voice — "switch to my employer account"),
+// page (and, for demo accounts, by voice, "switch to my employer account"),
 // so the global bar stays uncluttered.
 //
-// Active page is marked three ways — aria-current, inverted colors, and an
-// underline — so it never relies on color perception alone.
+// Active page is marked three ways, aria-current, inverted colors, and an
+// underline, so it never relies on color perception alone.
 export function Nav() {
   const pathname = usePathname();
   return (
     // Right-aligned on desktop (sm:justify-end), a full-width scrollable strip
     // on phones. The links scroll horizontally within their own strip if they
-    // don't fit, which keeps navigation off the vertical budget — on a phone
+    // don't fit, which keeps navigation off the vertical budget, on a phone
     // the wrapped version was eating a fifth of the viewport before the user
     // reached Aide itself.
     <div className="flex min-w-0 flex-1 items-center justify-between gap-2 sm:justify-end sm:gap-3">

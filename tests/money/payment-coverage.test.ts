@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeDispatch, walletDoc, type ConvexCall, type Handlers } from "../helpers/fake-convex";
 
 // "Paid" is a claim about the real world. An employer can press the button, and
-// Aide can be asked to say it, but neither may make it true — only money that
+// Aide can be asked to say it, but neither may make it true, only money that
 // actually arrived can. This is the check that enforces that, and it is the
 // only thing standing between a worker and being told they were paid when they
 // were not.
@@ -34,7 +34,7 @@ vi.mock("../../lib/monnify", () => ({
 }));
 
 // Imported fresh for every test. The store keeps a short-lived balance cache
-// keyed by account, and coverage always asks about the same worker — so
+// keyed by account, and coverage always asks about the same worker, so
 // without a module reset the first test's balance would answer them all.
 let verifyPaymentCoverage: typeof import("../../lib/store/applications").verifyPaymentCoverage;
 
@@ -66,8 +66,7 @@ beforeEach(async () => {
   bank.transactions.mockReset();
   // The wallet's confirmed inbound total is whatever the test sets.
   bank.transactions.mockImplementation(() =>
-    Promise.resolve({ content: inbound ? [{ amount: inbound, paymentStatus: "PAID", transactionReference: "TX" }] : [] }),
-  );
+    Promise.resolve({ content: inbound ? [{ amount: inbound, paymentStatus: "PAID", transactionReference: "TX" }] : [] }));
 });
 
 // Coverage is now checked against a NAMED worker's wallet rather than a
@@ -105,7 +104,7 @@ describe("verifyPaymentCoverage", () => {
 
   it("will not let one payment be claimed by two different gigs", async () => {
     // 12,000 arrived and Gig A already claimed it. Gig B cannot also be paid
-    // from the same money — this is the double-count that would let an employer
+    // from the same money, this is the double-count that would let an employer
     // close out several gigs on a single transfer.
     inbound = 12000;
     paidApps = [{ _id: "a1", accountId: "demo-worker", jobId: "g-a", status: "paid", verified: true }];

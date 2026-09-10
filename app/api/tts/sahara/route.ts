@@ -3,7 +3,7 @@ import { saharaSynthesize } from "@/lib/sahara";
 export const runtime = "nodejs";
 
 // Same GET-with-?text= contract as /api/tts (edge-tts), so voice-engine.ts's
-// fetchSpeech() works unchanged — pointing NEXT_PUBLIC_TTS_PATH at this route
+// fetchSpeech() works unchanged, pointing NEXT_PUBLIC_TTS_PATH at this route
 // is the only switch needed to make Aide speak through Sahara's neural voices
 // (Nigerian Pidgin accent by default) instead of Microsoft Edge's.
 const audioCache = new Map<string, Buffer>();

@@ -14,7 +14,7 @@ const CONFIRM_WORDS = ["mango", "sunrise", "guitar", "river", "orange", "candle"
 const PENDING_TTL_MS = 5 * 60 * 1000;
 const BALANCE_TTL_MS = 20_000;
 
-// A spoken confirmation cannot defend against someone standing in the room —
+// A spoken confirmation cannot defend against someone standing in the room,
 // they hear the word Aide reads out. What actually protects the money is that
 // it may only ever leave to a destination registered EARLIER, so redirecting it
 // takes time rather than a moment of opportunity. This is the same "new
@@ -89,7 +89,7 @@ export async function listActiveWallets(): Promise<Wallet[]> {
   return docs.map(toWallet);
 }
 
-// One in-flight provisioning per account PER INSTANCE — signup's background
+// One in-flight provisioning per account PER INSTANCE, signup's background
 // call and a concurrent balance request must not both hit Monnify's create
 // endpoint. getReservedAccount-first also makes provisioning idempotent by
 // reference across instances.
@@ -132,8 +132,7 @@ export function ensureWallet(accountId: string): Promise<Wallet> {
         lastError: (e as Error).message,
       });
       throw e;
-    }).finally(() => inFlight.delete(accountId)),
-  );
+    }).finally(() => inFlight.delete(accountId)));
   return inFlight.get(accountId)!;
 }
 
@@ -147,7 +146,7 @@ export function provisionWalletInBackground(accountId: string): void {
 
 // --- Balance ---
 
-// Brief per-instance cache — the greeting, payments page, and agent all ask
+// Brief per-instance cache, the greeting, payments page, and agent all ask
 // within seconds. Withdrawals invalidate it; a 20s TTL bounds staleness.
 const balanceCache = new Map<string, { value: number; at: number }>();
 
@@ -202,8 +201,7 @@ export async function getBalance(accountId: string): Promise<{ balance: number; 
     const wallet = await getWallet(accountId).catch(() => null);
     console.warn(
       `[payments] AIDE_DEMO_BALANCE in use for ${accountId}: showing ${balance} because the bank is unreachable ` +
-        `(${(e as Error).message}). This figure is NOT from the bank. Unset AIDE_DEMO_BALANCE to disable.`,
-    );
+        `(${(e as Error).message}). This figure is NOT from the bank. Unset AIDE_DEMO_BALANCE to disable.`);
     return { balance, account: wallet?.accountNumber, bankName: wallet?.bankName, demo: true };
   }
 }
@@ -212,7 +210,7 @@ export async function getBalance(accountId: string): Promise<{ balance: number; 
 
 export async function recordWithdrawal(accountId: string, r: Omit<WithdrawalRecord, "at" | "accountId">): Promise<void> {
   await convexClient().mutation(api.wallets.recordWithdrawal, { accountId, amount: r.amount, accountName: r.accountName, status: r.status, at: Date.now() });
-  balanceCache.delete(accountId); // money left — never serve a stale total
+  balanceCache.delete(accountId); // money left, never serve a stale total
 }
 
 export async function getWithdrawals(accountId: string): Promise<WithdrawalRecord[]> {
@@ -247,7 +245,7 @@ function hashPhrase(text: string): string {
   return createHash("sha256").update(normalizePhrase(text)).digest("hex");
 }
 
-// All contiguous word-windows of the spoken text, hashed — so "my phrase is
+// All contiguous word-windows of the spoken text, hashed, so "my phrase is
 // sunny garden gate" still matches a stored "sunny garden gate".
 function candidateHashesFor(spoken: string): string[] {
   // Bound the input size to prevent Algorithmic DoS on the event loop.
@@ -265,7 +263,7 @@ function candidateHashesFor(spoken: string): string[] {
 export async function setSecurityPhrase(accountId: string, phrase: string): Promise<{ ok: true } | { ok: false; message: string }> {
   const normalized = normalizePhrase(phrase);
   if (normalized.split(" ").length < 2 || normalized.length < 8) {
-    return { ok: false, message: "The security phrase should be at least two words — something memorable only you would say." };
+    return { ok: false, message: "The security phrase should be at least two words, something memorable only you would say." };
   }
   await convexClient().mutation(api.wallets.setSecurityPhrase, {
     accountId,
@@ -291,9 +289,9 @@ export async function listBeneficiaries(accountId: string): Promise<Beneficiary[
 
 export async function saveBeneficiary(
   accountId: string,
-  b: { accountName: string; accountNumber: string; bankCode: string; bankName?: string },
-): Promise<{ created: boolean }> {
-  return await convexClient().mutation(api.wallets.saveBeneficiary, { accountId, ...b, at: Date.now() });
+  b: { accountName: string; accountNumber: string; bankCode: string; bankName?: string }): Promise<{ created: boolean }> {
+  return await convexClient().mutation(api.wallets.saveBeneficiary, { accountId,
+  ...b, at: Date.now() });
 }
 
 // Where a withdrawal should go. Explicit account details are name-enquiry
@@ -304,14 +302,13 @@ export type WithdrawalDestination = { accountNumber?: string; bankCode?: string;
 async function resolveDestination(
   accountId: string,
   dest: WithdrawalDestination | undefined,
-  wallet: Wallet,
-): Promise<{ ok: true; account: string; bankCode: string; accountName: string; addedAt?: number } | { ok: false; message: string }> {
+  wallet: Wallet): Promise<{ ok: true; account: string; bankCode: string; accountName: string; addedAt?: number } | { ok: false; message: string }> {
   if (dest?.accountNumber && dest?.bankCode) {
     try {
       const r = await validateBankAccount(dest.accountNumber.trim(), dest.bankCode.trim());
       return { ok: true, account: r.accountNumber, bankCode: dest.bankCode.trim(), accountName: r.accountName, addedAt: Date.now() };
     } catch {
-      return { ok: false, message: "Bank details not found — check the account number and bank, then try again." };
+      return { ok: false, message: "Bank details not found, check the account number and bank, then try again." };
     }
   }
   const beneficiaries = await listBeneficiaries(accountId);
@@ -323,7 +320,7 @@ async function resolveDestination(
       return { ok: true, account: b.accountNumber, bankCode: b.bankCode, accountName: b.accountName, addedAt: b.at };
     }
     if (matches.length > 1) {
-      return { ok: false, message: `More than one saved beneficiary matches "${dest.beneficiaryName}" — say the full name.` };
+      return { ok: false, message: `More than one saved beneficiary matches "${dest.beneficiaryName}", say the full name.` };
     }
     return { ok: false, message: `No saved beneficiary matches "${dest.beneficiaryName}". Give the account number and bank instead.` };
   }
@@ -341,7 +338,7 @@ async function resolveDestination(
   return { ok: false, message: "No destination account. Give the account number and the bank the money should go to." };
 }
 
-// Step 1 of withdrawal: arm it, with its own destination. No money moves here —
+// Step 1 of withdrawal: arm it, with its own destination. No money moves here,
 // the amount is checked against the wallet's real available balance up front,
 // and the destination is verified by name enquiry. Workers confirm with their
 // personal spoken security phrase (the accessible OTP replacement); employers
@@ -367,7 +364,7 @@ export async function armWithdrawal(accountId: string, amount: number, dest?: Wi
       ok: false,
       needsSecurityPhrase: true,
       message:
-        "You need a spoken security phrase before withdrawing — it replaces the SMS code. Choose a short phrase only you would know, and set it first.",
+        "You need a spoken security phrase before withdrawing, it replaces the SMS code. Choose a short phrase only you would know, and set it first.",
     };
   }
   const resolved = await resolveDestination(accountId, dest, w);
@@ -414,7 +411,7 @@ export async function armWithdrawal(accountId: string, amount: number, dest?: Wi
 // Step 2 of withdrawal: verify what was spoken against the armed check.
 // The check-and-clear is a single atomic Convex mutation, so two concurrent
 // confirmations can never both authorize the same transfer. This is the
-// consent gate — deliberately NOT called a second factor: anyone in the room
+// consent gate, deliberately NOT called a second factor: anyone in the room
 // hears the word, so it proves intent, not identity.
 export async function verifyWithdrawal(accountId: string, spokenPhrase: string): Promise<
   | { ok: true; amount: number; account: string; bankCode: string; accountName: string }

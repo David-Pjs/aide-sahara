@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     try {
       name = (await validateBankAccount(accountNumber.trim(), bankCode.trim())).accountName;
     } catch {
-      return Response.json({ error: "Bank details not found — check the account number and bank." }, { status: 404 });
+      return Response.json({ error: "Bank details not found, check the account number and bank." }, { status: 404 });
     }
   }
   const r = await saveBeneficiary(acc.id, { accountName: name, accountNumber: accountNumber.trim(), bankCode: bankCode.trim(), bankName });

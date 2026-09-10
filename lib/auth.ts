@@ -1,6 +1,6 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
-// Password hashing with Node's built-in scrypt — salted, constant-time
+// Password hashing with Node's built-in scrypt, salted, constant-time
 // comparison, no external dependencies. Stored as "salt:hash" (hex).
 
 export function hashPassword(password: string): string {

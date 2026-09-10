@@ -39,13 +39,13 @@ function JobsPageInner() {
   const [assessment, setAssessment] = useState<AssessmentData | null>(null);
   const [result, setResult] = useState<AssessmentResult | null>(null);
   // Onboarding threads start closed. Several hired gigs meant several open
-  // transcripts stacked on the page at once — a wall to scroll past, and a
+  // transcripts stacked on the page at once, a wall to scroll past, and a
   // much longer wall to listen through. Null means every one is collapsed.
   const [openThread, setOpenThread] = useState<string | null>(null);
 
   const { speak, endCapture } = useAide();
 
-  // Job filters — URL-driven so Aide can fill them ("filter VA jobs paying
+  // Job filters, URL-driven so Aide can fill them ("filter VA jobs paying
   // 12 to 20 thousand") and the worker can adjust the same controls on screen.
   const searchParams = useSearchParams();
   const [fKeyword, setFKeyword] = useState("");
@@ -61,7 +61,7 @@ function JobsPageInner() {
   }, [searchParams]);
 
   // Asking Aide to read a thread opens that thread on screen, the same way
-  // starting an assessment opens the assessment — Aide's words and the screen
+  // starting an assessment opens the assessment, Aide's words and the screen
   // stay on the same thing.
   const threadParam = searchParams.get("thread");
   useEffect(() => {
@@ -136,9 +136,8 @@ function JobsPageInner() {
       await load();
       speak(
         job.requiresAssessment
-          ? `Applied to ${job.title}. This job needs a short spoken assessment — press start assessment when you are ready.`
-          : `Applied to ${job.title}. No assessment is required — you are all set.`,
-      );
+          ? `Applied to ${job.title}. This job needs a short spoken assessment, press start assessment when you are ready.`
+          : `Applied to ${job.title}. No assessment is required, you are all set.`);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -179,7 +178,7 @@ function JobsPageInner() {
         intro += `You have a time limit of ${timeStr}. `;
       }
       intro +=
-        "Before we begin: you can cancel at any time by saying, cancel assessment — but be warned, cancelling permanently locks this job, and you will not be able to apply to it again. ";
+        "Before we begin: you can cancel at any time by saying, cancel assessment, but be warned, cancelling permanently locks this job, and you will not be able to apply to it again. ";
 
       if (data.assessmentType === "mcq") {
         const qCount = data.questions?.length || 0;
@@ -190,8 +189,7 @@ function JobsPageInner() {
             data.questions[0].question +
             ". The options are: " +
             data.questions[0].options.map((o: string, idx: number) => `option ${idx + 1}, ${o}`).join(". ") +
-            ". Please make your choice.",
-        );
+            ". Please make your choice.");
       } else {
         intro += `The prompt is: ${data.prompt}. `;
         speak(intro + "Just speak your answer, then press submit.");
@@ -204,7 +202,7 @@ function JobsPageInner() {
   };
 
   // Aide's voice flow lands here with ?assessment=<jobId> after the agent's
-  // start_assessment tool ran — open that job's assessment UI automatically.
+  // start_assessment tool ran, open that job's assessment UI automatically.
   const autoStartedRef = useRef(false);
   const assessmentParam = searchParams.get("assessment");
   useEffect(() => {
@@ -259,7 +257,7 @@ function JobsPageInner() {
         if (hired.length === 0) return null;
         return (
           <section id="onboarding" aria-label="Your hired jobs and onboarding messages" className="mt-8">
-            <h2 className="text-2xl font-bold">You’re hired — onboarding</h2>
+            <h2 className="text-2xl font-bold">You’re hired, onboarding</h2>
             <p className="mt-1 text-lg text-[var(--ink-soft)]">
               One card per job you’ve been hired for. Tap a card to open its messages, or say “Aide, read my messages”
               and the right one opens itself.
@@ -313,7 +311,7 @@ function JobsPageInner() {
       <section id="filters" aria-label="Job filters" className="mt-8 rounded-xl border-2 border-[var(--line)] bg-white p-5">
         <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--ink-soft)]">Filter jobs</h2>
         <p className="mt-1 text-sm text-[var(--ink-soft)]">
-          Fill these in, or just tell Aide — “show transcription jobs paying twelve to twenty thousand”.
+          Fill these in, or just tell Aide, “show transcription jobs paying twelve to twenty thousand”.
         </p>
         <div className="mt-3 flex flex-wrap items-end gap-3">
           <div>
@@ -434,7 +432,7 @@ function JobsPageInner() {
                           : { borderColor: "var(--ink-soft)", color: "var(--ink-soft)" }
                       }
                     >
-                      {app.verified ? "✓ Skill verified" : app.status === "cancelled" ? "Locked — assessment cancelled" : `Applied — ${app.status}`}
+                      {app.verified ? "✓ Skill verified" : app.status === "cancelled" ? "Locked, assessment cancelled" : `Applied, ${app.status}`}
                     </span>
                   )}
                   {app && app.status === "applied" && !app.verified && (
@@ -464,7 +462,7 @@ function JobsPageInner() {
       </ul>
       {jobs.length === 0 && !error && <p className="mt-8 text-lg text-[var(--ink-soft)]">Loading jobs…</p>}
       {jobs.length > 0 && visibleJobs.length === 0 && (
-        <p className="mt-8 text-lg text-[var(--ink-soft)]">No jobs match these filters — clear them or ask Aide to broaden the search.</p>
+        <p className="mt-8 text-lg text-[var(--ink-soft)]">No jobs match these filters, clear them or ask Aide to broaden the search.</p>
       )}
 
       <ExternalJobsSection />

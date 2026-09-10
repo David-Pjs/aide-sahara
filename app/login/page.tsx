@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAide } from "../aide";
 
-// Real login for credentialed accounts. Passwords are typed, never spoken —
+// Real login for credentialed accounts. Passwords are typed, never spoken,
 // saying a password aloud is exactly the kind of leak this platform's users
 // can't afford, so the keyboard is the right channel here.
 export default function LoginPage() {
@@ -26,7 +26,7 @@ export default function LoginPage() {
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error || "Could not log in.");
       // Full navigation, not router.push: the app restarts as the logged-in
-      // identity — fresh transcript and greeting, correct nav auth state.
+      // identity, fresh transcript and greeting, correct nav auth state.
       window.location.assign("/");
     } catch (err) {
       const msg = (err as Error).message;

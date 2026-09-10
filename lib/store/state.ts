@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 //
 // All mutable state hangs off globalThis. Next.js dev bundles each API route
 // separately, so a plain module-level singleton silently forks into one copy
-// per route — applications created by /api/jobs/apply would be invisible to
+// per route, applications created by /api/jobs/apply would be invisible to
 // /api/jobs/status. globalThis is shared by the whole Node process.
 
 export type McqQuestion = {
@@ -38,7 +38,7 @@ export type Application = {
   id: string;
   jobId: string;
   // "cancelled" = the worker abandoned the assessment; the job is permanently
-  // locked for them — no retake, no re-application.
+  // locked for them, no retake, no re-application.
   status: "applied" | "assessed" | "hired" | "rejected" | "paid" | "cancelled";
   verified: boolean;
   // Human-readable assessment outcome for the employer, e.g. "MCQ: 2 of 2 (100%)".
@@ -59,7 +59,7 @@ export type Account = {
   email?: string;
   role: Role;
   createdAt: number;
-  // Per-account profile. New accounts start completely empty — Aide offers a
+  // Per-account profile. New accounts start completely empty, Aide offers a
   // spoken onboarding to fill these, or they can be edited on the profile page.
   skills: string[];
   bio: string;
@@ -67,17 +67,17 @@ export type Account = {
   // never stored, so this is the only thing that survives the browser tab.
   preferences?: string[];
   // Present on real credentialed accounts; absent on the passwordless demo
-  // identities. Never leaves the server — always strip via publicAccount().
+  // identities. Never leaves the server, always strip via publicAccount().
   passwordHash?: string;
 };
 
-// A record of money leaving via voice-confirmed withdrawal — Monnify has no
+// A record of money leaving via voice-confirmed withdrawal, Monnify has no
 // cheap "list my disbursements" call, so the app keeps its own ledger. Also
 // what makes balances honest: available = confirmed inbound − withdrawals.
 export type WithdrawalRecord = { accountId: string; amount: number; accountName: string; status: string; at: number };
 
 // A withdrawal armed but not yet executed. The user must speak `phrase` back
-// before the transfer runs — voice consent replacing a visual OTP.
+// before the transfer runs, voice consent replacing a visual OTP.
 export type PendingWithdrawal = {
   amount: number;
   phrase: string;
@@ -102,7 +102,7 @@ export type Beneficiary = {
 
 // One Monnify wallet (dedicated reserved NUBAN) per Aide account. The
 // accountReference is deterministic (aide-<accountId>) so the same real
-// NUBAN is reattached across server restarts — Monnify allows exactly one
+// NUBAN is reattached across server restarts, Monnify allows exactly one
 // reserved account per reference/customer.
 export type Wallet = {
   accountId: string;
@@ -155,10 +155,10 @@ export type StoreState = {
 };
 
 const SEED_JOBS: Job[] = [
-  { id: "j1", title: "Audio transcription — 30 min interview", task: "Transcribe a 30-minute recorded interview into clean text.", skill: "transcription", pay: 12000, employer: "ClearVoice Media", requiresAssessment: true },
+  { id: "j1", title: "Audio transcription, 30 min interview", task: "Transcribe a 30-minute recorded interview into clean text.", skill: "transcription", pay: 12000, employer: "ClearVoice Media", requiresAssessment: true },
   { id: "j2", title: "Yoruba → English translation", task: "Translate 800 words of Yoruba text into English.", skill: "translation", pay: 15000, employer: "Lingua NG", requiresAssessment: true },
-  { id: "j3", title: "Phone customer support — 2 hour shift", task: "Handle inbound support calls for an airtime vendor.", skill: "phone support", pay: 8000, employer: "TopUp Africa", requiresAssessment: true },
-  { id: "j4", title: "Audio data labeling — 100 clips", task: "Listen to 100 short clips and tag the language spoken.", skill: "audio QA", pay: 10000, employer: "DataSeed", requiresAssessment: false },
+  { id: "j3", title: "Phone customer support, 2 hour shift", task: "Handle inbound support calls for an airtime vendor.", skill: "phone support", pay: 8000, employer: "TopUp Africa", requiresAssessment: true },
+  { id: "j4", title: "Audio data labeling, 100 clips", task: "Listen to 100 short clips and tag the language spoken.", skill: "audio QA", pay: 10000, employer: "DataSeed", requiresAssessment: false },
 ];
 
 function seedState(): StoreState {
@@ -178,7 +178,7 @@ function seedState(): StoreState {
 
 const g = globalThis as unknown as { __aideStore?: StoreState };
 export const state = (g.__aideStore ??= seedState());
-// The state object can outlive code changes (HMR keeps globalThis) — backfill
+// The state object can outlive code changes (HMR keeps globalThis), backfill
 // any fields added since it was first seeded.
 state.jobs ??= [...SEED_JOBS];
 state.withdrawals ??= [];

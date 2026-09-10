@@ -40,12 +40,12 @@ export function AssessmentPanel({
     }).catch(() => {});
     onResult({ verified: false, message: `Assessment cancelled. ${assessment.job.title} is now permanently closed to you.` });
     onClose();
-    speak(`Your assessment is cancelled. As I warned, ${assessment.job.title} is now permanently closed to you — but I can find you other jobs any time.`);
+    speak(`Your assessment is cancelled. As I warned, ${assessment.job.title} is now permanently closed to you, but I can find you other jobs any time.`);
     await reload();
   };
 
   const onCancelClick = () => {
-    const sure = window.confirm("Cancel this assessment? This is permanent — you will NEVER be able to apply to this job again.");
+    const sure = window.confirm("Cancel this assessment? This is permanent, you will NEVER be able to apply to this job again.");
     if (sure) cancelForGood();
   };
 
@@ -61,8 +61,7 @@ export function AssessmentPanel({
         else {
           pendingCancelRef.current = true;
           speak(
-            "Are you sure? Cancelling permanently locks this job — you will never be able to apply to it again. Say cancel assessment once more to confirm, or just continue answering.",
-          );
+            "Are you sure? Cancelling permanently locks this job, you will never be able to apply to it again. Say cancel assessment once more to confirm, or just continue answering.");
         }
         return;
       }
@@ -74,7 +73,7 @@ export function AssessmentPanel({
 
   // Start the clock only once Aide has stopped talking. It used to start the
   // instant the tool returned, so the explanation, the rules and the reading
-  // of every question and option all burned time the worker never got — and
+  // of every question and option all burned time the worker never got, and
   // with no visible countdown, the first they knew of it was being told time
   // was up. The server keeps the first start it is given, so this cannot be
   // used to award extra time by asking again.
@@ -108,7 +107,7 @@ export function AssessmentPanel({
       setTimeLeft(null);
       return;
     }
-    // Not begun yet — show the full limit rather than counting down while
+    // Not begun yet, show the full limit rather than counting down while
     // Aide is still reading the questions out.
     if (startedAt === null) {
       setTimeLeft(assessment.timeLimit);
@@ -200,11 +199,11 @@ export function AssessmentPanel({
       )}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-[var(--line)] pb-4">
         <h2 className="text-2xl font-bold">
-          {assessment.assessmentType === "mcq" ? "Multiple Choice" : "Spoken Oral"} Assessment — {assessment.job.title}
+          {assessment.assessmentType === "mcq" ? "Multiple Choice" : "Spoken Oral"} Assessment, {assessment.job.title}
         </h2>
         {timeLeft !== null && (
           // Prominent countdown once time gets close; the ticking number is
-          // aria-live "off" — the spoken 60s/30s/10s alerts carry it to
+          // aria-live "off", the spoken 60s/30s/10s alerts carry it to
           // screen-reader and voice users without per-second spam.
           <div
             role="timer"
@@ -271,9 +270,9 @@ export function AssessmentPanel({
           <p className="text-lg">{assessment.prompt}</p>
 
           <p className="mt-4 font-bold text-[var(--accent)]">
-            {capturing && listening ? "Aide is listening — just speak your answer." : "Aide is writing down what you say."}
+            {capturing && listening ? "Aide is listening, just speak your answer." : "Aide is writing down what you say."}
           </p>
-          {!supported && <p className="mt-2 text-[var(--alert)]">No speech recognition in this browser — type your answer below.</p>}
+          {!supported && <p className="mt-2 text-[var(--alert)]">No speech recognition in this browser, type your answer below.</p>}
           {interim && <p className="mt-3 text-lg italic text-[var(--ink-soft)]">“{interim}”</p>}
 
           <div className="mt-4">
@@ -286,7 +285,7 @@ export function AssessmentPanel({
           </div>
 
           <label htmlFor="assessment-answer" className="mt-5 block font-bold">
-            Your answer (spoken words appear here — you can edit them)
+            Your answer (spoken words appear here, you can edit them)
           </label>
           <textarea
             id="assessment-answer"

@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 //   1. POST { jobId } starts the assessment (stores attempt timestamp, returns prompt/questions)
 //   2. POST { jobId, answer } grades the worker's spoken oral answer
 //   3. POST { jobId, answers } grades the worker's MCQ answers (array of option indices)
-//   4. POST { jobId, action: "cancel" } cancels — permanently locking the job for this worker
+//   4. POST { jobId, action: "cancel" } cancels, permanently locking the job for this worker
 export async function POST(req: Request) {
   const userId = userIdFrom(req) || "demo-worker";
   const body = (await req.json().catch(() => ({}))) as {
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const job = jobId ? await getJob(jobId) : undefined;
   if (!job) return Response.json({ error: "No job with that id." }, { status: 400 });
 
-  // The worker is actually ready — start the clock. Sent once Aide has
+  // The worker is actually ready, start the clock. Sent once Aide has
   // finished speaking, not when the questions were handed out.
   if (action === "begin") {
     const startedAt = await beginAssessment(userId, job.id);
@@ -36,15 +36,17 @@ export async function POST(req: Request) {
 
   // MCQ Grading
   if (answers !== undefined && Array.isArray(answers)) {
-    return Response.json({ ok: true, ...(await gradeMcqAssessment(userId, job.id, answers)) });
+    return Response.json({ ok: true,
+    ...(await gradeMcqAssessment(userId, job.id, answers)) });
   }
 
   // Oral Grading
   if (answer !== undefined && typeof answer === "string") {
-    return Response.json({ ok: true, ...(await gradeOralAssessment(userId, job.id, answer)) });
+    return Response.json({ ok: true,
+    ...(await gradeOralAssessment(userId, job.id, answer)) });
   }
 
-  // Start Assessment — shared with the voice agent's start_assessment tool,
+  // Start Assessment, shared with the voice agent's start_assessment tool,
   // so the cancel lockout and attempt bookkeeping live in one place.
   const started = await startAssessment(userId, job.id);
   if (!started.ok) {

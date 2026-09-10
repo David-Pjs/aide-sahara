@@ -33,7 +33,7 @@ function toMessage(d: MsgDoc): Message {
 // the data rather than assumed.
 //
 // The old check asked only whether the reader had the role "worker", which
-// made every worker on the platform a party to every thread — and the employer
+// made every worker on the platform a party to every thread, and the employer
 // side compared display names, which two accounts can share. Since the system
 // prompt tells employers to pass credentials through here, that was the worst
 // place in the app to be approximate.
@@ -49,8 +49,7 @@ export async function threadParties(jobId: string): Promise<ThreadParties | null
 // Which side of this conversation the account is on, or null for everyone else.
 export async function partyToThread(
   acc: { id: string; name: string; role: string },
-  jobId: string,
-): Promise<MessageFrom | null> {
+  jobId: string): Promise<MessageFrom | null> {
   const job = await getJob(jobId);
   if (!job) return null;
   if (acc.role === "employer") return ownsJob(acc, job) ? "employer" : null;
@@ -70,7 +69,7 @@ export async function listMessages(jobId: string): Promise<Message[]> {
   return docs.map(toMessage);
 }
 
-// Append a message and announce it to the OTHER party's reactive event feed —
+// Append a message and announce it to the OTHER party's reactive event feed,
 // the accessible equivalent of a notification: their Aide speaks it aloud the
 // moment it lands. Callers must have already checked messagingUnlocked and that
 // the sender is a party to the gig.
@@ -79,8 +78,7 @@ export async function sendMessage(
   from: MessageFrom,
   authorAccountId: string,
   authorName: string,
-  text: string,
-): Promise<Message> {
+  text: string): Promise<Message> {
   const clean = text.trim();
   const parties = await threadParties(jobId);
   const d = (await convexClient().mutation(api.messages.send, {
@@ -103,8 +101,7 @@ export async function sendMessage(
     } else {
       // Notify the employer's own account, found by the name on the gig.
       const employer = (await listAccounts()).find(
-        (a) => a.role === "employer" && a.name.toLowerCase() === job.employer.toLowerCase(),
-      );
+        (a) => a.role === "employer" && a.name.toLowerCase() === job.employer.toLowerCase());
       if (employer) {
         publishEvent(employer.id, {
           type: "notify",

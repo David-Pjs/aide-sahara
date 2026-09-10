@@ -18,7 +18,7 @@ for (let attempt = 1; attempt <= 20; attempt++) {
     }
     process.exit(0);
   }
-  console.log(`   attempt ${attempt}/20 — no payment yet, waiting 3s …`);
+  console.log(`   attempt ${attempt}/20, no payment yet, waiting 3s …`);
   await new Promise((r) => setTimeout(r, 3000));
 }
 console.log("\nNo payment detected. Send money to the account in the websim, then re-run.");

@@ -14,7 +14,7 @@ export const runtime = "nodejs";
 
 // External listings belong to the account that scanned for them. This used to
 // resolve to the demo worker no matter who was signed in, so one person's web
-// scan results — and the listings they were tracking — were everybody's.
+// scan results, and the listings they were tracking, were everybody's.
 export async function GET(req: Request) {
   const acc = await getAccount(userIdFrom(req));
   const [jobs, applications] = await Promise.all([getExternalJobs(acc.id), getExternalApplications(acc.id)]);
@@ -31,9 +31,9 @@ export async function POST(req: Request) {
     const w = acc;
     const apps = (await getApplications(w.id)).filter((a) => a.verified);
     const verifiedSkills = (await Promise.all(apps.map(async (a) => (await getJob(a.jobId))?.skill))).filter(
-      (s): s is string => !!s,
-    );
-    const skills = [...new Set([...(w.skills ?? []), ...verifiedSkills])];
+      (s): s is string => !!s);
+    const skills = [...new Set([...(w.skills ?? []),
+    ...verifiedSkills])];
     const jobs = await searchExternalJobs(skills);
     await setExternalJobs(acc.id, jobs);
     return Response.json({ ok: true, jobs, matchedSkills: skills });

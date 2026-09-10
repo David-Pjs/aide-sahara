@@ -10,10 +10,11 @@ import {
 import { SYSTEM_PROMPT } from "../../lib/agent/system";
 
 // Three quick taps close Aide's microphone; three more open it. The user
-// cannot see whether it worked, so the only feedback is what Aide says — which
+// cannot see whether it worked, so the only feedback is what Aide says, which
 // makes both the counting and the wording load-bearing.
 
-const t = (base: number, ...gaps: number[]) => {
+const t = (base: number,
+...gaps: number[]) => {
   const run = new TapRun();
   let now = base;
   const fired: number[] = [];
@@ -61,7 +62,7 @@ describe("counting a run of taps", () => {
     expect(t(0, 100, 100, 100, 100)).toEqual([200]);
   });
 
-  it("toggles exactly twice over six quick taps — closed, then open again", () => {
+  it("toggles exactly twice over six quick taps, closed, then open again", () => {
     expect(t(0, 100, 100, 100, 100, 100)).toEqual([200, 500]);
   });
 
@@ -79,7 +80,7 @@ describe("counting a run of taps", () => {
 describe("waking up must not be mistaken for a hold", () => {
   // Aide sleeps after a quiet spell and any tap wakes it. Waking used to say
   // nothing, so a user who cannot see "waking up…" had no reason to believe
-  // the tap had landed — and tapping again, twice, closed the microphone they
+  // the tap had landed, and tapping again, twice, closed the microphone they
   // were trying to reopen. Two things prevent that now: taps that arrive while
   // Aide is asleep do not count toward a run, and waking answers out loud.
 

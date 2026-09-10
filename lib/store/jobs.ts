@@ -2,7 +2,7 @@ import { api } from "../../convex/_generated/api";
 import { convexClient } from "../convex-server";
 import { JOBS, newId, type ExternalApplication, type ExternalJob, type Job, type McqQuestion } from "./state";
 
-// Jobs come from two places: the four seeded demo gigs (static, in code — they
+// Jobs come from two places: the four seeded demo gigs (static, in code, they
 // never change) and gigs employers post at runtime, which live in Convex so
 // they're visible across serverless instances instead of only on whichever
 // instance happened to handle the POST.
@@ -31,7 +31,7 @@ async function postedJobs(): Promise<Job[]> {
     const docs = (await convexClient().query(api.jobs.listPosted, {})) as PostedJobDoc[];
     return docs.map(toJob);
   } catch {
-    return []; // Convex unreachable — still show the seeded gigs
+    return []; // Convex unreachable, still show the seeded gigs
   }
 }
 
@@ -118,7 +118,7 @@ export function validateGig(input: {
   };
 }
 
-// Post a new gig (employer flow — via the modal form or Aide's post_gig tool).
+// Post a new gig (employer flow, via the modal form or Aide's post_gig tool).
 export async function postJob(input: {
   title: string;
   skill: string;
@@ -164,7 +164,8 @@ export async function postJob(input: {
 }
 
 export async function listJobs(skill?: string): Promise<Job[]> {
-  const all = [...JOBS, ...(await postedJobs())];
+  const all = [...JOBS,
+  ...(await postedJobs())];
   if (!skill) return all;
   const q = skill.toLowerCase();
   return all.filter((j) => j.skill.includes(q) || j.title.toLowerCase().includes(q));
@@ -181,13 +182,14 @@ export async function getJob(id: string): Promise<Job | undefined> {
 export function assessmentPromptFor(job: Job): string {
   return (
     job.assessmentQuestion ||
-    `To verify your ${job.skill} skill: in one or two sentences, describe how you would approach this task — "${job.task}"`
+    `To verify your ${job.skill} skill: in one or two sentences, describe how you would approach this task, "${job.task}"`
   );
 }
 
 // Strip correctIndex from MCQ questions so they are hidden from workers/agents
 export function publicJob(job: Job): Omit<Job, "mcqQuestions"> & { mcqQuestions?: Omit<McqQuestion, "correctIndex">[] } {
-  const { mcqQuestions, ...rest } = job;
+  const { mcqQuestions,
+  ...rest } = job;
   return {
     ...rest,
     mcqQuestions: mcqQuestions?.map(({ question, options }) => ({ question, options })),
@@ -236,7 +238,7 @@ export async function trackExternalJob(accountId: string, externalJobId: string)
 // Does this account own this gig? Ownership is by account id wherever one was
 // recorded. The seeded demo gigs and anything posted before employerAccountId
 // existed have no owner, so they fall back to the display-name match the app
-// has always used — that comparison is weak (two accounts can share a name),
+// has always used, that comparison is weak (two accounts can share a name),
 // which is exactly why new gigs no longer rely on it.
 export function ownsJob(acc: { id: string; name: string; role: string }, job: Job): boolean {
   if (acc.role !== "employer") return false;

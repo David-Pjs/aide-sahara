@@ -9,7 +9,7 @@ import edge_tts
 # multi-second handshake cost (~5-6s observed); a warm connection in the
 # same process drops that to ~2.5-3s. Spawning a fresh Python process per
 # utterance (the old approach) paid the cold-start cost on every single
-# reply — this worker pays it once, at server boot, instead.
+# reply, this worker pays it once, at server boot, instead.
 #
 # Protocol on stdout, one response per stdin request line (JSON: {"text","voice"}):
 #   4-byte big-endian length prefix, followed by that many bytes of MP3 audio.

@@ -3,11 +3,11 @@ import { forSpeech } from "../../app/aide/voice-engine";
 
 // forSpeech is the last thing to touch a sentence before it becomes audio.
 // Every rule here exists because the neural voice got something wrong out
-// loud — and for a user who cannot read the transcript, what is said IS the
+// loud, and for a user who cannot read the transcript, what is said IS the
 // product. Money amounts are the sharpest case: "one two zero zero zero" and
 // "twelve thousand" are not the same sentence.
 
-describe("forSpeech — money", () => {
+describe("forSpeech, money", () => {
   it("turns a naira symbol and digits into spoken naira", () => {
     expect(forSpeech("You have ₦12,000 ready.")).toBe("You have 12000 naira ready.");
   });
@@ -25,7 +25,7 @@ describe("forSpeech — money", () => {
   });
 });
 
-describe("forSpeech — pronunciation repairs", () => {
+describe("forSpeech, pronunciation repairs", () => {
   it("restores the space when a tool call fuses two sentences", () => {
     // Without this the voice reads "you.I" as one token and says "dot".
     expect(forSpeech("for you.I found one")).toBe("for you. I found one");
@@ -36,7 +36,7 @@ describe("forSpeech — pronunciation repairs", () => {
   });
 
   it("turns dashes into a comma's worth of pause", () => {
-    expect(forSpeech("Good news — money landed")).toBe("Good news, money landed");
+    expect(forSpeech("Good news \u2014 money landed")).toBe("Good news, money landed");
     expect(forSpeech("Good news - money landed")).toBe("Good news, money landed");
   });
 
@@ -61,9 +61,9 @@ describe("forSpeech — pronunciation repairs", () => {
   });
 });
 
-describe("forSpeech — safety", () => {
+describe("forSpeech, safety", () => {
   it("is idempotent, so a re-spoken sentence does not drift", () => {
-    const once = forSpeech("You have ₦12,000 — ready to withdraw.");
+    const once = forSpeech("You have ₦12,000, ready to withdraw.");
     expect(forSpeech(once)).toBe(once);
   });
 

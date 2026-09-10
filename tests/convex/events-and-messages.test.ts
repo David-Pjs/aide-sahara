@@ -5,7 +5,7 @@ import { api } from "../../convex/_generated/api";
 
 // The event feed is how Aide learns money arrived and says so out loud, and how
 // onboarding messages reach the other party. Both the webhook and the poller
-// can report the same payment, from different serverless instances — so the
+// can report the same payment, from different serverless instances, so the
 // dedupe here is what stops a user being told twice that they were paid.
 const modules = import.meta.glob("../../convex/**/*.ts");
 
@@ -18,7 +18,7 @@ const payment = (over: Record<string, unknown> = {}) => ({
   ...over,
 });
 
-describe("payment events — announced once, and only once", () => {
+describe("payment events, announced once, and only once", () => {
   it("delivers a confirmed payment to the account that was paid", async () => {
     const t = convexTest(schema, modules);
     await t.mutation(api.events.publish, payment());
@@ -110,7 +110,8 @@ describe("onboarding message thread", () => {
   const send = (t: any, over: Record<string, unknown> = {}) =>
     t.mutation(api.messages.send, {
       jobId: "j1", workerAccountId: "demo-worker", from: "employer" as const,
-      authorName: "ClearVoice Media", text: "Your login is on the portal.", ...over,
+      authorName: "ClearVoice Media", text: "Your login is on the portal.",
+      ...over,
     });
 
   it("stores a message with its author and side", async () => {

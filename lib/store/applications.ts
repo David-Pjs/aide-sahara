@@ -13,7 +13,7 @@ import { getBalance, getWallet } from "./payments";
 // shared one set of applications: your application list was somebody else's,
 // applying as you applied as them, and an employer hiring "the applicant"
 // hired the demo worker whoever had actually applied. The account is now a
-// parameter precisely so it cannot be forgotten — leaving it out is a type
+// parameter precisely so it cannot be forgotten, leaving it out is a type
 // error rather than a silent fallback to the wrong person.
 
 type AppDoc = { _id: string; accountId: string; jobId: string; status: Application["status"]; verified: boolean; assessmentResult?: string };
@@ -69,7 +69,7 @@ export async function resolveApplicant(jobId: string, workerAccountId?: string):
   const live = applicants.filter((a) => a.status !== "rejected" && a.status !== "cancelled");
   const pool = live.length > 0 ? live : applicants;
   if (pool.length > 1) {
-    return { ok: false, message: "There is more than one applicant for that gig — say which worker you mean." };
+    return { ok: false, message: "There is more than one applicant for that gig, say which worker you mean." };
   }
   return { ok: true, accountId: pool[0].accountId, application: pool[0] };
 }
@@ -91,9 +91,9 @@ export async function unapply(accountId: string, jobId: string): Promise<{ ok: b
 async function patch(
   accountId: string,
   jobId: string,
-  fields: { status?: Application["status"]; verified?: boolean; assessmentResult?: string; requireStatus?: Application["status"]; requireUnverified?: boolean },
-): Promise<Application | undefined> {
-  const d = (await convexClient().mutation(api.applications.setStatus, { accountId, jobId, ...fields })) as AppDoc | null;
+  fields: { status?: Application["status"]; verified?: boolean; assessmentResult?: string; requireStatus?: Application["status"]; requireUnverified?: boolean }): Promise<Application | undefined> {
+  const d = (await convexClient().mutation(api.applications.setStatus, { accountId, jobId,
+  ...fields })) as AppDoc | null;
   return d ? toApplication(d) : undefined;
 }
 
@@ -105,7 +105,7 @@ const attemptKey = (userId: string, jobId: string) => `${userId}-${jobId}`;
 // used to start the instant the tool returned, while Aide was still explaining
 // the rules and reading the questions aloud. On a two-minute assessment, being
 // read three questions and their options can eat most of the time before the
-// worker has heard the first one — and they cannot see a countdown to notice.
+// worker has heard the first one, and they cannot see a countdown to notice.
 // Safe to call more than once; the first call wins.
 export async function beginAssessment(userId: string, jobId: string): Promise<number> {
   const now = Date.now();
@@ -124,8 +124,7 @@ export async function recordAttempt(userId: string, jobId: string): Promise<numb
 export async function checkTimeLimit(
   userId: string,
   jobId: string,
-  timeLimit?: number,
-): Promise<{ expired: boolean; elapsed: number; limit: number }> {
+  timeLimit?: number): Promise<{ expired: boolean; elapsed: number; limit: number }> {
   if (!timeLimit) return { expired: false, elapsed: 0, limit: 0 };
   const startedAt = (await convexClient().query(api.jobs.getAttempt, { key: attemptKey(userId, jobId) })) as number | null;
   if (!startedAt) {
@@ -142,7 +141,7 @@ export async function clearAttempt(userId: string, jobId: string): Promise<void>
   await convexClient().mutation(api.jobs.clearAttempt, { key: attemptKey(userId, jobId) });
 }
 
-// How long the worker has left on a running, time-limited assessment — lets
+// How long the worker has left on a running, time-limited assessment, lets
 // Aide answer "how much time do I have?" truthfully instead of guessing.
 export async function timeRemaining(userId: string, jobId: string): Promise<{ limit: number; remaining: number } | null> {
   const job = await getJob(jobId);
@@ -153,7 +152,7 @@ export async function timeRemaining(userId: string, jobId: string): Promise<{ li
   return { limit: job.timeLimit, remaining: Math.max(0, job.timeLimit - elapsed) };
 }
 
-// The single entry point for beginning an assessment — used by both the voice
+// The single entry point for beginning an assessment, used by both the voice
 // agent's start_assessment tool and the jobs page's API route, so the rules
 // (cancel lockout, attempt timestamps, MCQ sanitizing) live in exactly one place.
 export type AssessmentStart =
@@ -216,8 +215,7 @@ export async function gradeOralAssessment(userId: string, jobId: string, answer:
 export async function gradeMcqAssessment(
   userId: string,
   jobId: string,
-  answers: number[],
-): Promise<{ verified: boolean; score: number; total: number; message: string }> {
+  answers: number[]): Promise<{ verified: boolean; score: number; total: number; message: string }> {
   const job = await getJob(jobId);
   if (!job) return { verified: false, score: 0, total: 0, message: "Job not found." };
 
@@ -287,7 +285,7 @@ export async function verifyPaymentCoverage(workerAccountId: string, jobId: stri
   const short = alreadyClaimed + job.pay - balance;
   return {
     ok: false,
-    message: `No confirmed payment covers this gig yet. The worker's confirmed inbound total is ${balance} naira and ${alreadyClaimed} naira is already claimed by other paid gigs — ${short} naira more must land first. Send the pay from the payout desk, then try again.`,
+    message: `No confirmed payment covers this gig yet. The worker's confirmed inbound total is ${balance} naira and ${alreadyClaimed} naira is already claimed by other paid gigs, ${short} naira more must land first. Send the pay from the payout desk, then try again.`,
   };
 }
 

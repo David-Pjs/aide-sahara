@@ -21,10 +21,16 @@ export async function POST(req: Request) {
     // Live-tested 2026-09-06: use_disable_llm_corrections=TRUE cut average
     // Sahara STT latency from ~5s to ~2.1s (3 runs each) on identical audio,
     // with byte-identical transcripts both ways. For a live conversational
-    // loop where every turn pays this cost, that's the right trade — full
+    // loop where every turn pays this cost, that's the right trade, full
     // LLM correction stays on for the offline benchmark script instead,
     // where accuracy is what's being measured, not latency.
-    const result = await saharaTranscribe(audio, "utterance.webm", {
+    // audio arrives as a File (FormData preserves the filename set by the
+    // client), which carries the real extension for whatever codec that
+    // device actually recorded in (webm on desktop/Android, mp4/AAC on iOS).
+    // Forwarding a wrong, hardcoded extension to Sahara is exactly the kind
+    // of mismatch that produces silently wrong or empty transcripts.
+    const filename = audio instanceof File && audio.name ? audio.name : "utterance.webm";
+    const result = await saharaTranscribe(audio, filename, {
       languageAsrInput: language as SaharaAsrLanguage | undefined,
       disableLlmCorrections: true,
     });

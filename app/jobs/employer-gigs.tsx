@@ -28,7 +28,7 @@ export function EmployerGigs({
   const [error, setError] = useState<string | null>(null);
 
   // Take a gig down. Confirmed first, because it also withdraws every pending
-  // application on it — and refused outright by the server once anyone has been
+  // application on it, and refused outright by the server once anyone has been
   // hired, so a worker's agreed job cannot vanish from under them.
   const removeGig = async (job: Job, pendingCount: number) => {
     const warning =
@@ -70,8 +70,7 @@ export function EmployerGigs({
           ? "Worker has been hired. Aide is letting them know now."
           : action === "reject"
             ? "Applicant declined. Aide is letting them know kindly."
-            : "Worker has been marked as paid.",
-      );
+            : "Worker has been marked as paid.");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -94,7 +93,7 @@ export function EmployerGigs({
         </button>
       </div>
       <p className="mt-2 text-[var(--ink-soft)]">
-        Prefer to talk? Just tell Aide <em>“post a new gig”</em> and it will collect everything — pay, assessment question and all — by
+        Prefer to talk? Just tell Aide <em>“post a new gig”</em> and it will collect everything, pay, assessment question and all, by
         voice.
       </p>
 
@@ -235,7 +234,7 @@ export function EmployerGigs({
                           </div>
 
                           {/* The onboarding channel unlocks the moment the
-                              worker is hired — this is where the employer hands
+                              worker is hired, this is where the employer hands
                               over directives, credentials, and next steps. It
                               stays closed until asked for, so a page of gigs
                               isn't a page of open transcripts. */}

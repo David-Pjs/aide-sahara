@@ -34,4 +34,12 @@ venv/
 # Python bytecode from the TTS worker / speak function
 __pycache__/
 *.pyc
-.github/workflows/ci.yml
+
+# Raw HuggingFace shards and extraction intermediates for the benchmark
+# (~419MB, one file alone is 158MB — well past GitHub's 100MB limit). Only
+# benchmark/samples/ (the 4 trimmed clips actually referenced by
+# manifest.json) is meant to ship with the submission.
+benchmark/raw/
+
+# Pitch deck, demo scripts and personal photos: not part of the submission repo
+_pitch/

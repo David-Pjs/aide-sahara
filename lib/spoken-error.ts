@@ -1,5 +1,5 @@
 // Aide speaks its errors. Anything that reaches `speak()` is heard, not read,
-// by someone who cannot see a retry button — so raw runtime text is worse than
+// by someone who cannot see a retry button, so raw runtime text is worse than
 // useless. "The operation was aborted due to timeout" is what AbortSignal.timeout
 // puts on a DOMException; "Failed to fetch" is what a dropped connection puts on
 // a TypeError. Neither tells a listener anything they can act on.

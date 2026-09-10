@@ -22,7 +22,7 @@ export async function GET(req: Request) {
     });
   }
 
-  // Worker profile — balance is best-effort so the page still renders when
+  // Worker profile, balance is best-effort so the page still renders when
   // Monnify is unreachable.
   let balance: number | null = null;
   let wallet: { account?: string; bankName?: string } = {};
@@ -32,8 +32,7 @@ export async function GET(req: Request) {
     wallet = b;
   } catch {}
   const applications = await Promise.all(
-    (await getApplications(acc.id)).map(async (a) => ({ ...a, job: await getJob(a.jobId) })),
-  );
+    (await getApplications(acc.id)).map(async (a) => ({ ...a, job: await getJob(a.jobId) })));
   const verified = applications.filter((a) => a.verified);
   return Response.json({
     account: publicAccount(acc),
@@ -59,5 +58,6 @@ export async function POST(req: Request) {
     bio?: string;
   };
   const result = await updateProfile(userId, body);
-  return Response.json({ ok: true, ...result });
+  return Response.json({ ok: true,
+  ...result });
 }

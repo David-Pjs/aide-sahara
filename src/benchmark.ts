@@ -1,10 +1,10 @@
-// Sahara CodeSwitch Africa Challenge — required benchmark: Sahara vs at least
+// Sahara CodeSwitch Africa Challenge, required benchmark: Sahara vs at least
 // two other speech models on code-switched audio. Run with:
 //
 //   npx tsx src/benchmark.ts
 //
 // Reads benchmark/manifest.json (a list of local audio clips + ground-truth
-// transcripts + language pair/accent/noise metadata — see benchmark/README.md
+// transcripts + language pair/accent/noise metadata, see benchmark/README.md
 // for how to pull real clips from Intron's own Afriswitch dataset on
 // Hugging Face) and scores each configured provider's transcript against the
 // reference with Word Error Rate (WER) and Character Error Rate (CER).
@@ -15,7 +15,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import "dotenv/config";
-import { saharaTranscribe, type SaharaAsrLanguage } from "../lib/sahara.js";
+import { saharaTranscribeAsync, type SaharaAsrLanguage } from "../lib/sahara.js";
 
 type ManifestEntry = {
   id: string;
@@ -27,6 +27,12 @@ type ManifestEntry = {
   domain?: string;
   deviceType?: string;
   noiseCondition?: string;
+  source?: string;
+  diagnosis?: string;
+  durationSeconds?: number;
+  numTurns?: number;
+  codeMixIndex?: number;
+  numSwitchPoints?: number;
 };
 
 type ProviderResult = { provider: string; transcript: string; wer: number; cer: number; latencyMs: number; error?: string };
@@ -41,47 +47,41 @@ async function loadManifest(): Promise<ManifestEntry[]> {
 
 // --- Providers -------------------------------------------------------------
 
+// Real conversation recordings run well past Sahara's 120s Sync cap, so the
+// benchmark uses the async Upload File endpoint (no documented duration
+// limit, live-tested successfully on a 376s clip) instead of Sync.
 async function transcribeWithSahara(entry: ManifestEntry, audio: Buffer): Promise<string> {
   const blob = new Blob([new Uint8Array(audio)], { type: "audio/wav" });
-  const result = await saharaTranscribe(blob, path.basename(entry.audioPath), {
+  const result = await saharaTranscribeAsync(blob, path.basename(entry.audioPath), {
     languageAsrInput: entry.saharaLanguageHint,
   });
   return result.transcript;
 }
 
-// Groq hosts whisper-large-v3 with an OpenAI-compatible audio endpoint —
-// https://console.groq.com/docs/speech-to-text. Free tier key is enough for
-// a benchmark run of a few clips.
-async function transcribeWithGroq(entry: ManifestEntry, audio: Buffer): Promise<string> {
-  const key = process.env.GROQ_API_KEY?.trim();
-  if (!key) throw new Error("GROQ_API_KEY not set");
-  const form = new FormData();
-  form.append("file", new Blob([new Uint8Array(audio)]), path.basename(entry.audioPath));
-  form.append("model", process.env.GROQ_STT_MODEL || "whisper-large-v3");
-  const res = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}` },
-    body: form,
-  });
-  if (!res.ok) throw new Error(`Groq STT failed (${res.status}): ${(await res.text()).slice(0, 300)}`);
-  const json = (await res.json()) as { text: string };
-  return json.text;
+// OpenAI's flagship general-purpose ASR model, reached through Hugging
+// Face's Inference Providers router (not the legacy api-inference host,
+// which is dead/migrated). State-of-the-art on most public multilingual ASR
+// benchmarks, this is the "best global general-purpose model" comparator.
+async function transcribeWithWhisperLargeV3(entry: ManifestEntry, audio: Buffer): Promise<string> {
+  return callHfInference("openai/whisper-large-v3", audio);
 }
 
-// Any open-source/hosted model reachable through Hugging Face's Inference
-// API. Defaults to openai/whisper-large-v3; swap HF_STT_MODEL for an
-// Africa-focused model (e.g. one fine-tuned on the Afriswitch dataset) if
-// your team hosts one.
-async function transcribeWithHuggingFace(entry: ManifestEntry, audio: Buffer): Promise<string> {
+// The distilled/faster sibling of the same flagship model, a second,
+// genuinely different comparator (speed/accuracy tradeoff point), not just
+// a re-run of the same model.
+async function transcribeWithWhisperTurbo(entry: ManifestEntry, audio: Buffer): Promise<string> {
+  return callHfInference("openai/whisper-large-v3-turbo", audio);
+}
+
+async function callHfInference(model: string, audio: Buffer): Promise<string> {
   const key = process.env.HF_API_TOKEN?.trim();
   if (!key) throw new Error("HF_API_TOKEN not set");
-  const model = process.env.HF_STT_MODEL || "openai/whisper-large-v3";
-  const res = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+  const res = await fetch(`https://router.huggingface.co/hf-inference/models/${model}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "audio/wav" },
     body: new Uint8Array(audio),
   });
-  if (!res.ok) throw new Error(`HF Inference failed (${res.status}): ${(await res.text()).slice(0, 300)}`);
+  if (!res.ok) throw new Error(`HF Inference (${model}) failed (${res.status}): ${(await res.text()).slice(0, 300)}`);
   const json = (await res.json()) as { text: string };
   return json.text;
 }
@@ -90,8 +90,8 @@ type Provider = { name: string; run: (entry: ManifestEntry, audio: Buffer) => Pr
 
 const PROVIDERS: Provider[] = [
   { name: "Sahara v2.5", run: transcribeWithSahara },
-  { name: "Groq whisper-large-v3", run: transcribeWithGroq },
-  { name: `HuggingFace ${process.env.HF_STT_MODEL || "openai/whisper-large-v3"}`, run: transcribeWithHuggingFace },
+  { name: "OpenAI Whisper large-v3", run: transcribeWithWhisperLargeV3 },
+  { name: "OpenAI Whisper large-v3-turbo", run: transcribeWithWhisperTurbo },
 ];
 
 // --- Scoring -----------------------------------------------------------
@@ -132,7 +132,7 @@ function cer(reference: string, hypothesis: string): number {
 async function main() {
   const manifest = await loadManifest();
   if (manifest.length === 0) {
-    console.error("benchmark/manifest.json is empty — see benchmark/README.md to add sample clips.");
+    console.error("benchmark/manifest.json is empty, see benchmark/README.md to add sample clips.");
     process.exit(1);
   }
 
@@ -172,33 +172,70 @@ async function main() {
 
 function renderMarkdown(allResults: { entry: ManifestEntry; results: ProviderResult[] }[]): string {
   const lines: string[] = [
-    "# Sahara CodeSwitch Africa Challenge — Benchmark Report",
+    "# Sahara CodeSwitch Africa Challenge: Benchmark Report",
     "",
-    "Aide (voice-native work-and-pay platform for blind Nigerian workers) benchmarked on code-switched audio.",
+    "Aide (voice-native work-and-pay platform for blind Nigerian workers) benchmarked on real code-switched audio.",
+    "",
+    "## Methodology",
+    "",
+    "- **Source**: [Intron AfriSwitchCare](https://huggingface.co/datasets/intronhealth/AfriSwitchCare), Intron's own published code-switching benchmark dataset. Simulated doctor-patient consultations; no real patient data (explicitly disclosed by the dataset authors).",
+    "- **Clips**: whole conversations (audio + human-transcribed reference are paired 1:1 by the dataset's own construction, so there is zero alignment risk). Sahara's Upload File Sync caps at 120s, so the async Upload File endpoint was used instead (no documented duration limit, live-tested successfully).",
+    "- **Metric**: Word Error Rate (WER) and Character Error Rate (CER), word/character-level Levenshtein edit distance over normalized (lowercased, punctuation-stripped) text. Speaker-turn artifacts (\" : \" separators left over from the dataset's own transcript format) were stripped from the reference before scoring, since they are not real spoken content and would otherwise penalize every model equally but unfairly.",
+    "- **Models compared**: Sahara v2.5 (Africa/code-switching-specialized) vs. OpenAI Whisper large-v3 (global flagship, state-of-the-art on most public multilingual ASR benchmarks) vs. Whisper large-v3-turbo (its distilled, faster sibling), one specialized model against the current best general-purpose model at two speed/accuracy points.",
     "",
   ];
   const providerNames = allResults[0]?.results.map((r) => r.provider) ?? [];
-  lines.push(`| Clip | Language pair | ${providerNames.map((n) => `${n} WER`).join(" | ")} |`);
-  lines.push(`|---|---|${providerNames.map(() => "---").join("|")}|`);
+  lines.push("## Results", "");
+  lines.push(`| Clip | Language pair | Diagnosis (simulated) | Duration | Code-mix index | ${providerNames.map((n) => `${n} WER`).join(" | ")} |`);
+  lines.push(`|---|---|---|---|---|${providerNames.map(() => "---").join("|")}|`);
   for (const { entry, results } of allResults) {
-    lines.push(`| ${entry.id} | ${entry.languagePair} | ${results.map((r) => (r.error ? "FAILED" : `${(r.wer * 100).toFixed(1)}%`)).join(" | ")} |`);
+    const dur = entry.durationSeconds ? `${Math.floor(entry.durationSeconds / 60)}:${String(entry.durationSeconds % 60).padStart(2, "0")}` : "?";
+    lines.push(
+      `| ${entry.id} | ${entry.languagePair} | ${entry.diagnosis ?? "?"} | ${dur} | ${entry.codeMixIndex?.toFixed(1) ?? "?"} | ${results
+        .map((r) => (r.error ? "FAILED" : `${(r.wer * 100).toFixed(1)}%`))
+        .join(" | ")} |`
+    );
   }
 
   lines.push("", "## Averages", "");
   for (const name of providerNames) {
     const werValues = allResults.map((r) => r.results.find((x) => x.provider === name)?.wer ?? 1);
-    const avg = werValues.reduce((a, b) => a + b, 0) / werValues.length;
-    lines.push(`- **${name}**: average WER ${(avg * 100).toFixed(1)}%`);
+    const cerValues = allResults.map((r) => r.results.find((x) => x.provider === name)?.cer ?? 1);
+    const avgWer = werValues.reduce((a, b) => a + b, 0) / werValues.length;
+    const avgCer = cerValues.reduce((a, b) => a + b, 0) / cerValues.length;
+    const latencies = allResults.map((r) => r.results.find((x) => x.provider === name)?.latencyMs ?? 0);
+    const avgLatency = Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length);
+    lines.push(`- **${name}**: average WER ${(avgWer * 100).toFixed(1)}%, average CER ${(avgCer * 100).toFixed(1)}%, average latency ${avgLatency}ms`);
   }
 
-  lines.push("", "## Per-clip transcripts", "");
+  lines.push(
+    "",
+    "## Strengths and weaknesses",
+    "",
+    "_Fill in after reviewing the per-clip transcripts below: where did each model handle a language switch cleanly, and where did it produce fluent-sounding but wrong text (a common ASR failure mode on code-switched audio)?_",
+    ""
+  );
+
+  lines.push("## Per-clip transcripts", "");
   for (const { entry, results } of allResults) {
-    lines.push(`### ${entry.id}`, "", `**Reference:** ${entry.reference}`, "");
+    lines.push(
+      `### ${entry.id} (${entry.languagePair}, ${entry.numTurns ?? "?"} turns, ${entry.numSwitchPoints ?? "?"} switch points)`,
+      "",
+      `**Reference (human transcript):** ${entry.reference}`,
+      ""
+    );
     for (const r of results) {
-      lines.push(`- **${r.provider}** (${r.latencyMs}ms): ${r.error ? `_${r.error}_` : r.transcript}`);
+      lines.push(`- **${r.provider}** (WER ${(r.wer * 100).toFixed(1)}%, ${r.latencyMs}ms): ${r.error ? `_${r.error}_` : r.transcript}`);
     }
     lines.push("");
   }
+
+  lines.push(
+    "## Responsible AI note",
+    "",
+    "Benchmark audio is Intron's own published, consented AfriSwitchCare dataset: simulated doctor-patient roleplay performed by bilingual annotators, not recordings of real patients. No PII, no real clinical data. See the dataset's own disclosure at https://huggingface.co/datasets/intronhealth/AfriSwitchCare.",
+    ""
+  );
 
   return lines.join("\n");
 }

@@ -14,7 +14,7 @@ const line = () => console.log("─".repeat(60));
 
 async function main() {
   line();
-  console.log("AIDE money-loop live-proof — sandbox:", env.baseUrl);
+  console.log("AIDE money-loop live-proof, sandbox:", env.baseUrl);
   line();
 
   console.log("① Auth …");
@@ -49,7 +49,7 @@ async function main() {
     return;
   }
 
-  console.log("④ THE BIG ONE — disburse WITHOUT an OTP …");
+  console.log("④ THE BIG ONE, disburse WITHOUT an OTP …");
   try {
     const balance = await walletBalance(env.walletAccountNumber);
     console.log(`   wallet available balance: ₦${balance.availableBalance}`);

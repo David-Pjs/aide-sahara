@@ -4,8 +4,8 @@ import schema from "../../convex/schema";
 import { api } from "../../convex/_generated/api";
 
 // The application state machine decides whether someone is hired and whether a
-// gig counts as paid. The cancel lockout is the harshest rule in the product —
-// it permanently bars a worker from a job — so it must fire exactly when
+// gig counts as paid. The cancel lockout is the harshest rule in the product,
+// it permanently bars a worker from a job, so it must fire exactly when
 // intended and never by accident.
 const modules = import.meta.glob("../../convex/**/*.ts");
 
@@ -25,7 +25,7 @@ describe("applying", () => {
     expect(app?.verified).toBe(false);
   });
 
-  it("is idempotent — applying twice does not create a second application", async () => {
+  it("is idempotent, applying twice does not create a second application", async () => {
     const t = await applied();
     await t.mutation(api.applications.apply, { accountId: "demo-worker", jobId: "j1" });
     expect(await t.query(api.applications.listForAccount, { accountId: "demo-worker" })).toHaveLength(1);
@@ -37,7 +37,7 @@ describe("applying", () => {
   });
 });
 
-describe("assessment cancellation — a one-way door", () => {
+describe("assessment cancellation, a one-way door", () => {
   const cancel = (t: any) =>
     t.mutation(api.applications.setStatus, {
       accountId: "demo-worker", jobId: "j1", status: "cancelled",
@@ -117,8 +117,7 @@ describe("hiring lifecycle", () => {
     const t = await applied();
     expect(await t.query(api.applications.getForJob, { accountId: "demo-worker", jobId: "never" })).toBeNull();
     expect(
-      await t.mutation(api.applications.setStatus, { accountId: "demo-worker", jobId: "never", status: "hired" }),
-    ).toBeNull();
+      await t.mutation(api.applications.setStatus, { accountId: "demo-worker", jobId: "never", status: "hired" })).toBeNull();
   });
 });
 

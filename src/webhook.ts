@@ -8,7 +8,7 @@ import { isValidWebhook, verifyTransaction } from "./monnify.js";
 // account via https://websim.sdk.monnify.com/?#/bankingapp and watch it land.
 const app = express();
 
-// Capture the RAW body — signature is computed over the exact bytes Monnify sent.
+// Capture the RAW body, signature is computed over the exact bytes Monnify sent.
 app.use(express.raw({ type: "*/*" }));
 
 app.post("/webhook/monnify", async (req, res) => {
@@ -16,14 +16,14 @@ app.post("/webhook/monnify", async (req, res) => {
   const signature = req.header("monnify-signature");
 
   if (!isValidWebhook(raw, signature)) {
-    console.log("✗ REJECTED webhook — bad signature. Ignoring.");
+    console.log("✗ REJECTED webhook, bad signature. Ignoring.");
     return res.status(401).send("invalid signature");
   }
 
   const event = JSON.parse(raw) as { eventType: string; eventData?: { transactionReference?: string } };
   console.log(`\n✓ verified webhook: ${event.eventType}`);
 
-  // Never trust the payload's status — re-fetch server-side before acting.
+  // Never trust the payload's status, re-fetch server-side before acting.
   const txRef = event.eventData?.transactionReference;
   if (event.eventType === "SUCCESSFUL_TRANSACTION" && txRef) {
     const tx = await verifyTransaction(txRef);
