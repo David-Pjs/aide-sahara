@@ -8,7 +8,7 @@ You talk to Aide. It finds you work, proves your skill through a spoken assessme
 
 ## Why we built this
 
-I am an albino. I have low vision, and at school I could not see the board. I sat as close to the front as they would let me and still copied most lessons from someone else's notebook. The thing I remember is not the difficulty. It is the question underneath it, which was what this would mean for me later, when the classroom became a workplace and nobody was obliged to help.
+I have low vision. At school I could not see the board. I sat as close to the front as they would let me and still copied most lessons from someone else's notebook. The thing I remember is not the difficulty. It is the question underneath it, which was what this would mean for me later, when the classroom became a workplace and nobody was obliged to help.
 
 That question has an answer, and it is worse than I expected when I went looking for the numbers.
 
