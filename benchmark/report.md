@@ -7,22 +7,24 @@ Aide (voice-native work-and-pay platform for blind Nigerian workers) benchmarked
 - **Source**: [Intron AfriSwitchCare](https://huggingface.co/datasets/intronhealth/AfriSwitchCare), Intron's own published code-switching benchmark dataset. Simulated doctor-patient consultations; no real patient data (explicitly disclosed by the dataset authors).
 - **Clips**: whole conversations (audio + human-transcribed reference are paired 1:1 by the dataset's own construction, so there is zero alignment risk). Sahara's Upload File Sync caps at 120s, so the async Upload File endpoint was used instead (no documented duration limit, live-tested successfully).
 - **Metrics**: the five the challenge asks for, WER, accuracy, hallucination, transcript loss and segment loss, all derived from a single word-level alignment per (reference, transcript) pair (see Extended metrics below), plus Character Error Rate. Levenshtein edit distance over normalized (lowercased, punctuation-stripped) text. Speaker-turn artifacts (" : " separators left over from the dataset's own transcript format) were stripped from the reference before scoring, since they are not real spoken content and would otherwise penalize every model equally but unfairly.
-- **Models compared**: Sahara v2.5 (Africa/code-switching-specialized) vs. OpenAI Whisper large-v3 (global flagship, state-of-the-art on most public multilingual ASR benchmarks) vs. Whisper large-v3-turbo (its distilled, faster sibling). One specialized model against the current best general-purpose model at two speed/accuracy points.
+- **Models compared**: four models from three vendors. Sahara v2.5 (Intron, Africa/code-switching specialised); OpenAI Whisper large-v3 (global flagship, state of the art on most public multilingual ASR benchmarks) and Whisper large-v3-turbo (its distilled, faster sibling); and Qwen3-ASR-1.7B (Alibaba), an independently multilingual model of a different architecture.
+- **Why a fourth model**: with only the two Whisper builds, the comparison was one specialist against two versions of a single generalist from a single vendor, which is not much of a comparison. Hugging Face's `hf-inference` provider serves exactly two ASR models and both are those Whisper builds, so Qwen3-ASR was reached through Hugging Face's router to DeepInfra instead. It was added with `src/add-provider.ts`, which merges one model's results into `report.json` without re-running the others, so adding a comparator costs none of the Sahara credit already spent.
 
 ## Results
 
-| Clip | Language pair | Diagnosis (simulated) | Duration | Code-mix index | Sahara v2.5 WER | OpenAI Whisper large-v3 WER | OpenAI Whisper large-v3-turbo WER |
-|---|---|---|---|---|---|---|---|
-| afriswitchcare-igbo | Igbo-English | PID | 6:17 | 12.0 | 50.1% | 41.9% | 39.1% |
-| afriswitchcare-yoruba | Yoruba-English | Osteoarthritis | 5:50 | 38.9 | 58.5% | 76.3% | 85.2% |
-| afriswitchcare-hausa | Hausa-English | Hypertension | 1:29 | 38.8 | 50.8% | 87.1% | 82.6% |
-| afriswitchcare-pidgin | Nigerian Pidgin-English | Depression | 5:02 | 22.5 | 25.7% | 70.3% | 48.3% |
+| Clip | Language pair | Diagnosis (simulated) | Duration | Code-mix index | Sahara v2.5 WER | OpenAI Whisper large-v3 WER | OpenAI Whisper large-v3-turbo WER | Qwen3-ASR-1.7B WER |
+|---|---|---|---|---|---|---|---|---|
+| afriswitchcare-igbo | Igbo-English | PID | 6:17 | 12.0 | 50.1% | 41.9% | 39.1% | 37.3% |
+| afriswitchcare-yoruba | Yoruba-English | Osteoarthritis | 5:50 | 38.9 | 58.5% | 76.3% | 85.2% | 62.2% |
+| afriswitchcare-hausa | Hausa-English | Hypertension | 1:29 | 38.8 | 50.8% | 87.1% | 82.6% | 96.2% |
+| afriswitchcare-pidgin | Nigerian Pidgin-English | Depression | 5:02 | 22.5 | 25.7% | 70.3% | 48.3% | 36.4% |
 
 ## Averages
 
 - **Sahara v2.5**: average WER 46.3%, average CER 30.6%, average latency 17413ms
 - **OpenAI Whisper large-v3**: average WER 68.9%, average CER 54.8%, average latency 38902ms
 - **OpenAI Whisper large-v3-turbo**: average WER 63.8%, average CER 47.0%, average latency 15021ms
+- **Qwen3-ASR-1.7B (Alibaba)**: average WER 58.0%, average CER 36.2%, average latency 24161ms
 
 ## Extended metrics
 
@@ -45,6 +47,7 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 46.3% | 56.4% | 20.4% | 25.9% | 2.7% | 0 of 4 |
 | OpenAI Whisper large-v3 | 68.9% | 38.1% | 27.1% | 53.0% | 7.0% | 2 of 4 |
 | OpenAI Whisper large-v3-turbo | 63.8% | 39.1% | 21.3% | 52.9% | 2.9% | 0 of 4 |
+| Qwen3-ASR-1.7B (Alibaba) | 58.0% | 50.5% | 6.0% | 44.2% | 8.5% | 0 of 4 |
 
 ### Per clip
 
@@ -55,6 +58,7 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 50.1% | 50.2% | 28.2% | 51.8% (72/139) | 0.2% | none |
 | OpenAI Whisper large-v3 | 41.9% | 60.6% | 17.4% | 48.2% (67/139) | 2.5% | none |
 | OpenAI Whisper large-v3-turbo | 39.1% | 64.4% | 16.2% | 49.6% (69/139) | 3.5% | minor: "how" x3 (0.4% of output) |
+| Qwen3-ASR-1.7B (Alibaba) | 37.3% | 69.5% | 4.5% | 43.9% (61/139) | 6.7% | minor: "afternoon" x3 (0.7% of output) |
 
 **afriswitchcare-yoruba** (Yoruba-English)
 
@@ -63,6 +67,7 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 58.5% | 42.7% | 25.2% | 21.2% (14/66) | 1.2% | none |
 | OpenAI Whisper large-v3 | 76.3% | 34.6% | 37.2% | 50.0% (33/66) | 10.9% | runaway: "ținăt" x72 (13.4% of output) |
 | OpenAI Whisper large-v3-turbo | 85.2% | 17.2% | 8.5% | 75.8% (50/66) | 2.5% | minor: "no" x3 (0.4% of output) |
+| Qwen3-ASR-1.7B (Alibaba) | 62.2% | 42.4% | 12.7% | 45.5% (30/66) | 4.7% | none |
 
 **afriswitchcare-hausa** (Hausa-English)
 
@@ -71,6 +76,7 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 50.8% | 53.8% | 19.7% | 25.0% (2/8) | 4.5% | none |
 | OpenAI Whisper large-v3 | 87.1% | 18.2% | 47.0% | 75.0% (6/8) | 5.3% | none |
 | OpenAI Whisper large-v3-turbo | 82.6% | 20.5% | 29.5% | 75.0% (6/8) | 3.0% | none |
+| Qwen3-ASR-1.7B (Alibaba) | 96.2% | 17.4% | 2.3% | 87.5% (7/8) | 13.6% | none |
 
 **afriswitchcare-pidgin** (Nigerian Pidgin-English)
 
@@ -79,13 +85,15 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 25.7% | 79.1% | 8.5% | 5.6% (1/18) | 4.8% | minor: "yes" x4 (0.7% of output) |
 | OpenAI Whisper large-v3 | 70.3% | 39.1% | 6.9% | 38.9% (7/18) | 9.4% | runaway: "mwenye" x136 (22.2% of output) |
 | OpenAI Whisper large-v3-turbo | 48.3% | 54.2% | 31.1% | 11.1% (2/18) | 2.6% | minor: "yes" x3 (0.7% of output) |
+| Qwen3-ASR-1.7B (Alibaba) | 36.4% | 72.6% | 4.6% | 0.0% (0/18) | 8.9% | minor: "yes" x4 (1.1% of output) |
+
 
 ## Strengths and weaknesses
 
 **Sahara v2.5**
 - *Strength, does not fabricate.* Sahara records the lowest insertion rate of the three models (2.7% average against 7.0% and 2.9%) and, crucially, produces **no runaway repetition loops at all** across the four clips, where Whisper large-v3 produces two. Its only flagged repetition is a four-times "yes" on the Pidgin clip, 0.7% of that output, which is plausibly real conversational speech rather than a degenerate loop. Every Sahara transcript is a plausible if sometimes garbled rendering of what was actually said. This matters more than the raw WER number in a clinical-adjacent domain: a wrong-but-faithful transcript is a recoverable error, a fabricated one is not.
 - *Strength, handles the switch itself, not just one side of it.* On the Yoruba and Hausa clips, where the reference is dense with mid-sentence language switching (CMI 38.8-38.9), Sahara is the only model that keeps producing recognizable text in *both* languages through the switch points, e.g. correctly rendering `iṣẹ́ wo le ṣe` and `oníyàwó, ìyàwó méjì` back to back with the English `"retired traffic coordinator"` around them (Yoruba clip). Whisper, on the same passage, drops into transliterated nonsense the moment it hits the Yoruba side.
-- *Weakness, loses accuracy on longer medical-English stretches.* On the Igbo clip specifically (the one clip that is mostly extended English clinical dialogue with only occasional Igbo interjections, lowest CMI of the four at 12.0), Sahara's WER (50.1%) is worse than either Whisper variant. Its failure mode here is dropped/merged words in fast English speech ("PID that a pelvic inflammatory disease" losing "'s"), not fabrication, but it is a real accuracy gap on this specific pattern.
+- *Weakness, loses accuracy on longer medical-English stretches.* On the Igbo clip specifically (the one clip that is mostly extended English clinical dialogue with only occasional Igbo interjections, lowest CMI of the four at 12.0), Sahara's WER (50.1%) is the worst of all four models, behind Qwen3-ASR (37.3%), Whisper turbo (39.1%) and Whisper large-v3 (41.9%). Its failure mode here is dropped/merged words in fast English speech ("PID that a pelvic inflammatory disease" losing "'s"), not fabrication, but it is a real accuracy gap on this specific pattern.
 - *Latency:* averaged 17.4s per clip (full multi-minute conversations, LLM corrections **on** for benchmark accuracy), still faster than Whisper large-v3 (38.9s) despite Whisper running as a single-shot local-style inference call with no polling round trip.
 
 **OpenAI Whisper large-v3**
@@ -99,6 +107,14 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 
 **A caveat about WER as the sole metric:** the Igbo result is the clearest place this shows up. Whisper's *lower* WER there coexists with a mid-transcript hallucination (a stretch of fabricated Q&A: "What is your name? My name is Ruslan Abayisi...") that never happened in the reference. Because that fabricated stretch is short relative to the whole 6-minute transcript, it doesn't move global WER much, but it would matter enormously if this were a real clinical note. This is why the per-clip transcripts are included in full below rather than reporting scores alone: WER alone would rank Whisper the more "accurate" model on this clip while missing the more consequential failure.
 
+**Qwen3-ASR-1.7B (Alibaba)**
+- *Strength, it does not drop content.* Transcript loss of 6.0% against 20.4% for Sahara and 27.1% for Whisper large-v3, the lowest of any model by a wide margin. On the Pidgin clip it is the only model in the benchmark to lose no segments at all (0 of 18).
+- *Strength, wins the Igbo clip outright* on every metric: 37.3% WER, 69.5% accuracy, 4.5% transcript loss and 43.9% segment loss, all best of four. Like both Whisper builds, it is strongest on the clip with the least code-switching (CMI 12.0).
+- *Weakness, it invents rather than omits.* It carries the highest insertion rate of the four at 8.5%. Its failure mode is the mirror image of Sahara's: where Sahara drops words it is unsure of, Qwen produces something for every stretch of audio whether or not it recognised it.
+- *Weakness, collapses on Hausa.* 96.2% WER, 87.5% segment loss (7 of 8) and a 13.6% insertion rate, the worst single result any model recorded on any clip. It renders Hausa speech as Swahili-like text ("shukrani", "asibiti", "miaka"), the same phonetic-substitution failure Whisper shows on the same clip, but more severe.
+- *No runaway loops* on any clip.
+
+**What the four-model set shows that three did not.** The two failure directions are now clearly separable. Qwen keeps almost everything and invents the most; Whisper large-v3 drops the most and loops; Sahara sits between them, dropping more than Qwen but inventing least and never looping. Sahara is also the only model whose worst clip stays under 60% WER (58.5%), against 85.2%, 87.1% and 96.2% for the others. For a product that reads a transcript aloud to someone who cannot check it against the screen, the worst case matters more than the average.
 ## Limitations
 
 - **Sample size.** Four clips, one per language pair, drawn from a single dataset (AfriSwitchCare). This is enough to surface real, reproducible failure patterns (which it did: the hallucination-loop behavior alone appeared in 2/4 Whisper runs), but not enough to report a statistically confident WER estimate per language. A larger sample would mainly change confidence intervals around these numbers, not the qualitative findings above, which are drawn directly from inspecting full transcripts.

@@ -90,8 +90,24 @@ for (const item of report) {
   lines.push("");
 }
 
-writeFileSync(join(ROOT, "metrics.md"), lines.join("\n"), "utf8");
+const block = lines.join("\n");
+writeFileSync(join(ROOT, "metrics.md"), block, "utf8");
 writeFileSync(join(ROOT, "metrics.json"), JSON.stringify(rows, null, 2), "utf8");
+// Keep report.md's Extended metrics section in step with the data. Without
+// this the report holds a stale snapshot the moment a provider is added, and a
+// report that disagrees with its own JSON is worse than no report.
+const reportPath = join(ROOT, "report.md");
+const reportText = readFileSync(reportPath, "utf8");
+const startMark = "## Extended metrics";
+const endMark = "## Strengths and weaknesses";
+const startAt = reportText.indexOf(startMark);
+const endAt = reportText.indexOf(endMark);
+if (startAt >= 0 && endAt > startAt) {
+  const eol = reportText.includes("\r\n") ? "\r\n" : "\n";
+  const rebuilt = reportText.slice(0, startAt) + block.split("\n").join(eol) + eol + eol + reportText.slice(endAt);
+  writeFileSync(reportPath, rebuilt, "utf8");
+  console.error("refreshed the Extended metrics section of report.md");
+}
 
 console.log(lines.join("\n"));
 console.error("\nwrote benchmark/metrics.md and benchmark/metrics.json");

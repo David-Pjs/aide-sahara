@@ -19,6 +19,7 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 46.3% | 56.4% | 20.4% | 25.9% | 2.7% | 0 of 4 |
 | OpenAI Whisper large-v3 | 68.9% | 38.1% | 27.1% | 53.0% | 7.0% | 2 of 4 |
 | OpenAI Whisper large-v3-turbo | 63.8% | 39.1% | 21.3% | 52.9% | 2.9% | 0 of 4 |
+| Qwen3-ASR-1.7B (Alibaba) | 58.0% | 50.5% | 6.0% | 44.2% | 8.5% | 0 of 4 |
 
 ### Per clip
 
@@ -29,6 +30,7 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 50.1% | 50.2% | 28.2% | 51.8% (72/139) | 0.2% | none |
 | OpenAI Whisper large-v3 | 41.9% | 60.6% | 17.4% | 48.2% (67/139) | 2.5% | none |
 | OpenAI Whisper large-v3-turbo | 39.1% | 64.4% | 16.2% | 49.6% (69/139) | 3.5% | minor: "how" x3 (0.4% of output) |
+| Qwen3-ASR-1.7B (Alibaba) | 37.3% | 69.5% | 4.5% | 43.9% (61/139) | 6.7% | minor: "afternoon" x3 (0.7% of output) |
 
 **afriswitchcare-yoruba** (Yoruba-English)
 
@@ -37,6 +39,7 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 58.5% | 42.7% | 25.2% | 21.2% (14/66) | 1.2% | none |
 | OpenAI Whisper large-v3 | 76.3% | 34.6% | 37.2% | 50.0% (33/66) | 10.9% | runaway: "ținăt" x72 (13.4% of output) |
 | OpenAI Whisper large-v3-turbo | 85.2% | 17.2% | 8.5% | 75.8% (50/66) | 2.5% | minor: "no" x3 (0.4% of output) |
+| Qwen3-ASR-1.7B (Alibaba) | 62.2% | 42.4% | 12.7% | 45.5% (30/66) | 4.7% | none |
 
 **afriswitchcare-hausa** (Hausa-English)
 
@@ -45,6 +48,7 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 50.8% | 53.8% | 19.7% | 25.0% (2/8) | 4.5% | none |
 | OpenAI Whisper large-v3 | 87.1% | 18.2% | 47.0% | 75.0% (6/8) | 5.3% | none |
 | OpenAI Whisper large-v3-turbo | 82.6% | 20.5% | 29.5% | 75.0% (6/8) | 3.0% | none |
+| Qwen3-ASR-1.7B (Alibaba) | 96.2% | 17.4% | 2.3% | 87.5% (7/8) | 13.6% | none |
 
 **afriswitchcare-pidgin** (Nigerian Pidgin-English)
 
@@ -53,3 +57,4 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | Sahara v2.5 | 25.7% | 79.1% | 8.5% | 5.6% (1/18) | 4.8% | minor: "yes" x4 (0.7% of output) |
 | OpenAI Whisper large-v3 | 70.3% | 39.1% | 6.9% | 38.9% (7/18) | 9.4% | runaway: "mwenye" x136 (22.2% of output) |
 | OpenAI Whisper large-v3-turbo | 48.3% | 54.2% | 31.1% | 11.1% (2/18) | 2.6% | minor: "yes" x3 (0.7% of output) |
+| Qwen3-ASR-1.7B (Alibaba) | 36.4% | 72.6% | 4.6% | 0.0% (0/18) | 8.9% | minor: "yes" x4 (1.1% of output) |
