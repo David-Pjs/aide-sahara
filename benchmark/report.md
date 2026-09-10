@@ -115,6 +115,11 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 - *No runaway loops* on any clip.
 
 **What the four-model set shows that three did not.** The two failure directions are now clearly separable. Qwen keeps almost everything and invents the most; Whisper large-v3 drops the most and loops; Sahara sits between them, dropping more than Qwen but inventing least and never looping. Sahara is also the only model whose worst clip stays under 60% WER (58.5%), against 85.2%, 87.1% and 96.2% for the others. For a product that reads a transcript aloud to someone who cannot check it against the screen, the worst case matters more than the average.
+## Text to speech
+
+Aide's entire output is speech, so its TTS is benchmarked on the same footing as its recognition. Sahara TTS, edge-tts (Microsoft) and gTTS (Google) were compared by round-trip intelligibility on the same four code-switched sentences, drawn from these same AfriSwitchCare references. Full method, results and caveats in [`tts/report.md`](tts/report.md).
+
+The short version: Sahara TTS shows no intelligibility advantage over a general-purpose voice (59.8% round-trip WER against edge-tts's 58.8% and gTTS's 62.3%), and it is markedly slower, averaging 10.2s per line once warm against edge-tts's 3.0s, with a 64.3s first call. That is why Aide's output path stays on edge-tts. gTTS has no Yoruba or Igbo voice at all. No system hallucinated: insertion rate was 0.0% across all twelve renderings.
 ## Limitations
 
 - **Sample size.** Four clips, one per language pair, drawn from a single dataset (AfriSwitchCare). This is enough to surface real, reproducible failure patterns (which it did: the hallucination-loop behavior alone appeared in 2/4 Whisper runs), but not enough to report a statistically confident WER estimate per language. A larger sample would mainly change confidence intervals around these numbers, not the qualitative findings above, which are drawn directly from inspecting full transcripts.

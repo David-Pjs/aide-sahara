@@ -1,0 +1,22 @@
+{
+  "pidgin": {
+    "edge": 2930,
+    "gtts": 1195,
+    "sahara": 8255
+  },
+  "yoruba": {
+    "edge": 2856,
+    "gtts": 1559,
+    "sahara": 12933
+  },
+  "igbo": {
+    "edge": 3004,
+    "gtts": 1165,
+    "sahara": 10250
+  },
+  "hausa": {
+    "edge": 3153,
+    "gtts": 2102,
+    "sahara": 9528
+  }
+}

@@ -1,0 +1,203 @@
+[
+  {
+    "sentence": {
+      "id": "pidgin",
+      "languagePair": "Nigerian Pidgin-English",
+      "text": "No everything has reduced lately Okay but when no be say you dey vomit?",
+      "source": "Intron AfriSwitchCare, afriswitchcare-pidgin reference transcript",
+      "saharaAccent": "yoruba",
+      "saharaAccentNote": "Sahara offers no Pidgin accent; yoruba is the product default",
+      "edgeVoice": "en-NG-EzinneNeural",
+      "gttsLang": "en",
+      "gttsNote": "gTTS has no Pidgin voice"
+    },
+    "results": [
+      {
+        "system": "Sahara TTS",
+        "config": "accent=yoruba",
+        "bytes": 295724,
+        "synthesisMs": 8255,
+        "transcript": " No everything as reduced lately o'kay, but when no be say you dey vomit.",
+        "wer": 0.07142857142857142,
+        "accuracy": 0.9285714285714286,
+        "transcriptLoss": 0,
+        "segmentLoss": 0,
+        "insertionRate": 0
+      },
+      {
+        "system": "edge-tts (Microsoft)",
+        "config": "en-NG-EzinneNeural",
+        "bytes": 30240,
+        "synthesisMs": 2930,
+        "transcript": " No everything has reduced lately ok but when no be say you dey vomit.",
+        "wer": 0.07142857142857142,
+        "accuracy": 0.9285714285714286,
+        "transcriptLoss": 0,
+        "segmentLoss": 0,
+        "insertionRate": 0
+      },
+      {
+        "system": "gTTS (Google)",
+        "config": "lang=en",
+        "bytes": 61824,
+        "synthesisMs": 1195,
+        "transcript": " No, everything has reduced lately, okay, but when nobis say you day vomit.",
+        "wer": 0.21428571428571427,
+        "accuracy": 0.7857142857142857,
+        "transcriptLoss": 0.07142857142857142,
+        "segmentLoss": 0,
+        "insertionRate": 0
+      }
+    ]
+  },
+  {
+    "sentence": {
+      "id": "yoruba",
+      "languagePair": "Yoruba-English",
+      "text": "Orókún mi ni o orókún mi méjèèjì bayii ó má ń ro mí, my knees.",
+      "source": "Intron AfriSwitchCare, afriswitchcare-yoruba reference transcript",
+      "saharaAccent": "yoruba",
+      "edgeVoice": "en-NG-EzinneNeural",
+      "gttsLang": "en",
+      "gttsNote": "gTTS has no Yoruba voice at all"
+    },
+    "results": [
+      {
+        "system": "Sahara TTS",
+        "config": "accent=yoruba",
+        "bytes": 246284,
+        "synthesisMs": 12933,
+        "transcript": " Oroko me mejeji, Bayomaru me my knees.",
+        "wer": 0.8666666666666667,
+        "accuracy": 0.13333333333333333,
+        "transcriptLoss": 0.5333333333333333,
+        "segmentLoss": 1,
+        "insertionRate": 0
+      },
+      {
+        "system": "edge-tts (Microsoft)",
+        "config": "en-NG-EzinneNeural",
+        "bytes": 32544,
+        "synthesisMs": 2856,
+        "transcript": " Orokan mi ena o Orokan mi mi Jiji bayi omo ena omi, my niece.",
+        "wer": 0.7333333333333333,
+        "accuracy": 0.26666666666666666,
+        "transcriptLoss": 0.06666666666666667,
+        "segmentLoss": 0,
+        "insertionRate": 0
+      },
+      {
+        "system": "gTTS (Google)",
+        "config": "lang=en",
+        "bytes": 67200,
+        "synthesisMs": 1559,
+        "transcript": " Orokunmi ni o Orokunmi mejeji ba i o mo enro im, my knees.",
+        "wer": 0.7333333333333333,
+        "accuracy": 0.26666666666666666,
+        "transcriptLoss": 0.13333333333333333,
+        "segmentLoss": 0,
+        "insertionRate": 0
+      }
+    ]
+  },
+  {
+    "sentence": {
+      "id": "igbo",
+      "languagePair": "Igbo-English",
+      "text": "A chọọ m, a chọọ m ilere ahụ gị now, ok?",
+      "source": "Intron AfriSwitchCare, afriswitchcare-igbo reference transcript",
+      "saharaAccent": "igbo",
+      "edgeVoice": "en-NG-EzinneNeural",
+      "gttsLang": "en",
+      "gttsNote": "gTTS has no Igbo voice at all"
+    },
+    "results": [
+      {
+        "system": "Sahara TTS",
+        "config": "accent=igbo",
+        "bytes": 101804,
+        "synthesisMs": 10250,
+        "transcript": " A chua mi lewe a huk gena okey.",
+        "wer": 0.9090909090909091,
+        "accuracy": 0.09090909090909091,
+        "transcriptLoss": 0.2727272727272727,
+        "segmentLoss": 1,
+        "insertionRate": 0
+      },
+      {
+        "system": "edge-tts (Microsoft)",
+        "config": "en-NG-EzinneNeural",
+        "bytes": 26928,
+        "synthesisMs": 3004,
+        "transcript": " H.U.M., H.U.M. Ilaria Ohuji Inao, OK.",
+        "wer": 0.9090909090909091,
+        "accuracy": 0.09090909090909091,
+        "transcriptLoss": 0.45454545454545453,
+        "segmentLoss": 1,
+        "insertionRate": 0
+      },
+      {
+        "system": "gTTS (Google)",
+        "config": "lang=en",
+        "bytes": 51264,
+        "synthesisMs": 1165,
+        "transcript": " H-U-M. H-U-M ilere ahugi nau. OK.",
+        "wer": 0.8181818181818182,
+        "accuracy": 0.18181818181818182,
+        "transcriptLoss": 0.45454545454545453,
+        "segmentLoss": 1,
+        "insertionRate": 0
+      }
+    ]
+  },
+  {
+    "sentence": {
+      "id": "hausa",
+      "languagePair": "Hausa-English",
+      "text": "Babu angaya Maka da wai kana da diabetes ko A'a okay akwai Wani a cikin family ka Wanda suna hypertension ko diabetes?",
+      "source": "Intron AfriSwitchCare, afriswitchcare-hausa reference transcript",
+      "saharaAccent": "hausa",
+      "edgeVoice": "en-NG-EzinneNeural",
+      "gttsLang": "ha",
+      "gttsNote": "gTTS does support Hausa"
+    },
+    "results": [
+      {
+        "system": "Sahara TTS",
+        "config": "accent=hausa",
+        "bytes": 641324,
+        "synthesisMs": 9528,
+        "transcript": " Babu angaya makadawayi Canada diabetes kua aoke. Akwai, wani a chicken family kawanda suna hypertension kuda diabetes.",
+        "wer": 0.5454545454545454,
+        "accuracy": 0.45454545454545453,
+        "transcriptLoss": 0.22727272727272727,
+        "segmentLoss": 0,
+        "insertionRate": 0
+      },
+      {
+        "system": "edge-tts (Microsoft)",
+        "config": "en-NG-EzinneNeural",
+        "bytes": 50400,
+        "synthesisMs": 3153,
+        "transcript": " Babu Angaya Moka Dewai Kona de Diabetes K.O.A. Ok Akwae Onea Sikim Family Kowanda Suna Hypertension K.O. Diabetes",
+        "wer": 0.6363636363636364,
+        "accuracy": 0.36363636363636365,
+        "transcriptLoss": 0.18181818181818182,
+        "segmentLoss": 0,
+        "insertionRate": 0
+      },
+      {
+        "system": "gTTS (Google)",
+        "config": "lang=ha",
+        "bytes": 82944,
+        "synthesisMs": 2102,
+        "transcript": " Babo angaya makadaweka na ada diabetes kwa aaa oke akwewane atikimu family kawanda suna. Hypertension kwa diabetes.",
+        "wer": 0.7272727272727273,
+        "accuracy": 0.2727272727272727,
+        "transcriptLoss": 0.22727272727272727,
+        "segmentLoss": 0,
+        "insertionRate": 0
+      }
+    ]
+  }
+]

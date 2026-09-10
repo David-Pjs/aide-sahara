@@ -1,0 +1,43 @@
+[
+  {
+    "id": "pidgin",
+    "languagePair": "Nigerian Pidgin-English",
+    "text": "No everything has reduced lately Okay but when no be say you dey vomit?",
+    "source": "Intron AfriSwitchCare, afriswitchcare-pidgin reference transcript",
+    "saharaAccent": "yoruba",
+    "saharaAccentNote": "Sahara offers no Pidgin accent; yoruba is the product default",
+    "edgeVoice": "en-NG-EzinneNeural",
+    "gttsLang": "en",
+    "gttsNote": "gTTS has no Pidgin voice"
+  },
+  {
+    "id": "yoruba",
+    "languagePair": "Yoruba-English",
+    "text": "Orókún mi ni o orókún mi méjèèjì bayii ó má ń ro mí, my knees.",
+    "source": "Intron AfriSwitchCare, afriswitchcare-yoruba reference transcript",
+    "saharaAccent": "yoruba",
+    "edgeVoice": "en-NG-EzinneNeural",
+    "gttsLang": "en",
+    "gttsNote": "gTTS has no Yoruba voice at all"
+  },
+  {
+    "id": "igbo",
+    "languagePair": "Igbo-English",
+    "text": "A chọọ m, a chọọ m ilere ahụ gị now, ok?",
+    "source": "Intron AfriSwitchCare, afriswitchcare-igbo reference transcript",
+    "saharaAccent": "igbo",
+    "edgeVoice": "en-NG-EzinneNeural",
+    "gttsLang": "en",
+    "gttsNote": "gTTS has no Igbo voice at all"
+  },
+  {
+    "id": "hausa",
+    "languagePair": "Hausa-English",
+    "text": "Babu angaya Maka da wai kana da diabetes ko A'a okay akwai Wani a cikin family ka Wanda suna hypertension ko diabetes?",
+    "source": "Intron AfriSwitchCare, afriswitchcare-hausa reference transcript",
+    "saharaAccent": "hausa",
+    "edgeVoice": "en-NG-EzinneNeural",
+    "gttsLang": "ha",
+    "gttsNote": "gTTS does support Hausa"
+  }
+]
