@@ -12,7 +12,7 @@ I have low vision. At school I could not see the board. I sat as close to the fr
 
 That question has an answer, and it is worse than I expected when I went looking for the numbers.
 
-Aide is built by two developers, Dillon and me. We both write the code. The difference is that one of us cannot read the screen we are building, which means the accessibility decisions in this product were not researched, they were argued about by someone who has to live with the answer. This is not a population studied from the outside.
+So I am building what I will need. Dillon and I both write the code, but the accessibility decisions in Aide were never researched. They were argued about by the person who has to live with the answer.
 
 ## Who this is for
 
