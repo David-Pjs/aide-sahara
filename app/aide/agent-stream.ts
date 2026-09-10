@@ -86,6 +86,10 @@ export async function streamAgentReply(messages: Msg[], handlers: AgentStreamHan
   let full = "";
   let unspoken = "";
   const result: AgentStreamResult = { full: "" };
+  // Where the screen was ACTUALLY sent, as opposed to the last destination
+  // merely seen in an event. The two are not the same and conflating them
+  // is what let Aide announce a page it had not opened.
+  let movedTo: string | undefined;
 
   const handleLine = (line: string) => {
     if (!line.trim()) return;
@@ -102,15 +106,25 @@ export async function streamAgentReply(messages: Msg[], handlers: AgentStreamHan
       // rather than after the whole reply has finished streaming. Aide is
       // usually still saying "opening that now" as this fires, which is the
       // point, the words and the screen should agree.
-      if (ev.navigateTo && ev.navigateTo !== result.navigateTo) {
+      if (ev.navigateTo && ev.navigateTo !== movedTo) {
         result.navigateTo = ev.navigateTo;
+        movedTo = ev.navigateTo;
         result.navigated = true;
         handlers.onNavigate?.(ev.navigateTo);
       }
     } else if (ev.t === "done") {
-      // Only if the mid-stream event never arrived; navigating twice to the
-      // same place would re-render the screen under the user for no reason.
-      if (ev.navigateTo && ev.navigateTo !== result.navigateTo) result.navigateTo = ev.navigateTo;
+      // The final destination is authoritative, and only needs acting on when
+      // it is not where the user was actually taken. This used to compare
+      // against the last destination SEEN, so once any mid-stream nav had
+      // fired, `navigated` stayed true for the rest of the turn and a
+      // different final destination was dropped in silence. Aide then said it
+      // had opened a page it had not opened, which is the one claim the system
+      // prompt forbids it to make, and the one a blind user cannot catch by
+      // glancing at the screen.
+      if (ev.navigateTo && ev.navigateTo !== movedTo) {
+        result.navigateTo = ev.navigateTo;
+        result.navigated = false;
+      }
       result.newUserId = ev.newUserId;
       result.loggedOut = ev.loggedOut;
     } else if (ev.t === "error") {

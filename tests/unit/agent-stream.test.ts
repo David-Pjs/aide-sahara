@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractSentences } from "../../app/aide/agent-stream";
+import { extractSentences, streamAgentReply } from "../../app/aide/agent-stream";
 
 // Sentence splitting decides what Aide actually says out loud. A boundary
 // missed here is not a cosmetic bug: the sentence either never reaches the
@@ -88,5 +88,89 @@ describe("extractSentences", () => {
     const { spoken, unspoken } = feed(["I am still speaking and have not"]);
     expect(spoken).toEqual([]);
     expect(unspoken).toBe("I am still speaking and have not");
+  });
+});
+
+// Navigation is the one claim the system prompt forbids Aide to make without
+// doing: "Moving them is an ACTION, never a claim". A blind user told they are
+// on the payments page cannot glance up and discover they are not, so a
+// dropped navigation is a correctness bug, not a polish one.
+
+function streamOf(events: unknown[]): Response {
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) {
+      const enc = new TextEncoder();
+      for (const e of events) controller.enqueue(enc.encode(JSON.stringify(e) + "\n"));
+      controller.close();
+    },
+  });
+  return new Response(body, { status: 200 });
+}
+
+async function run(events: unknown[]) {
+  const moves: string[] = [];
+  const original = globalThis.fetch;
+  globalThis.fetch = (async () => streamOf(events)) as typeof fetch;
+  try {
+    const result = await streamAgentReply([{ role: "user", content: "go" }], {
+      onDelta: () => {},
+      onSentence: () => {},
+      onNavigate: (to) => moves.push(to),
+    });
+    // The caller navigates only when the stream did not already do it.
+    if (result.navigateTo && !result.navigated) moves.push(result.navigateTo);
+    return { result, moves };
+  } finally {
+    globalThis.fetch = original;
+  }
+}
+
+describe("streamAgentReply navigation", () => {
+  it("moves the screen mid-reply when a tool returns a destination", async () => {
+    const { moves } = await run([
+      { t: "delta", text: "Opening that now. " },
+      { t: "nav", navigateTo: "/payments#balance" },
+      { t: "done", navigateTo: "/payments#balance" },
+    ]);
+    expect(moves).toEqual(["/payments#balance"]);
+  });
+
+  it("does not navigate twice to the same destination", async () => {
+    const { moves } = await run([
+      { t: "delta", text: "Opening the jobs page. " },
+      { t: "nav", navigateTo: "/jobs#listings" },
+      { t: "nav", navigateTo: "/jobs#listings" },
+      { t: "done", navigateTo: "/jobs#listings" },
+    ]);
+    expect(moves).toEqual(["/jobs#listings"]);
+  });
+
+  it("follows a later destination that only arrives in the final event", async () => {
+    // The regression. A mid-stream nav used to latch `navigated` true for the
+    // whole turn, so this second destination was dropped and the user was left
+    // on the jobs page while Aide said the assessment was open.
+    const { moves, result } = await run([
+      { t: "nav", navigateTo: "/jobs#listings" },
+      { t: "delta", text: "Starting your assessment. " },
+      { t: "done", navigateTo: "/jobs?assessment=abc" },
+    ]);
+    expect(moves).toEqual(["/jobs#listings", "/jobs?assessment=abc"]);
+    expect(result.navigateTo).toBe("/jobs?assessment=abc");
+  });
+
+  it("still navigates when the only destination arrives at the end", async () => {
+    const { moves } = await run([
+      { t: "delta", text: "Here you go. " },
+      { t: "done", navigateTo: "/profile#skills" },
+    ]);
+    expect(moves).toEqual(["/profile#skills"]);
+  });
+
+  it("does not navigate when no tool moved the screen", async () => {
+    const { moves } = await run([
+      { t: "delta", text: "Your balance is twelve thousand naira. " },
+      { t: "done" },
+    ]);
+    expect(moves).toEqual([]);
   });
 });
