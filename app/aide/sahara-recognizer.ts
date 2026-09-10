@@ -418,8 +418,17 @@ export class SaharaRecognizer {
       form.append("language", getSaharaLanguage());
       const res = await fetch("/api/stt/sahara", { method: "POST", body: form });
       const json = (await res.json().catch(() => ({}))) as { transcript?: string; error?: string };
-      if (!res.ok || !json.transcript?.trim()) {
-        if (json.error) console.warn("Sahara STT:", json.error);
+      if (!res.ok) {
+        // A failed REQUEST is not the same as a silent user, and used to be
+        // treated as one: the upload failed, this returned, and nothing was
+        // said. Someone who cannot see the screen has no way to tell that
+        // apart from an app that has died. Report it so the engine can speak.
+        console.warn("Sahara STT:", json.error ?? res.status);
+        this.onerror?.({ error: "stt-unavailable", message: json.error });
+        return;
+      }
+      if (!json.transcript?.trim()) {
+        // Genuinely nothing heard. Staying quiet is correct here.
         return;
       }
       const entry: any = [{ transcript: json.transcript }];

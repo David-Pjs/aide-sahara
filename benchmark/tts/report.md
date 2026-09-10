@@ -72,7 +72,7 @@ The four sentences are real reference transcripts from Intron AfriSwitchCare, no
 
 ## An important caveat about the absolute numbers
 
-The judge is not neutral about these languages. In the ASR benchmark in `../report.md`, Whisper large-v3 scores 68.9% average WER on **real human speech** in these same four language pairs, and 76.3% on Yoruba specifically. So a high round-trip WER here conflates two different things: how clearly the TTS rendered the line, and how badly the recogniser handles the language regardless of who is speaking.
+The judge is not neutral about these languages. In the ASR benchmark in `../report.md`, Whisper large-v3 scores 68.6% average WER on **real human speech** in these same four language pairs, and 76.3% on Yoruba specifically. So a high round-trip WER here conflates two different things: how clearly the TTS rendered the line, and how badly the recogniser handles the language regardless of who is speaking.
 
 That is why the Yoruba and Igbo rows sit near 90% for every system, including the ones that produced perfectly reasonable audio. The comparison **between** systems stays fair, because all three are scored by the same recogniser on the same sentence. The absolute figures should not be read as a claim that these renderings are unintelligible to a person.
 

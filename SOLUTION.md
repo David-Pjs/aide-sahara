@@ -10,7 +10,7 @@ The online economy was built for people who can see it. Sign-up forms, dashboard
 
 The usual answer is a screen reader bolted onto an app designed for sighted users. It is slow, it is brittle, and it is most brittle exactly where it matters most, which is money. A screen reader can read a balance aloud. It cannot tell you whether that balance is real.
 
-There is a second wall underneath the first, and it is the one this challenge is about. **A blind Nigerian worker does not speak clean English.** They speak Pidgin, Yoruba, Igbo or Hausa mixed into English inside a single sentence. Every general-purpose speech recogniser fails at precisely the switch point, and our benchmark shows it fails in the worst possible way: it does not go quiet, it invents fluent text. Whisper large-v3 repeated one nonsense word **136 times** on a Nigerian Pidgin consultation, filling 22% of its transcript with content nobody said.
+There is a second wall underneath the first, and it is the one this challenge is about. **A blind Nigerian worker does not speak clean English.** They speak Pidgin, Yoruba, Igbo or Hausa mixed into English inside a single sentence. Every general-purpose speech recogniser fails at precisely the switch point, and our benchmark shows it fails in the worst possible way: it does not go quiet, it invents fluent text. Whisper large-v3 repeated one nonsense word **136 times** on a Nigerian Pidgin consultation, filling 22.4% of its transcript with content nobody said.
 
 For a sighted user that is a bad transcript. For a blind user driving an agent by voice, it is an agent acting on words that were never spoken.
 
@@ -88,12 +88,12 @@ Four models from three vendors on four real code-switched clips from Intron's ow
 
 | Model | WER | Accuracy | Transcript loss | Segment loss | Insertion rate | Runaway loops |
 |---|---|---|---|---|---|---|
-| Sahara v2.5 | **46.3%** | **56.4%** | 20.4% | **25.9%** | 2.7% | **0 of 4** |
-| OpenAI Whisper large-v3 | 68.9% | 38.1% | 27.1% | 53.0% | 7.0% | 2 of 4 |
-| OpenAI Whisper large-v3-turbo | 63.8% | 39.1% | 21.3% | 52.9% | 2.9% | 0 of 4 |
-| Qwen3-ASR-1.7B (Alibaba) | 58.0% | 50.5% | **6.0%** | 44.2% | 8.5% | 0 of 4 |
+| Sahara v2.5 | **46.1%** | **56.5%** | 20.6% | **25.9%** | 2.7% | **0 of 4** |
+| OpenAI Whisper large-v3 | 68.6% | 38.1% | 27.2% | 53.0% | 6.7% | 2 of 4 |
+| OpenAI Whisper large-v3-turbo | 63.7% | 39.1% | 21.4% | 52.9% | 2.8% | 0 of 4 |
+| Qwen3-ASR-1.7B (Alibaba) | 55.6% | 50.2% | **7.0%** | 44.0% | 5.8% | 0 of 4 |
 
-Segment loss separates the models far more sharply than WER does: Whisper drops roughly **half of every reference sentence set outright**. Sahara is the only model whose worst clip stays under 60% WER, against 85.2%, 87.1% and 96.2% for the others. For a product that reads a transcript aloud to someone who cannot check it against the screen, the worst case matters more than the average.
+Segment loss separates the models far more sharply than WER does: Whisper drops roughly **half of every reference sentence set outright**. Sahara is the only model whose worst clip stays under 60% WER, against 85.2%, 87.1% and 93.9% for the others. For a product that reads a transcript aloud to someone who cannot check it against the screen, the worst case matters more than the average.
 
 Sahara does not win everything, and the report says so: Qwen wins the Igbo clip outright on every metric, putting Sahara last of four there.
 

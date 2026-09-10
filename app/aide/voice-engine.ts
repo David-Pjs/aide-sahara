@@ -268,6 +268,8 @@ export class VoiceEngine {
   // our own pauses) and must come back, but a recognizer that dies instantly,
   // over and over, needs backoff, not a hot loop.
   private lastStart = 0;
+  // Last time Aide said the speech service was down, for throttling.
+  private lastSttComplaint = 0;
   private rapidEnds = 0;
   private restartDelay = 300;
   // Dead-mic detection: consecutive listen windows that opened the mic but
@@ -911,6 +913,18 @@ export class VoiceEngine {
     };
 
     rec.onerror = (e: any) => {
+      // The speech service answered with a failure. Silence here reads as a
+      // dead app to a user with no screen, so say it out loud, but at most
+      // once a minute: a sustained outage should inform, not nag.
+      if (e?.error === "stt-unavailable") {
+        onState({ micStatus: "speech service unavailable" });
+        const now = Date.now();
+        if (now - this.lastSttComplaint > 60_000) {
+          this.lastSttComplaint = now;
+          this.speak("I could not make out what you said, because my speech service is not responding right now. Your account is fine. Please try again in a moment.");
+        }
+        return;
+      }
       // "no-speech" / "aborted" are routine; onend does the restart.
       if (e?.error === "no-speech") {
         onState({ micStatus: "mic open, but no speech was heard (check the input device)" });

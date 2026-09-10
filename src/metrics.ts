@@ -10,15 +10,45 @@
 // keeps the comparison between models fair: every model is scored by the same
 // code against the same reference.
 
-/** The normalization used by src/benchmark.ts, repeated here deliberately so
- *  scores computed after the fact are directly comparable to the ones the
- *  harness produced live. Lowercase, strip punctuation, collapse whitespace. */
+// Tags the transcriber writes where speech was not speech. Intron strip these
+// from both reference and hypothesis before scoring, in scripts/evaluations.py
+// of intron-innovation/Intron-Multimodal-Benchmarking. Scoring a model for
+// failing to reproduce "[inaudible]" would measure nothing real.
+const INAUDIBLE = /\[(?:in ?aud[ai]ble|music|silence|noise|blank)\]|\((?:in ?aud[ai]ble|noise|audio is empty)\)/gi;
+
+// Hesitations, removed for the same reason and from the same source. Whether a
+// model transcribed "um" is not a measure of whether it understood the speaker.
+const FILLERS = new Set(["ah", "blah", "eh", "hmm", "huh", "hum", "mmhmm", "mm", "oh", "ohh", "uh", "uhhuh", "umhum", "uhhum", "um"]);
+
+/** Normalisation aligned with Intron's own published benchmarking pipeline
+ *  (intron-innovation/Intron-Multimodal-Benchmarking, scripts/evaluations.py):
+ *  strip inaudible tags, drop filler words, lowercase, remove punctuation,
+ *  collapse whitespace.
+ *
+ *  Verified against this corpus before adopting: the four AfriSwitchCare
+ *  references contain no inaudible tags and 2 filler words in 2,391, so the
+ *  cleaning is very nearly a no-op here and the published figures did not move.
+ *  It is applied anyway so the method matches theirs rather than merely
+ *  resembling it. */
 export function normalize(text: string): string {
-  return text
+  const stripped = text
+    .replace(INAUDIBLE, " ")
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\s]/gu, "")
     .replace(/\s+/g, " ")
     .trim();
+  if (!stripped) return "";
+  return stripped.split(" ").filter((w) => !FILLERS.has(w)).join(" ");
+}
+
+/** Unnormalised tokens: whitespace split only, case and punctuation intact.
+ *  Intron publish transcription_wer.csv and transcription_unnormalized_wer.csv
+ *  side by side, and we report both cuts for the same reason: normalisation is
+ *  a choice, and a reader should be able to see how much of a result depends
+ *  on it. */
+export function wordsUnnormalized(text: string): string[] {
+  const t = text.replace(INAUDIBLE, " ").replace(/\s+/g, " ").trim();
+  return t ? t.split(" ") : [];
 }
 
 export function words(text: string): string[] {
@@ -43,9 +73,9 @@ export type Alignment = {
 /** Standard Levenshtein alignment over words, with backtrace. Deletion means a
  *  reference word the model never produced; insertion means a hypothesis word
  *  with nothing behind it in the reference. */
-export function align(reference: string, hypothesis: string): Alignment {
-  const ref = words(reference);
-  const hyp = words(hypothesis);
+export function align(reference: string, hypothesis: string, tokenize: (t: string) => string[] = words): Alignment {
+  const ref = tokenize(reference);
+  const hyp = tokenize(hypothesis);
   const R = ref.length;
   const H = hyp.length;
 

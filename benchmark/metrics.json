@@ -91,14 +91,17 @@
       "hasLoop": false,
       "severe": false
     },
+    "werUnnorm": 0.6006711409395973,
+    "cer": 0.3515187260395164,
+    "latencyMs": 18357,
     "clip": "afriswitchcare-igbo",
     "languagePair": "Igbo-English",
     "provider": "Sahara v2.5"
   },
   {
-    "wer": 0.4186307519640853,
+    "wer": 0.409652076318743,
     "accuracy": 0.6060606060606061,
-    "transcriptLoss": 0.1739618406285073,
+    "transcriptLoss": 0.17620650953984288,
     "segmentLoss": {
       "total": 139,
       "lost": 67,
@@ -174,7 +177,7 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.024691358024691357,
+      "insertionRate": 0.015712682379349047,
       "maxRepeat": 1,
       "loopPhrase": null,
       "loopedShare": 0,
@@ -182,12 +185,15 @@
       "hasLoop": false,
       "severe": false
     },
+    "werUnnorm": 0.5335570469798657,
+    "cer": 0.28457682099675613,
+    "latencyMs": 45758,
     "clip": "afriswitchcare-igbo",
     "languagePair": "Igbo-English",
     "provider": "OpenAI Whisper large-v3"
   },
   {
-    "wer": 0.39057239057239057,
+    "wer": 0.388327721661055,
     "accuracy": 0.6442199775533108,
     "transcriptLoss": 0.16161616161616163,
     "segmentLoss": {
@@ -267,26 +273,29 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.03479236812570146,
+      "insertionRate": 0.03254769921436588,
       "maxRepeat": 3,
       "loopPhrase": "how",
-      "loopedShare": 0.0038560411311053984,
+      "loopedShare": 0.003865979381443299,
       "loopedTokens": 3,
       "hasLoop": true,
       "severe": false
     },
+    "werUnnorm": 0.5078299776286354,
+    "cer": 0.263344146269537,
+    "latencyMs": 20873,
     "clip": "afriswitchcare-igbo",
     "languagePair": "Igbo-English",
     "provider": "OpenAI Whisper large-v3-turbo"
   },
   {
-    "wer": 0.372615039281706,
-    "accuracy": 0.6947250280583613,
-    "transcriptLoss": 0.04489337822671156,
+    "wer": 0.3400673400673401,
+    "accuracy": 0.696969696969697,
+    "transcriptLoss": 0.058361391694725026,
     "segmentLoss": {
       "total": 139,
-      "lost": 61,
-      "rate": 0.43884892086330934,
+      "lost": 60,
+      "rate": 0.4316546762589928,
       "lostSegments": [
         "You can come in.",
         "Alright, okay.",
@@ -317,7 +326,6 @@
         "Alright, ok.",
         "8 Ok.",
         "Alright.",
-        "That's alright.",
         "I na-enwe ahụ ọkụ?",
         "Ee, m na-enwe arụ ọkụ.",
         "I na-agbọ agbọ?",
@@ -352,14 +360,17 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.06734006734006734,
+      "insertionRate": 0.037037037037037035,
       "maxRepeat": 3,
       "loopPhrase": "afternoon",
-      "loopedShare": 0.006586169045005488,
+      "loopedShare": 0.006880733944954129,
       "loopedTokens": 6,
       "hasLoop": true,
       "severe": false
     },
+    "werUnnorm": 0.49776286353467564,
+    "cer": 0.20259510468888234,
+    "latencyMs": 8898,
     "clip": "afriswitchcare-igbo",
     "languagePair": "Igbo-English",
     "provider": "Qwen3-ASR-1.7B (Alibaba)"
@@ -398,6 +409,9 @@
       "hasLoop": false,
       "severe": false
     },
+    "werUnnorm": 0.66484268125855,
+    "cer": 0.41986644407345575,
+    "latencyMs": 18252,
     "clip": "afriswitchcare-yoruba",
     "languagePair": "Yoruba-English",
     "provider": "Sahara v2.5"
@@ -455,6 +469,9 @@
       "hasLoop": true,
       "severe": true
     },
+    "werUnnorm": 0.8235294117647058,
+    "cer": 0.6427378964941569,
+    "latencyMs": 52013,
     "clip": "afriswitchcare-yoruba",
     "languagePair": "Yoruba-English",
     "provider": "OpenAI Whisper large-v3"
@@ -462,7 +479,7 @@
   {
     "wer": 0.8522571819425444,
     "accuracy": 0.17236662106703146,
-    "transcriptLoss": 0.08481532147742818,
+    "transcriptLoss": 0.08618331053351573,
     "segmentLoss": {
       "total": 66,
       "lost": 50,
@@ -524,19 +541,22 @@
       "insertionRate": 0.024623803009575923,
       "maxRepeat": 3,
       "loopPhrase": "no",
-      "loopedShare": 0.004366812227074236,
+      "loopedShare": 0.004373177842565598,
       "loopedTokens": 3,
       "hasLoop": true,
       "severe": false
     },
+    "werUnnorm": 0.8891928864569083,
+    "cer": 0.7099332220367279,
+    "latencyMs": 18573,
     "clip": "afriswitchcare-yoruba",
     "languagePair": "Yoruba-English",
     "provider": "OpenAI Whisper large-v3-turbo"
   },
   {
-    "wer": 0.6224350205198358,
+    "wer": 0.6114911080711354,
     "accuracy": 0.4240766073871409,
-    "transcriptLoss": 0.12722298221614228,
+    "transcriptLoss": 0.14500683994528044,
     "segmentLoss": {
       "total": 66,
       "lost": 30,
@@ -575,7 +595,7 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.046511627906976744,
+      "insertionRate": 0.03556771545827633,
       "maxRepeat": 1,
       "loopPhrase": null,
       "loopedShare": 0,
@@ -583,14 +603,17 @@
       "hasLoop": false,
       "severe": false
     },
+    "werUnnorm": 0.7400820793433652,
+    "cer": 0.43697829716193654,
+    "latencyMs": 78427,
     "clip": "afriswitchcare-yoruba",
     "languagePair": "Yoruba-English",
     "provider": "Qwen3-ASR-1.7B (Alibaba)"
   },
   {
-    "wer": 0.5075757575757576,
+    "wer": 0.5,
     "accuracy": 0.5378787878787878,
-    "transcriptLoss": 0.19696969696969696,
+    "transcriptLoss": 0.20454545454545456,
     "segmentLoss": {
       "total": 8,
       "lost": 2,
@@ -601,7 +624,7 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.045454545454545456,
+      "insertionRate": 0.03787878787878788,
       "maxRepeat": 1,
       "loopPhrase": null,
       "loopedShare": 0,
@@ -609,6 +632,9 @@
       "hasLoop": false,
       "severe": false
     },
+    "werUnnorm": 0.6015037593984962,
+    "cer": 0.28862478777589134,
+    "latencyMs": 14873,
     "clip": "afriswitchcare-hausa",
     "languagePair": "Hausa-English",
     "provider": "Sahara v2.5"
@@ -639,6 +665,9 @@
       "hasLoop": false,
       "severe": false
     },
+    "werUnnorm": 0.9473684210526315,
+    "cer": 0.6417657045840407,
+    "latencyMs": 11649,
     "clip": "afriswitchcare-hausa",
     "languagePair": "Hausa-English",
     "provider": "OpenAI Whisper large-v3"
@@ -669,13 +698,16 @@
       "hasLoop": false,
       "severe": false
     },
+    "werUnnorm": 0.9398496240601504,
+    "cer": 0.5314091680814941,
+    "latencyMs": 5243,
     "clip": "afriswitchcare-hausa",
     "languagePair": "Hausa-English",
     "provider": "OpenAI Whisper large-v3-turbo"
   },
   {
-    "wer": 0.9621212121212122,
-    "accuracy": 0.17424242424242425,
+    "wer": 0.9393939393939394,
+    "accuracy": 0.1590909090909091,
     "transcriptLoss": 0.022727272727272728,
     "segmentLoss": {
       "total": 8,
@@ -692,7 +724,7 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.13636363636363635,
+      "insertionRate": 0.09848484848484848,
       "maxRepeat": 1,
       "loopPhrase": null,
       "loopedShare": 0,
@@ -700,14 +732,17 @@
       "hasLoop": false,
       "severe": false
     },
+    "werUnnorm": 1.0676691729323309,
+    "cer": 0.5602716468590832,
+    "latencyMs": 5094,
     "clip": "afriswitchcare-hausa",
     "languagePair": "Hausa-English",
     "provider": "Qwen3-ASR-1.7B (Alibaba)"
   },
   {
-    "wer": 0.2567783094098884,
-    "accuracy": 0.7910685805422647,
-    "transcriptLoss": 0.08452950558213716,
+    "wer": 0.256,
+    "accuracy": 0.7936,
+    "transcriptLoss": 0.0848,
     "segmentLoss": {
       "total": 18,
       "lost": 1,
@@ -717,22 +752,25 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.04784688995215311,
+      "insertionRate": 0.0496,
       "maxRepeat": 4,
       "loopPhrase": "yes",
-      "loopedShare": 0.006622516556291391,
+      "loopedShare": 0.006633499170812604,
       "loopedTokens": 4,
       "hasLoop": true,
       "severe": false
     },
+    "werUnnorm": 0.3807266982622433,
+    "cer": 0.16847826086956522,
+    "latencyMs": 18168,
     "clip": "afriswitchcare-pidgin",
     "languagePair": "Nigerian Pidgin-English",
     "provider": "Sahara v2.5"
   },
   {
-    "wer": 0.7033492822966507,
-    "accuracy": 0.39074960127591707,
-    "transcriptLoss": 0.0685805422647528,
+    "wer": 0.6992,
+    "accuracy": 0.392,
+    "transcriptLoss": 0.0688,
     "segmentLoss": {
       "total": 18,
       "lost": 7,
@@ -748,22 +786,25 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.09409888357256778,
+      "insertionRate": 0.0912,
       "maxRepeat": 136,
       "loopPhrase": "mwenye",
-      "loopedShare": 0.2223950233281493,
+      "loopedShare": 0.2237871674491393,
       "loopedTokens": 143,
       "hasLoop": true,
       "severe": true
     },
+    "werUnnorm": 0.7977883096366508,
+    "cer": 0.6149665551839465,
+    "latencyMs": 46189,
     "clip": "afriswitchcare-pidgin",
     "languagePair": "Nigerian Pidgin-English",
     "provider": "OpenAI Whisper large-v3"
   },
   {
-    "wer": 0.48325358851674644,
-    "accuracy": 0.5422647527910686,
-    "transcriptLoss": 0.31100478468899523,
+    "wer": 0.4816,
+    "accuracy": 0.544,
+    "transcriptLoss": 0.312,
     "segmentLoss": {
       "total": 18,
       "lost": 2,
@@ -774,22 +815,25 @@
       ]
     },
     "hallucination": {
-      "insertionRate": 0.025518341307814992,
+      "insertionRate": 0.0256,
       "maxRepeat": 3,
       "loopPhrase": "yes",
-      "loopedShare": 0.006696428571428571,
+      "loopedShare": 0.006726457399103139,
       "loopedTokens": 3,
       "hasLoop": true,
       "severe": false
     },
+    "werUnnorm": 0.631911532385466,
+    "cer": 0.3729096989966555,
+    "latencyMs": 15396,
     "clip": "afriswitchcare-pidgin",
     "languagePair": "Nigerian Pidgin-English",
     "provider": "OpenAI Whisper large-v3-turbo"
   },
   {
-    "wer": 0.36363636363636365,
-    "accuracy": 0.7256778309409888,
-    "transcriptLoss": 0.046251993620414676,
+    "wer": 0.3344,
+    "accuracy": 0.728,
+    "transcriptLoss": 0.0544,
     "segmentLoss": {
       "total": 18,
       "lost": 0,
@@ -797,14 +841,17 @@
       "lostSegments": []
     },
     "hallucination": {
-      "insertionRate": 0.08931419457735247,
+      "insertionRate": 0.0624,
       "maxRepeat": 4,
       "loopPhrase": "yes",
-      "loopedShare": 0.010703363914373088,
+      "loopedShare": 0.011111111111111112,
       "loopedTokens": 7,
       "hasLoop": true,
       "severe": false
     },
+    "werUnnorm": 0.5876777251184834,
+    "cer": 0.19941471571906355,
+    "latencyMs": 4224,
     "clip": "afriswitchcare-pidgin",
     "languagePair": "Nigerian Pidgin-English",
     "provider": "Qwen3-ASR-1.7B (Alibaba)"

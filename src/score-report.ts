@@ -9,7 +9,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { scoreAll, type Scored } from "./metrics";
+import { scoreAll, align, wer as werOf, wordsUnnormalized, normalize, type Scored } from "./metrics";
 
 type ProviderResult = { provider: string; transcript: string; wer: number; cer: number; latencyMs: number; error?: string };
 type Entry = {
@@ -19,16 +19,40 @@ type Entry = {
 
 const ROOT = join(process.cwd(), "benchmark");
 const report: Entry[] = JSON.parse(readFileSync(join(ROOT, "report.json"), "utf8"));
+type ManifestEntry = { id: string; diagnosis?: string; durationSeconds?: number; codeMixIndex?: number };
+const manifest: ManifestEntry[] = JSON.parse(readFileSync(join(ROOT, "manifest.json"), "utf8"));
+const meta = new Map(manifest.map((m) => [m.id, m]));
+
+/** Character error rate over the same Intron-aligned normalisation as WER, so
+ *  the two are computed from one definition rather than two. */
+function cer(reference: string, hypothesis: string): number {
+  const r = normalize(reference).replace(/ /g, "").split("");
+  const h = normalize(hypothesis).replace(/ /g, "").split("");
+  if (r.length === 0) return h.length === 0 ? 0 : 1;
+  let prev = Array.from({ length: h.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= r.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= h.length; j++) {
+      cur[j] = r[i - 1] === h[j - 1] ? prev[j - 1] : 1 + Math.min(prev[j], cur[j - 1], prev[j - 1]);
+    }
+    prev = cur;
+  }
+  return prev[h.length] / r.length;
+}
+
+const mmss = (sec?: number) => (sec === undefined ? "" : `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, "0")}`);
 
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-type Row = Scored & { clip: string; languagePair: string; provider: string };
+type Row = Scored & { werUnnorm: number; cer: number; latencyMs: number; clip: string; languagePair: string; provider: string };
 const rows: Row[] = [];
 
 for (const item of report) {
   for (const r of item.results) {
     const s = scoreAll(item.entry.reference, r.transcript ?? "");
-    rows.push({ ...s, clip: item.entry.id, languagePair: item.entry.languagePair, provider: r.provider });
+    const werUnnorm = werOf(align(item.entry.reference, r.transcript ?? "", wordsUnnormalized));
+    const c = cer(item.entry.reference, r.transcript ?? "");
+    rows.push({ ...s, werUnnorm, cer: c, latencyMs: r.latencyMs, clip: item.entry.id, languagePair: item.entry.languagePair, provider: r.provider });
   }
 }
 
@@ -49,7 +73,8 @@ lines.push("### Definitions");
 lines.push("");
 lines.push("| Metric | Definition |");
 lines.push("|---|---|");
-lines.push("| WER | (substitutions + deletions + insertions) / reference words |");
+lines.push("| WER | (substitutions + deletions + insertions) / reference words, over text normalised with Intron's own pipeline: inaudible tags stripped, filler words dropped, lowercased, punctuation removed |");
+lines.push("| WER (unnormalised) | the same measure with case and punctuation intact, published alongside the normalised figure exactly as Intron do, so a reader can see how much of a result rests on the normalisation choice |");
 lines.push("| Accuracy | correct reference words / reference words. Reported because WER exceeds 100% once a model inserts more than it gets right, which reads as nonsense on its own |");
 lines.push("| Transcript loss | deletions / reference words. Content the model never produced at all, separated from content it got wrong |");
 lines.push("| Segment loss | share of reference sentences where under 20% of the words survived. A dropped utterance, not a garbled one |");
@@ -57,13 +82,13 @@ lines.push("| Hallucination | insertions / reference words, plus a repetition-lo
 lines.push("");
 lines.push("### Averages across the four clips");
 lines.push("");
-lines.push("| Model | WER | Accuracy | Transcript loss | Segment loss | Hallucination (insertion rate) | Runaway loops |");
-lines.push("|---|---|---|---|---|---|---|");
+lines.push("| Model | WER | WER (unnormalised) | Accuracy | Transcript loss | Segment loss | Hallucination (insertion rate) | Runaway loops |");
+lines.push("|---|---|---|---|---|---|---|---|");
 for (const p of providers) {
   const rs = rows.filter((r) => r.provider === p);
   const loops = rs.filter((r) => r.hallucination.severe).length;
   lines.push(
-    `| ${p} | ${pct(mean(rs.map((r) => r.wer)))} | ${pct(mean(rs.map((r) => r.accuracy)))} | ` +
+    `| ${p} | ${pct(mean(rs.map((r) => r.wer)))} | ${pct(mean(rs.map((r) => r.werUnnorm)))} | ${pct(mean(rs.map((r) => r.accuracy)))} | ` +
       `${pct(mean(rs.map((r) => r.transcriptLoss)))} | ${pct(mean(rs.map((r) => r.segmentLoss.rate)))} | ` +
       `${pct(mean(rs.map((r) => r.hallucination.insertionRate)))} | ${loops} of ${rs.length} |`,
   );
@@ -102,9 +127,44 @@ const startMark = "## Extended metrics";
 const endMark = "## Strengths and weaknesses";
 const startAt = reportText.indexOf(startMark);
 const endAt = reportText.indexOf(endMark);
-if (startAt >= 0 && endAt > startAt) {
-  const eol = reportText.includes("\r\n") ? "\r\n" : "\n";
-  const rebuilt = reportText.slice(0, startAt) + block.split("\n").join(eol) + eol + eol + reportText.slice(endAt);
+
+// Results and Averages are derived too, so a changed metric definition cannot
+// leave the headline table disagreeing with the section below it.
+const R: string[] = [];
+R.push("## Results");
+R.push("");
+R.push(`| Clip | Language pair | Diagnosis (simulated) | Duration | Code-mix index | ${providers.map((n) => `${n} WER`).join(" | ")} |`);
+R.push(`|---|---|---|---|---|${providers.map(() => "---").join("|")}|`);
+for (const item of report) {
+  const m = meta.get(item.entry.id);
+  const cells = providers.map((p) => pct(rows.find((r) => r.clip === item.entry.id && r.provider === p)?.wer ?? 1));
+  R.push(`| ${item.entry.id} | ${item.entry.languagePair} | ${m?.diagnosis ?? ""} | ${mmss(m?.durationSeconds)} | ${(m?.codeMixIndex ?? 0).toFixed(1)} | ${cells.join(" | ")} |`);
+}
+R.push("");
+R.push("## Averages");
+R.push("");
+for (const p of providers) {
+  const rs = rows.filter((r) => r.provider === p);
+  R.push(`- **${p}**: average WER ${pct(mean(rs.map((r) => r.wer)))}, average CER ${pct(mean(rs.map((r) => r.cer)))}, average latency ${Math.round(mean(rs.map((r) => r.latencyMs)))}ms`);
+}
+R.push("");
+{
+  const rt = readFileSync(reportPath, "utf8");
+  const a = rt.indexOf("## Results");
+  const b = rt.indexOf("## Extended metrics");
+  if (a >= 0 && b > a) {
+    const eol2 = rt.includes("\n") ? "\n" : "\n";
+    writeFileSync(reportPath, rt.slice(0, a) + R.join("\n").split("\n").join(eol2) + eol2 + rt.slice(b), "utf8");
+    console.error("regenerated Results and Averages in report.md");
+  }
+}
+
+const reportText2 = readFileSync(reportPath, "utf8");
+const startAt2 = reportText2.indexOf(startMark);
+const endAt2 = reportText2.indexOf(endMark);
+if (startAt2 >= 0 && endAt2 > startAt2) {
+  const eol = reportText2.includes("\r\n") ? "\r\n" : "\n";
+  const rebuilt = reportText2.slice(0, startAt2) + block.split("\n").join(eol) + eol + eol + reportText2.slice(endAt2);
   writeFileSync(reportPath, rebuilt, "utf8");
   console.error("refreshed the Extended metrics section of report.md");
 }
