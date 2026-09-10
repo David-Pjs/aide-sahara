@@ -1,32 +1,58 @@
-# Aide: voice-native work and pay for blind Nigerian workers
+# Aide: a voice-native agent for blind and low-vision workers
 
 **Category:** Other High-Impact Use Cases (accessibility)
 **Live:** [aide-ng.vercel.app](https://aide-ng.vercel.app)
 **Benchmark:** [`benchmark/report.md`](benchmark/report.md) (speech recognition) and [`benchmark/tts/report.md`](benchmark/tts/report.md) (speech synthesis)
 
-## The problem
+You talk to Aide. It finds you work, proves your skill through a spoken assessment, gets you hired, and tells you when you have been paid. There is no screen to read, no form to fill, and no code to squint at. It listens in Nigerian Pidgin, Yoruba, Igbo and Hausa mixed into English, the way people actually speak, because the alternative is a recogniser that invents words a blind user cannot catch.
 
-The online economy was built for people who can see it. Sign-up forms, dashboards, uploaded CVs, one-time codes on a screen. Every one of them is a wall if you are blind.
+## Why we built this
 
-The usual answer is a screen reader bolted onto an app designed for sighted users. It is slow, it is brittle, and it is most brittle exactly where it matters most, which is money. A screen reader can read a balance aloud. It cannot tell you whether that balance is real.
+I am an albino. I have low vision, and at school I could not see the board. I sat as close to the front as they would let me and still copied most lessons from someone else's notebook. The thing I remember is not the difficulty. It is the question underneath it, which was what this would mean for me later, when the classroom became a workplace and nobody was obliged to help.
 
-There is a second wall underneath the first, and it is the one this challenge is about. **A blind Nigerian worker does not speak clean English.** They speak Pidgin, Yoruba, Igbo or Hausa mixed into English inside a single sentence. Every general-purpose speech recogniser fails at precisely the switch point, and our benchmark shows it fails in the worst possible way: it does not go quiet, it invents fluent text. Whisper large-v3 repeated one nonsense word **136 times** on a Nigerian Pidgin consultation, filling 22.4% of its transcript with content nobody said.
+That question has an answer, and it is worse than I expected when I went looking for the numbers.
 
-For a sighted user that is a bad transcript. For a blind user driving an agent by voice, it is an agent acting on words that were never spoken.
+Aide is built by the people it is for. I am the low-vision half of that; Dillon is the engineer alongside me. Not a product designed for a population studied from the outside.
 
 ## Who this is for
 
-Blind and severely visually impaired working-age Nigerians who can do the work (transcription, support, translation, data entry) and are locked out by the interface rather than the task.
+Blind and low-vision working-age Nigerians who can do the work and are locked out by the interface rather than the task.
 
-The scale is documented rather than estimated. The **Nigeria National Blindness and Visual Impairment Survey**, the largest eye survey conducted in Nigeria (15,375 participants aged 40 and over), found a blindness prevalence of **4.2%** (95% CI 3.8 to 4.6) using presenting visual acuity, with a further **1.5%** severely visually impaired. Extrapolated nationally, that is roughly **1.13 million blind Nigerians aged 40 and above**, and **84% of that blindness is avoidable**, meaning most of these people lost their sight to something treatable and were working before they did.
+That distinction is the whole argument, and it is not ours. It is what the research says:
 
-A companion paper from the same survey, *Poverty and Blindness in Nigeria*, establishes what this project assumes: the relationship runs in both directions. Losing your sight in Nigeria costs you your income.
+| | |
+|---|---|
+| Unemployed among blind and low-vision Nigerians | **more than 86%** |
+| Regional studies (Enugu State) | **72% to 95%** |
+| University-educated blind and low-vision graduates | roughly **8 times** more likely to be unemployed than sighted peers |
+| Formal labour force participation | around **8%**, against 64% for sighted citizens |
+
+The papers reporting these figures do not attribute them to incapacity. They attribute them to **assistive technology gaps, policy failure, and employers assuming blindness means an inability to work**. Sources: Adigun and Mngomezulu, *Exploring the lived experiences of (un)employment among visually impaired persons in Nigeria*, British Journal of Visual Impairment, 2023, reporting the 86% figure from Balarabe et al. 2014 and Eneh 2011; and the Enugu State assistive-technology study in the African Journal of Social and Behavioural Sciences.
+
+An 8-times graduate disadvantage is not a skills problem. It is a **tooling** problem, and tooling is something you can build.
+
+On population size, which the challenge asks about directly: the **Nigeria National Blindness and Visual Impairment Survey**, the largest eye survey conducted in Nigeria (15,375 participants aged 40 and over), found blindness prevalence of **4.2%** (95% CI 3.8 to 4.6) on presenting visual acuity plus a further **1.5%** severely visually impaired. Extrapolated nationally that is roughly **1.13 million blind** and about **4.25 million blind or visually impaired** Nigerian adults aged 40 and over, with **84% of the blindness avoidable**, meaning most of these people lost their sight to something treatable and were earning before they did.
+
+Two honest notes on that figure. It measures adults 40 and over, so it is a floor for a working-age product rather than a precise count of our users. And it counts Nigeria alone, while Sahara covers 12+ language pairs across the continent, so the addressable population is larger than the number we are willing to claim.
+
+A companion paper from the same survey, *Poverty and Blindness in Nigeria*, establishes the loop this product tries to break: losing your sight in Nigeria costs you your income, and losing your income makes the sight loss harder to treat.
 
 Sources: Kyari F et al., *Prevalence of Blindness and Visual Impairment in Nigeria*, IOVS 2009; Rabiu MM et al., *Review of the publications of the Nigeria national blindness survey*, 2012 ([PMID 22684129](https://pubmed.ncbi.nlm.nih.gov/22684129/)).
 
+## Why voice, and why code-switching specifically
+
+Screen readers exist. They are not the answer here, for two reasons we hit directly.
+
+The first is that a screen reader narrates an interface built for eyes. It reads what is on screen; it cannot restructure a flow that assumes you can scan a page, compare two rows, or read a code before it expires. It is a translation layer over a fundamentally visual product.
+
+The second is the one this challenge is about. **A blind Nigerian worker does not speak clean English.** They speak Pidgin, Yoruba, Igbo or Hausa mixed into English inside a single sentence, and every general-purpose recogniser fails at exactly the switch point. Our benchmark shows it fails in the worst available way: it does not fall silent, it invents fluent text. Whisper large-v3 repeated one nonsense word **136 times** on a Nigerian Pidgin consultation, filling 22.4% of its transcript with content nobody said.
+
+For a sighted user that is a bad transcript they can see and correct. For a blind user driving an agent by voice, it is an agent acting on words that were never spoken. That is why speech quality here is a safety property, not a feature.
 ## The solution
 
-Aide is a work and pay platform you operate entirely by talking. The conversation is the product; the screen is an optional mirror for people who can use it.
+Aide is a voice-native agent. The conversation is the product; the screen is an optional mirror for people who can use it.
+
+It carries a job end to end, including the part most accessible tools stop short of. Getting paid is where an inaccessible interface stops being an inconvenience and starts being the reason the work was not worth taking, so Aide does that part too. The payments integration is evidence that this is a real product rather than a demo, not the pitch.
 
 A worker asks Aide to find transcription jobs over a certain amount. Aide filters the board and reads the matches back, applies on their word, runs a spoken skill assessment, and when the employer pays, announces the money the moment it clears. Withdrawal is confirmed by a spoken security phrase rather than a code read off a screen.
 

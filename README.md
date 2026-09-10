@@ -1,6 +1,6 @@
 # Aide
 
-**A voice-native work-and-pay platform for blind and visually impaired workers in Nigeria.**
+**A voice-native agent for blind and low-vision workers, built by one.**
 
 
 A worker talks; Aide does the rest, finds jobs, runs a spoken skill assessment, opens a
