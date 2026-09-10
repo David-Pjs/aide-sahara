@@ -99,6 +99,70 @@ from Convex's `_id`, so cookies, wallet references, and Monnify customer records
 4. If it touches money, add a read-back/confirmation rule to `lib/agent/system.ts`.
 5. If the UI should reflect it, add or extend a screen, and keep it operable by voice.
 
+## The speech pipeline
+
+```
+                      microphone (always open, interruptible)
+                               |
+                               v
+        +----------------------------------------------+
+        |  app/aide/sahara-recognizer.ts               |
+        |  drop-in for browser SpeechRecognition        |
+        |  own VAD: RMS over Web Audio AnalyserNode     |
+        +----------------------------------------------+
+                               |  complete utterance
+                               v
+        POST /api/stt/sahara ---> Sahara v2.5 ASR (Intron)
+                               |  transcript
+                               v
+        POST /api/agent  ---> model + 34 tools, maxSteps 6
+                               |
+              +----------------+----------------+
+              |                |                |
+              v                v                v
+          Convex           Monnify         navigation
+       (state, jobs,      (accounts,       (screen moves
+        messages)          payments)        mid-reply)
+              |
+              v  sentence by sentence, as the model streams
+        GET /api/tts ---> edge-tts ---> speaker
+```
+
+Two details in that diagram are load-bearing.
+
+**The recogniser is a drop-in.** `sahara-recognizer.ts` implements the same surface `voice-engine.ts` already spoke to (`onaudiostart`, `onresult`, `onend`, `start()`, `abort()`), so swapping Chrome's English-only recogniser for Sahara required no change to the echo defence, idle timers or restart backoff. `STT_PROVIDER` selects between them.
+
+**Speech is queued per sentence, not per reply.** The agent streams newline-delimited JSON, and each finished sentence is spoken while the rest is still generating. Waiting for the whole reply added seconds of silence to every turn, which a user with no screen cannot distinguish from a dead app.
+
+## Latency
+
+Measured, not estimated.
+
+| Stage | Time |
+|---|---|
+| Agent first token | ~950ms |
+| Agent full turn (stream + tools + snapshot) | ~1.2s |
+| Speech synthesis, edge-tts (in production) | ~3.0s per line |
+| Speech synthesis, Sahara TTS (benchmarked, not wired in) | ~10.2s warm, 64.3s first call |
+| Sahara ASR, multi-minute conversation | ~17.4s |
+
+The TTS row is why `app/api/tts/sahara/route.ts` exists but is not connected. See [`benchmark/tts/report.md`](benchmark/tts/report.md).
+
+Every route that talks to the bank sets `maxDuration = 30`, because provisioning a reserved account and then reading its transactions is several sequential calls and the platform default was short enough to kill the request before our own 8s per-call timeout could report why.
+
+## Security
+
+| Concern | Mechanism | Where |
+|---|---|---|
+| Webhook forgery | SHA-512 HMAC over the raw body, then the payment is re-fetched from the provider before anything is spoken | `lib/monnify.ts:313` |
+| Session forgery | HMAC SHA-256 signed session cookie | `lib/session.ts` |
+| Password and security phrase storage | salted scrypt, constant-time comparison | `lib/auth.ts` |
+| Identity spoofing | the signed-in user is taken from the session, never from anything the client sends | `lib/session.ts`, `app/api/*` |
+| Assessment cheating | graded server-side; the answer key never leaves the server | `lib/grading.ts` |
+| Wrong-destination payout | name enquiry against the bank, and the verified account name is read back before the spoken confirmation | `lib/payments.ts` |
+| Inventing money | balances are confirmed inbound minus withdrawals; an unverifiable balance is null, never zero | `lib/store/payments.ts` |
+
+Secrets live in the environment and never in the repository. `.env` is gitignored; `.env.example` documents the variable names only.
 ## Known limits
 
 - Single seeded demo worker; applications belong to that worker.

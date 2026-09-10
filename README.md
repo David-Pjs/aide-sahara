@@ -11,6 +11,22 @@ required.
 
 [**Live demo →** aide-ng.vercel.app](https://aide-ng.vercel.app) · Open in Chrome and just talk.
 
+## Sahara CodeSwitch Africa Challenge submission
+
+| Document | What it covers |
+|---|---|
+| [`SOLUTION.md`](SOLUTION.md) | Problem, users, solution, and the key technical decisions |
+| [`benchmark/report.md`](benchmark/report.md) | Speech recognition: 4 models, 3 vendors, 5 metrics, full transcripts |
+| [`benchmark/tts/report.md`](benchmark/tts/report.md) | Speech synthesis: 3 systems, round-trip intelligibility |
+| [`ETHICS.md`](ETHICS.md) | Consent, privacy, bias, dignity, and where we are still exposed |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Speech pipeline, latency figures, security mechanisms |
+
+Reproduce the benchmark scores from the committed transcripts, with no API calls and no credit spent:
+
+```bash
+npx tsx src/score-report.ts
+```
+
 ---
 
 ## 1. Project Overview
