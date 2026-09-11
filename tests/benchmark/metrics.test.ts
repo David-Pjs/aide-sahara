@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { align, scoreAll, hallucination, segmentLoss, transcriptLoss, wer, accuracy } from "../../src/metrics";
+import { align, scoreAll, hallucination, segmentLoss, transcriptLoss, wer, accuracy, wordsToneless } from "../../src/metrics";
 
 // These five metrics decide the benchmark section of the submission, so they
 // have to be right, and they have to be right in the specific ways the failures
@@ -119,6 +119,27 @@ describe("hallucination", () => {
     const h = hallucination(align(reference, hypothesis), hypothesis);
     expect(h.insertionRate).toBeGreaterThan(1);
     expect(h.hasLoop).toBe(false);
+  });
+});
+
+describe("tone-insensitive WER", () => {
+  it("matches standard Yoruba orthography against an untoned reference", () => {
+    expect(wordsToneless("Èmi ò rí tó ba nínú")).toEqual(["emi", "o", "ri", "to", "ba", "ninu"]);
+    expect(wer(align("Emi o ri", "Èmi ò rí", wordsToneless))).toBe(0);
+  });
+
+  it("still counts a genuine spelling difference once the tone is gone", () => {
+    expect(wordsToneless("nǹkan")).toEqual(["nnkan"]);
+    expect(wer(align("nkan", "nǹkan", wordsToneless))).toBe(1);
+  });
+
+  it("strips Igbo under-dots but still counts real word errors", () => {
+    expect(wordsToneless("ụmụ mmadụ")).toEqual(["umu", "mmadu"]);
+    expect(wer(align("umu mmadu he me", "ụmụ mmadụ ga-eme", wordsToneless))).toBeGreaterThan(0);
+  });
+
+  it("leaves the strict tokeniser unchanged", () => {
+    expect(wer(align("Emi o ri", "Èmi ò rí"))).toBe(1);
   });
 });
 

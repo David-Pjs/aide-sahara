@@ -118,6 +118,8 @@ For the people who do use the screen, and for the low-vision users who are not b
 
 Four models from three vendors on four real code-switched clips from Intron's own AfriSwitchCare dataset. Full method, per-clip results and limitations in [`benchmark/report.md`](benchmark/report.md).
 
+A second set, 20 short natural clips from Intron's AfriSwitch, is closer to what Aide actually hears. Scored across Sahara and two Whisper builds, Sahara averages 54.7% WER against 77.9% and 79.7%. The sharper number is inside the switch itself: on the English spans all three models keep 58% to 65% of words, and on the Nigerian-language words around them Sahara keeps 56.7% while Whisper keeps 15.1% and 13.1%. Sahara is not ahead everywhere; it trails Whisper large-v3 on Yoruba. Details in [`benchmark/AFRISWITCH.md`](benchmark/AFRISWITCH.md).
+
 | Model | WER | Accuracy | Transcript loss | Segment loss | Insertion rate | Runaway loops |
 |---|---|---|---|---|---|---|
 | Sahara v2.5 | **46.1%** | **56.5%** | 20.6% | **25.9%** | 2.7% | **0 of 4** |

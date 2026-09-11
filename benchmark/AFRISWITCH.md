@@ -1,8 +1,49 @@
-# AfriSwitch: staged clips, and what the data turned up
+# AfriSwitch: 20 short code-switched clips, scored
 
-[Intron AfriSwitch](https://huggingface.co/datasets/intronhealth/AfriSwitch) is the closer match to what Aide actually hears. Its clips are short natural utterances from broadcast and conversation, where AfriSwitchCare is six-minute simulated clinical consultations. Access was granted on 10 September 2026, and this set is staged for scoring.
+[Intron AfriSwitch](https://huggingface.co/datasets/intronhealth/AfriSwitch) is the closer match to what Aide actually hears. Its clips are short natural utterances from broadcast and conversation, where AfriSwitchCare is six-minute simulated clinical consultations. Access was granted on 10 September 2026.
 
-**Status: extracted and verified, not yet scored.** Both the Sahara API credit and the Hugging Face inference credit were exhausted at the time of staging. No result from these clips appears in any table in `report.md` until every model has scored every clip, which the fairness guard in `src/score-report.ts` enforces.
+**Status: scored by three models on all 20 clips.** Results are kept in their own files, [`afriswitch_metrics.md`](afriswitch_metrics.md) and `afriswitch_report.json`, and never averaged into `report.md`: ten-second utterances and six-minute consultations are different tasks. Reproduce every figure below with no API calls:
+
+```bash
+npx tsx src/score-report.ts --set afriswitch
+```
+
+## Results
+
+| Model | WER | Accuracy | Segment loss | English words kept | Nigerian-language words kept | Median latency |
+|---|---|---|---|---|---|---|
+| Sahara v2.5 | **54.7%** | **52.7%** | **18.3%** | **65.0%** (91/140) | **56.7%** (143/252) | 3.97 s |
+| OpenAI Whisper large-v3 (Groq) | 77.9% | 27.7% | 41.7% | 57.9% (81/140) | 15.1% (38/252) | 0.61 s |
+| OpenAI Whisper large-v3-turbo (Groq) | 79.7% | 28.2% | 38.3% | 60.7% (85/140) | 13.1% (33/252) | 0.43 s |
+
+| Language pair | Sahara v2.5 | Whisper large-v3 (Groq) | Whisper large-v3-turbo (Groq) |
+|---|---|---|---|
+| Hausa-English | **21.3%** | 91.3% | 97.5% |
+| Igbo-English | **52.2%** (46.2% tone marks ignored) | 69.0% | 72.6% |
+| Nigerian Pidgin-English | **56.2%** | 72.5% | 62.2% |
+| Yoruba-English | 89.1% (73.6% tone marks ignored) | **78.9%** | 86.3% |
+
+**The code-switching result is the span table, not the average.** Every clip's reference marks its English spans with `[[EN]]` tags, so each reference word is labelled English or not and checked against the same alignment WER uses. On the English spans the three models are close (58% to 65%). On the Nigerian-language words around them Whisper keeps about one in seven, and Sahara keeps more than half. A general model hears the English inside a code-switched sentence and loses the language it was switched from.
+
+**Where Sahara loses.** On Yoruba it is worse than Whisper large-v3 under strict WER. Part of that is spelling: the references write Yoruba without tone marks ("Emi o ri") and Sahara writes the standard orthography ("Èmi ò rí"), which strict WER counts as wrong. Ignoring tone marks for every model brings Sahara to 73.6%, narrowly ahead of Whisper large-v3's 78.9%, so the rest of the gap is real: on yoruba-5 Sahara returned two words for a fourteen-word reference. It is also six to nine times slower than Groq's Whisper by median latency on these clips.
+
+### How the comparison was run, and what limits it
+
+- **Same clips, same references, same code.** All three models scored all 20 clips; the fairness guard in `src/score-report.ts` excludes any clip a model has not scored.
+- **Whisper ran on Groq.** Hugging Face inference credit, which ran the original Whisper and Qwen3-ASR comparisons, was exhausted. Groq serves the same open OpenAI Whisper weights; the model names say "(Groq)" so no table passes one host's decode off as another's.
+- **Whisper ran raw**: no prompt, no language, temperature 0. Sahara received the per-clip language hint its API accepts. Whisper accepts a language code for Yoruba and Hausa but has none for Igbo, Nigerian Pidgin or mixed speech, so there was no equivalent hint to give it on every clip. The difference is disclosed rather than hidden.
+- **Qwen3-ASR is absent from this set** for the same credit reason. It remains in the four-conversation comparison in `report.md`.
+- **Five clips per language.** Enough to show a pattern, not to state a confident per-language WER.
+- **The references contain errors** (see Finding 3). A wrong reference costs every model the same words, so comparisons between models hold, but absolute WER is inflated for all three.
+
+## Finding 5: Whisper translates or changes script instead of transcribing
+
+Two failure modes showed up that WER alone understates:
+
+- **Translation.** Whisper large-v3-turbo returned English for Hausa speech. For hausa-3, a 32-word Hausa reference, it returned "We have to do this." For hausa-1 it returned an English sentence, twice, that has no counterpart in the reference. Fluent, confident, and not what was said, which is the most dangerous output for a user who cannot see a screen to check it.
+- **Wrong script.** 6 of the 40 Whisper transcripts contain non-Latin script, though every language in this set is written in Latin script. Whisper large-v3 wrote pidgin-4 and part of yoruba-2 in Bengali, igbo-4 in Arabic, dropped an Oriya letter into igbo-3 and a Gurmukhi mark into yoruba-1; large-v3-turbo wrote part of hausa-2 in Cyrillic.
+
+Sahara wrote no non-Latin script on any of its 20 transcripts (checked by Unicode script property across every output), and none of the Sahara transcripts we reviewed replaced speech with a translation.
 
 ## What is staged
 

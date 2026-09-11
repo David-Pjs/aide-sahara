@@ -6,10 +6,16 @@
 // and anyone can reproduce them from the committed report.json alone.
 //
 //   npx tsx src/score-report.ts
+//   npx tsx src/score-report.ts --set afriswitch
+//
+// --set afriswitch scores the short AfriSwitch clips from
+// afriswitch_report.json into afriswitch_metrics.md and afriswitch_metrics.json,
+// adds a per-language table, and leaves report.md alone: that report is about
+// the long clinical conversations and must not absorb a different task.
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { scoreAll, align, wer as werOf, wordsUnnormalized, normalize, type Scored } from "./metrics";
+import { scoreAll, align, wer as werOf, wordsUnnormalized, wordsToneless, normalize, type Scored } from "./metrics";
 
 type ProviderResult = { provider: string; transcript: string; wer: number; cer: number; latencyMs: number; error?: string };
 type Entry = {
@@ -18,9 +24,17 @@ type Entry = {
 };
 
 const ROOT = join(process.cwd(), "benchmark");
-const report: Entry[] = JSON.parse(readFileSync(join(ROOT, "report.json"), "utf8"));
+const SET = process.argv.includes("--set") ? process.argv[process.argv.indexOf("--set") + 1] : "main";
+const IS_AFRISWITCH = SET === "afriswitch";
+const PREFIX = IS_AFRISWITCH ? "afriswitch_" : "";
+const reportFile = join(ROOT, `${PREFIX}report.json`);
+if (!existsSync(reportFile)) {
+  console.error(`benchmark/${PREFIX}report.json not found. Run src/add-provider.ts${IS_AFRISWITCH ? " with --set afriswitch" : ""} first.`);
+  process.exit(1);
+}
+const report: Entry[] = JSON.parse(readFileSync(reportFile, "utf8"));
 type ManifestEntry = { id: string; diagnosis?: string; durationSeconds?: number; codeMixIndex?: number };
-const manifest: ManifestEntry[] = JSON.parse(readFileSync(join(ROOT, "manifest.json"), "utf8"));
+const manifest: ManifestEntry[] = JSON.parse(readFileSync(join(ROOT, `${PREFIX}manifest.json`), "utf8"));
 const meta = new Map(manifest.map((m) => [m.id, m]));
 
 /** Character error rate over the same Intron-aligned normalisation as WER, so
@@ -44,15 +58,16 @@ const mmss = (sec?: number) => (sec === undefined ? "" : `${Math.floor(sec / 60)
 
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-type Row = Scored & { werUnnorm: number; cer: number; latencyMs: number; clip: string; languagePair: string; provider: string };
+type Row = Scored & { werUnnorm: number; werToneless: number; cer: number; latencyMs: number; clip: string; languagePair: string; provider: string };
 const rows: Row[] = [];
 
 for (const item of report) {
   for (const r of item.results) {
     const s = scoreAll(item.entry.reference, r.transcript ?? "");
     const werUnnorm = werOf(align(item.entry.reference, r.transcript ?? "", wordsUnnormalized));
+    const werToneless = werOf(align(item.entry.reference, r.transcript ?? "", wordsToneless));
     const c = cer(item.entry.reference, r.transcript ?? "");
-    rows.push({ ...s, werUnnorm, cer: c, latencyMs: r.latencyMs, clip: item.entry.id, languagePair: item.entry.languagePair, provider: r.provider });
+    rows.push({ ...s, werUnnorm, werToneless, cer: c, latencyMs: r.latencyMs, clip: item.entry.id, languagePair: item.entry.languagePair, provider: r.provider });
   }
 }
 
@@ -107,6 +122,83 @@ for (const p of providers) {
   );
 }
 lines.push("");
+if (IS_AFRISWITCH) {
+  // Twenty clips spread over several languages: a single average hides which
+  // language a model fails on, which is the question a reader actually has.
+  const pairs = [...new Set(complete.map((i) => i.entry.languagePair))];
+  lines.push("### By language pair");
+  lines.push("");
+  lines.push(
+    "Each cell is strict WER, then in brackets WER with tone marks and under-dots ignored. " +
+      "The AfriSwitch references spell Yoruba and Igbo without tone marks, so a model writing standard orthography " +
+      "(\"Èmi ò rí\" for the reference \"Emi o ri\") loses words it heard correctly under the strict figure. " +
+      "Both are computed for every model by the same code.",
+  );
+  lines.push("");
+  lines.push(`| Language pair | Clips | ${providers.map((p) => `${p} WER (tone marks ignored)`).join(" | ")} |`);
+  lines.push(`|---|---|${providers.map(() => "---").join("|")}|`);
+  const cell = (rs: Row[]) => `${pct(mean(rs.map((r) => r.wer)))} (${pct(mean(rs.map((r) => r.werToneless)))})`;
+  for (const pair of pairs) {
+    const ids = new Set(complete.filter((i) => i.entry.languagePair === pair).map((i) => i.entry.id));
+    lines.push(`| ${pair} | ${ids.size} | ${providers.map((p) => cell(scored.filter((r) => r.provider === p && ids.has(r.clip)))).join(" | ")} |`);
+  }
+  lines.push(`| All | ${complete.length} | ${providers.map((p) => cell(scored.filter((r) => r.provider === p))).join(" | ")} |`);
+  lines.push("");
+
+  // The switch itself. referenceTagged marks English spans as [[EN]]...[[/EN]],
+  // so each reference word can be labelled English or not, then checked against
+  // the same alignment WER uses. A model that keeps the Yoruba and drops the
+  // English, or the reverse, is failing at code-switching specifically.
+  const spanTokens = (tagged: string) => {
+    const out: { word: string; english: boolean }[] = [];
+    let english = false;
+    for (const raw of tagged.replace(/\[\[EN\]\]/g, " <EN> ").replace(/\[\[\/EN\]\]/g, " </EN> ").split(/\s+/)) {
+      if (raw === "<EN>") english = true;
+      else if (raw === "</EN>") english = false;
+      else {
+        const word = normalize(raw);
+        if (word) out.push({ word, english });
+      }
+    }
+    return out;
+  };
+  const spanUsable = complete.filter((i) => {
+    const tagged = (i.entry as { referenceTagged?: string }).referenceTagged;
+    return tagged && spanTokens(tagged).map((t) => t.word).join(" ") === normalize(i.entry.reference);
+  });
+  const recall = (p: string, english: boolean) => {
+    let kept = 0;
+    let total = 0;
+    for (const item of spanUsable) {
+      const labels = spanTokens((item.entry as { referenceTagged?: string }).referenceTagged!);
+      const r = item.results.find((x) => x.provider === p);
+      if (!r) continue;
+      const { refOps } = align(item.entry.reference, r.transcript ?? "");
+      labels.forEach((t, k) => {
+        if (t.english !== english) return;
+        total++;
+        if (refOps[k] === "correct") kept++;
+      });
+    }
+    return { kept, total };
+  };
+  lines.push("### Code-switched spans");
+  lines.push("");
+  lines.push(
+    `Share of reference words transcribed correctly, split by the dataset's own [[EN]] tags into the English spans and the rest. ` +
+      `Computed on the ${spanUsable.length} clips whose tagged reference matches the scored reference word for word` +
+      `${spanUsable.length < complete.length ? ` (the other ${complete.length - spanUsable.length} had annotation removed from the plain reference, so the labels would not line up)` : ""}.`,
+  );
+  lines.push("");
+  lines.push("| Model | English words kept | Nigerian-language words kept |");
+  lines.push("|---|---|---|");
+  for (const p of providers) {
+    const en = recall(p, true);
+    const na = recall(p, false);
+    lines.push(`| ${p} | ${pct(en.total ? en.kept / en.total : 0)} (${en.kept}/${en.total}) | ${pct(na.total ? na.kept / na.total : 0)} (${na.kept}/${na.total}) |`);
+  }
+  lines.push("");
+}
 lines.push("### Per clip");
 lines.push("");
 for (const item of complete) {
@@ -129,8 +221,13 @@ for (const item of complete) {
 }
 
 const block = lines.join("\n");
-writeFileSync(join(ROOT, "metrics.md"), block, "utf8");
-writeFileSync(join(ROOT, "metrics.json"), JSON.stringify(rows, null, 2), "utf8");
+writeFileSync(join(ROOT, `${PREFIX}metrics.md`), block, "utf8");
+writeFileSync(join(ROOT, `${PREFIX}metrics.json`), JSON.stringify(rows, null, 2), "utf8");
+if (IS_AFRISWITCH) {
+  console.log(block);
+  console.error(`\nwrote benchmark/${PREFIX}metrics.md and benchmark/${PREFIX}metrics.json`);
+  process.exit(0);
+}
 // Keep report.md's Extended metrics section in step with the data. Without
 // this the report holds a stale snapshot the moment a provider is added, and a
 // report that disagrees with its own JSON is worse than no report.

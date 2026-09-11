@@ -56,6 +56,16 @@ export function words(text: string): string[] {
   return n ? n.split(" ") : [];
 }
 
+/** Normalised tokens with tone marks and under-dots removed ("Èmi ò rí"
+ *  becomes "emi o ri"). AfriSwitch references write Yoruba and Igbo in
+ *  everyday untoned spelling, so a model that writes the standard orthography
+ *  is otherwise scored as wrong on words it heard correctly. Reported beside
+ *  the strict WER, never instead of it. */
+export function wordsToneless(text: string): string[] {
+  const n = normalize(text.normalize("NFD").replace(/\p{M}/gu, ""));
+  return n ? n.split(" ") : [];
+}
+
 export type Op = "correct" | "substitution" | "deletion" | "insertion";
 
 export type Alignment = {

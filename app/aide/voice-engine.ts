@@ -8,12 +8,34 @@ import { SaharaRecognizer, saharaSttSupported } from "./sahara-recognizer";
 
 type SR = any; // Web Speech API isn't in lib.dom
 
-// Which recognizer backs the mic. "sahara" swaps in Sahara's code-switching
-// STT (see ./sahara-recognizer.ts) behind the exact same interface, so the
-// rest of this engine, echo defense, idle/mute timers, restart backoff,
-// runs completely unchanged. "browser" (default) keeps the original
-// English-only Web Speech recognizer for local dev without a Sahara key.
-const STT_PROVIDER = process.env.NEXT_PUBLIC_STT_PROVIDER || "browser";
+// Which recognizer backs the mic. Both sit behind the same interface, so the
+// rest of this engine (echo defense, idle and mute timers, restart backoff)
+// runs unchanged whichever is live.
+//
+// "server" records each utterance in the browser and posts it to /api/stt,
+// which transcribes it with Sahara and falls back to Groq. Recording works in
+// every modern browser, iPhone Safari included, so it is the default. "browser"
+// uses the built-in Web Speech recognizer, which only works where the browser
+// can reach its vendor's speech service: Google Chrome on desktop and Android,
+// but not Brave, Firefox, Opera, or any browser on an iPhone. "sahara" is the
+// older name for "server".
+//
+// Neither choice is final. If the path in use proves it cannot hear in this
+// browser, the engine moves to the other one on its own.
+export type SttMode = "server" | "browser";
+
+const STT_CONFIGURED: SttMode = process.env.NEXT_PUBLIC_STT_PROVIDER === "browser" ? "browser" : "server";
+
+export function webSpeechAvailable(): boolean {
+  return typeof window !== "undefined" && !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+}
+
+// The recognizer to start with: the configured one when this browser can run
+// it, otherwise whichever one it can run, otherwise none (speak-only mode).
+export function initialSttMode(configured: SttMode, serverOk: boolean, browserOk: boolean): SttMode | null {
+  if (configured === "server") return serverOk ? "server" : browserOk ? "browser" : null;
+  return browserOk ? "browser" : serverOk ? "server" : null;
+}
 
 // A sentence waiting its turn at the speaker, together with its audio once
 // synthesis has been started for it. Holding the promise ON the queue entry
@@ -272,6 +294,13 @@ export class VoiceEngine {
   private lastSttComplaint = 0;
   private rapidEnds = 0;
   private restartDelay = 300;
+  // Which recognizer is live. Decided on first start, changed only when the
+  // one in use proves it cannot hear in this browser, and never switched back
+  // to a path that has already failed here.
+  private sttMode: SttMode | null = null;
+  private serverFailures = 0;
+  private browserSpeechBroken = false;
+  private serverSpeechBroken = false;
   // Dead-mic detection: consecutive listen windows that opened the mic but
   // heard no sound, whether we've EVER heard sound this session, and whether
   // we've already spoken the mute warning (so it fires once, not every cycle).
@@ -302,8 +331,7 @@ export class VoiceEngine {
 
   static supported(): boolean {
     if (typeof window === "undefined") return false;
-    if (STT_PROVIDER === "sahara") return saharaSttSupported();
-    return !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+    return saharaSttSupported() || webSpeechAvailable();
   }
 
   start(): void {
@@ -771,6 +799,22 @@ export class VoiceEngine {
     return overlap / words.length >= 0.8;
   }
 
+  // Move to the other recognizer and start it. Clears the backoff and the error
+  // on screen, because the reason for both belonged to the path being left.
+  private switchSttMode(mode: SttMode, why: string): void {
+    if (this.sttMode === mode) return;
+    console.warn(`Aide mic: switching to ${mode} speech recognition, because ${why}.`);
+    this.sttMode = mode;
+    this.rapidEnds = 0;
+    this.serverFailures = 0;
+    this.restartDelay = 300;
+    this.detachRecognizer();
+    this.rec = null;
+    this.setListening(false);
+    this.handlers.onState({ error: null, micStatus: `switching to ${mode} speech recognition` });
+    this.scheduleRestart(300);
+  }
+
   // Create a FRESH recognizer each time, Chrome instances can wedge after
   // abort, and a new one is the reliable way back to a working mic.
   private startRecognition(): void {
@@ -780,8 +824,11 @@ export class VoiceEngine {
     // otherwise quietly undo a hold the user asked for.
     if (!this.active || this.muted || typeof window === "undefined") return;
 
+    if (!this.sttMode) this.sttMode = initialSttMode(STT_CONFIGURED, saharaSttSupported(), webSpeechAvailable());
+    if (!this.sttMode) return;
+
     let rec: SR;
-    if (STT_PROVIDER === "sahara") {
+    if (this.sttMode === "server") {
       if (!saharaSttSupported()) return;
       this.detachRecognizer();
       rec = new SaharaRecognizer();
@@ -867,6 +914,7 @@ export class VoiceEngine {
         return;
       }
       this.rapidEnds = 0;
+      this.serverFailures = 0;
       this.lastHeardAt = Date.now();
       onState({ interim: "" });
       this.bufferFinal(clean);
@@ -902,6 +950,15 @@ export class VoiceEngine {
       if (aliveMs < 1000) {
         this.rapidEnds += 1;
         this.restartDelay = Math.min(this.restartDelay * 2, 4000);
+        // The built-in recognizer dying instantly, again and again, means this
+        // browser cannot reach its speech service. Recording and transcribing
+        // on the server works regardless, so move there rather than keep
+        // retrying something that will not start.
+        if (this.rapidEnds >= 3 && this.sttMode === "browser" && !this.serverSpeechBroken && saharaSttSupported()) {
+          this.browserSpeechBroken = true;
+          this.switchSttMode("server", "the browser's speech service would not start");
+          return;
+        }
         if (this.rapidEnds === 5) {
           onState({ error: "Aide's hearing keeps cutting out. Speech recognition in Chrome needs an internet connection, retrying." });
         }
@@ -916,7 +973,24 @@ export class VoiceEngine {
       // The speech service answered with a failure. Silence here reads as a
       // dead app to a user with no screen, so say it out loud, but at most
       // once a minute: a sustained outage should inform, not nag.
+      // Web Speech reports "network" when the browser has no working route to
+      // its vendor's speech service: Brave, plain Chromium, some networks.
+      // Retrying will not fix that, so move to server recognition now.
+      if (e?.error === "network" && this.sttMode === "browser" && !this.serverSpeechBroken && saharaSttSupported()) {
+        this.browserSpeechBroken = true;
+        this.switchSttMode("server", "the browser's speech service is unreachable");
+        return;
+      }
       if (e?.error === "stt-unavailable") {
+        this.serverFailures += 1;
+        // Two failed transcriptions in a row, with no success between, means
+        // no server provider can answer right now. If this browser's own
+        // recognizer has not already failed here, use it instead.
+        if (this.serverFailures >= 2 && this.sttMode === "server" && !this.browserSpeechBroken && webSpeechAvailable()) {
+          this.serverSpeechBroken = true;
+          this.switchSttMode("browser", "the speech service could not transcribe");
+          return;
+        }
         onState({ micStatus: "speech service unavailable" });
         const now = Date.now();
         if (now - this.lastSttComplaint > 60_000) {

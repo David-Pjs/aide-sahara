@@ -1,5 +1,7 @@
-// A drop-in replacement for the browser's SpeechRecognition object, backed by
-// Sahara's code-switching STT instead of Chrome's English-only recognizer.
+// A drop-in replacement for the browser's SpeechRecognition object. It records
+// each utterance and sends it to /api/stt, where Sahara transcribes it and Groq
+// takes over when Sahara cannot, so it works in any browser that can record
+// instead of depending on the browser's own speech service.
 // Implements the same shape voice-engine.ts already talks to
 // (onaudiostart/onsoundstart/onspeechstart/onresult/onend/onerror, start(),
 // abort()) so the rest of that file, echo defense, idle/mute timers, restart
@@ -416,14 +418,14 @@ export class SaharaRecognizer {
       // (webm on desktop/Android, mp4/AAC on iOS), not a hardcoded guess.
       form.append("audio", blob, `utterance.${extensionFor(blob.type)}`);
       form.append("language", getSaharaLanguage());
-      const res = await fetch("/api/stt/sahara", { method: "POST", body: form });
+      const res = await fetch("/api/stt", { method: "POST", body: form });
       const json = (await res.json().catch(() => ({}))) as { transcript?: string; error?: string };
       if (!res.ok) {
         // A failed REQUEST is not the same as a silent user, and used to be
         // treated as one: the upload failed, this returned, and nothing was
         // said. Someone who cannot see the screen has no way to tell that
         // apart from an app that has died. Report it so the engine can speak.
-        console.warn("Sahara STT:", json.error ?? res.status);
+        console.warn("Aide speech service:", json.error ?? res.status);
         this.onerror?.({ error: "stt-unavailable", message: json.error });
         return;
       }
@@ -435,7 +437,10 @@ export class SaharaRecognizer {
       entry.isFinal = true;
       this.onresult?.({ resultIndex: 0, results: [entry] });
     } catch (err) {
-      console.warn("Sahara STT upload failed:", err);
+      // No response at all (offline, or the request was cut off). Same as a
+      // failed request from the user's side: say so rather than go quiet.
+      console.warn("Aide speech upload failed:", err);
+      this.onerror?.({ error: "stt-unavailable", message: String(err) });
     } finally {
       this.uploading = false;
     }

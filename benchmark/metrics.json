@@ -92,6 +92,7 @@
       "severe": false
     },
     "werUnnorm": 0.6006711409395973,
+    "werToneless": 0.4983164983164983,
     "cer": 0.3515187260395164,
     "latencyMs": 18357,
     "clip": "afriswitchcare-igbo",
@@ -186,6 +187,7 @@
       "severe": false
     },
     "werUnnorm": 0.5335570469798657,
+    "werToneless": 0.409652076318743,
     "cer": 0.28457682099675613,
     "latencyMs": 45758,
     "clip": "afriswitchcare-igbo",
@@ -282,6 +284,7 @@
       "severe": false
     },
     "werUnnorm": 0.5078299776286354,
+    "werToneless": 0.388327721661055,
     "cer": 0.263344146269537,
     "latencyMs": 20873,
     "clip": "afriswitchcare-igbo",
@@ -369,6 +372,7 @@
       "severe": false
     },
     "werUnnorm": 0.49776286353467564,
+    "werToneless": 0.3400673400673401,
     "cer": 0.20259510468888234,
     "latencyMs": 8898,
     "clip": "afriswitchcare-igbo",
@@ -410,6 +414,7 @@
       "severe": false
     },
     "werUnnorm": 0.66484268125855,
+    "werToneless": 0.5321477428180574,
     "cer": 0.41986644407345575,
     "latencyMs": 18252,
     "clip": "afriswitchcare-yoruba",
@@ -470,6 +475,7 @@
       "severe": true
     },
     "werUnnorm": 0.8235294117647058,
+    "werToneless": 0.7441860465116279,
     "cer": 0.6427378964941569,
     "latencyMs": 52013,
     "clip": "afriswitchcare-yoruba",
@@ -547,6 +553,7 @@
       "severe": false
     },
     "werUnnorm": 0.8891928864569083,
+    "werToneless": 0.8522571819425444,
     "cer": 0.7099332220367279,
     "latencyMs": 18573,
     "clip": "afriswitchcare-yoruba",
@@ -604,6 +611,7 @@
       "severe": false
     },
     "werUnnorm": 0.7400820793433652,
+    "werToneless": 0.600547195622435,
     "cer": 0.43697829716193654,
     "latencyMs": 78427,
     "clip": "afriswitchcare-yoruba",
@@ -633,6 +641,7 @@
       "severe": false
     },
     "werUnnorm": 0.6015037593984962,
+    "werToneless": 0.5,
     "cer": 0.28862478777589134,
     "latencyMs": 14873,
     "clip": "afriswitchcare-hausa",
@@ -666,6 +675,7 @@
       "severe": false
     },
     "werUnnorm": 0.9473684210526315,
+    "werToneless": 0.8712121212121212,
     "cer": 0.6417657045840407,
     "latencyMs": 11649,
     "clip": "afriswitchcare-hausa",
@@ -699,6 +709,7 @@
       "severe": false
     },
     "werUnnorm": 0.9398496240601504,
+    "werToneless": 0.8257575757575758,
     "cer": 0.5314091680814941,
     "latencyMs": 5243,
     "clip": "afriswitchcare-hausa",
@@ -733,6 +744,7 @@
       "severe": false
     },
     "werUnnorm": 1.0676691729323309,
+    "werToneless": 0.9393939393939394,
     "cer": 0.5602716468590832,
     "latencyMs": 5094,
     "clip": "afriswitchcare-hausa",
@@ -761,6 +773,7 @@
       "severe": false
     },
     "werUnnorm": 0.3807266982622433,
+    "werToneless": 0.256,
     "cer": 0.16847826086956522,
     "latencyMs": 18168,
     "clip": "afriswitchcare-pidgin",
@@ -795,6 +808,7 @@
       "severe": true
     },
     "werUnnorm": 0.7977883096366508,
+    "werToneless": 0.6992,
     "cer": 0.6149665551839465,
     "latencyMs": 46189,
     "clip": "afriswitchcare-pidgin",
@@ -824,6 +838,7 @@
       "severe": false
     },
     "werUnnorm": 0.631911532385466,
+    "werToneless": 0.4816,
     "cer": 0.3729096989966555,
     "latencyMs": 15396,
     "clip": "afriswitchcare-pidgin",
@@ -850,6 +865,7 @@
       "severe": false
     },
     "werUnnorm": 0.5876777251184834,
+    "werToneless": 0.3344,
     "cer": 0.19941471571906355,
     "latencyMs": 4224,
     "clip": "afriswitchcare-pidgin",
@@ -1010,6 +1026,7 @@
       "severe": true
     },
     "werUnnorm": 0.8776328986960883,
+    "werToneless": 0.806841046277666,
     "cer": 0.5911016949152542,
     "latencyMs": 73916,
     "clip": "afriswitchcare-igbo-2",
@@ -1080,6 +1097,7 @@
       "severe": false
     },
     "werUnnorm": 0.7438725490196079,
+    "werToneless": 0.6674846625766871,
     "cer": 0.49964285714285717,
     "latencyMs": 45597,
     "clip": "afriswitchcare-yoruba-2",
@@ -1109,6 +1127,7 @@
       "severe": false
     },
     "werUnnorm": 0.8947368421052632,
+    "werToneless": 0.8229665071770335,
     "cer": 0.4953271028037383,
     "latencyMs": 17931,
     "clip": "afriswitchcare-hausa-2",
@@ -1150,6 +1169,7 @@
       "severe": true
     },
     "werUnnorm": 1.083224967490247,
+    "werToneless": 1.0342105263157895,
     "cer": 1.0548819400127631,
     "latencyMs": 92759,
     "clip": "afriswitchcare-pidgin-2",

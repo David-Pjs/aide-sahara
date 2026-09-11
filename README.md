@@ -18,7 +18,7 @@ required.
 | [`SOLUTION.md`](SOLUTION.md) | Problem, users, solution, and the key technical decisions |
 | [`benchmark/report.md`](benchmark/report.md) | Speech recognition: 4 models, 3 vendors, 5 metrics, full transcripts |
 | [`benchmark/tts/report.md`](benchmark/tts/report.md) | Speech synthesis: 3 systems, round-trip intelligibility |
-| [`benchmark/AFRISWITCH.md`](benchmark/AFRISWITCH.md) | 20 short natural-speech clips staged from AfriSwitch, and a sample-rate defect found in the source data |
+| [`benchmark/AFRISWITCH.md`](benchmark/AFRISWITCH.md) | 20 short natural-speech clips from AfriSwitch scored across 3 models, per language and per code-switched span, and a sample-rate defect found in the source data |
 | [`ETHICS.md`](ETHICS.md) | Consent, privacy, bias, dignity, and where we are still exposed |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Speech pipeline, latency figures, security mechanisms |
 
@@ -26,6 +26,7 @@ Reproduce the benchmark scores from the committed transcripts, with no API calls
 
 ```bash
 npx tsx src/score-report.ts
+npx tsx src/score-report.ts --set afriswitch
 ```
 
 ---
@@ -432,11 +433,17 @@ Sahara's Upload File Sync STT endpoint instead of Chrome's recognizer, with voic
 detection over Web Audio standing in for interim/final events. Every other part of the voice
 engine, echo defense, idle/mute timers, restart backoff, the TTS queue, runs unmodified.
 
-Switch it on with two environment variables (see `.env.example`):
+Recording happens in the browser and recognition on the server (`app/api/stt/route.ts`), so
+Aide hears in every browser that can record, including Firefox, Brave and iPhone Safari,
+where the built-in recognizer is missing or cannot reach its speech service. If Sahara cannot
+answer, the same utterance goes to Groq-hosted Whisper in the same request.
+
+Configure it with these environment variables (see `.env.example`):
 
 ```
 SAHARA_API_KEY=...
-NEXT_PUBLIC_STT_PROVIDER=sahara
+GROQ_API_KEY=...            # fallback when Sahara cannot answer
+NEXT_PUBLIC_STT_PROVIDER=server
 # optional: speak back through Sahara's Nigerian Pidgin neural voice instead of Edge TTS
 NEXT_PUBLIC_TTS_PATH=/api/tts/sahara
 SAHARA_TTS_ACCENT=pidgin

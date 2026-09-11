@@ -13,9 +13,10 @@ The dataset is distributed under **CC BY-NC-SA 4.0** and is used strictly as per
 ## What Aide does with a user's voice
 
 - **Nothing said to Aide is written to storage.** The conversation lives in React state for as long as the page is open and is gone when it reloads. There is no transcript on disk to leak, subpoena, inspect or restore.
-- Audio is sent to the speech provider for the length of one utterance and is not retained by us.
+- Audio is sent to a speech provider one utterance at a time and is not retained by us. Sahara (Intron) receives it first. If Sahara cannot answer, the same utterance goes to Groq, which runs Whisper. Where a browser's built-in recogniser is in use instead, the browser vendor receives it.
+- Our server logs which provider answered and why one failed, never the audio or the transcript.
 - The only thing that persists is what a user explicitly asks Aide to remember, saved against their account as a stated preference.
-- The remembered language choice lives in that browser's `localStorage`. It never reaches our servers.
+- The remembered language choice lives in that browser's `localStorage`. It travels with each utterance as a recognition hint and is not stored on our servers.
 
 ## Safety around money
 
@@ -31,7 +32,7 @@ The failure mode we treat as unacceptable is Aide stating something confident an
 
 Our benchmark is, incidentally, a bias measurement, and we think it should be read that way.
 
-Two general-purpose models trained overwhelmingly on English and other high-resource languages lose roughly **half of every sentence** in Nigerian-language conversations (52.9% and 53.0% segment loss) and produce **runaway hallucination loops** on 2 of 4 clips, once repeating a single nonsense token 136 times. A third, Qwen3-ASR, collapses entirely on Hausa at 96.2% WER, rendering it as Swahili-like text.
+Two general-purpose models trained overwhelmingly on English and other high-resource languages lose roughly **half of every sentence** in Nigerian-language conversations (52.9% and 53.0% segment loss) and produce **runaway hallucination loops** on 2 of 4 clips, once repeating a single nonsense token 136 times. A third, Qwen3-ASR, collapses entirely on Hausa at 96.2% WER, rendering it as Swahili-like text. On the short AfriSwitch clips, Whisper large-v3-turbo answered Hausa speech with invented English ("We have to do this." for a 32-word Hausa sentence), and Whisper large-v3 wrote Nigerian Pidgin in Bengali script. Inside code-switched sentences both Whisper builds kept most of the English and about one Nigerian-language word in seven.
 
 None of these are obscure systems. They are among the most widely deployed speech models in the world. If a Nigerian speaking Hausa is transcribed as a Swahili speaker by default, that is a distributional bias with direct consequences for anyone building on top of it.
 
@@ -54,8 +55,10 @@ Beyond that:
 
 Stating these plainly is part of the point.
 
-- **Speech data leaves the device.** Audio goes to a third-party API. We do not retain it, but we cannot make a claim about what a provider does with it beyond their own terms. An on-device option would be materially better for privacy and we do not have one.
+- **Speech data leaves the device, sometimes to two companies.** Audio goes to a third-party API, and when Sahara fails, to a second one. We do not retain it, but we cannot make a claim about what a provider does with it beyond their own terms. We chose a fallback over silence because a blind user who is not heard has no screen to fall back on. An on-device option would be materially better for privacy and we do not have one.
+- **The fallback hears code-switching worse.** Whisper lost roughly half of every code-switched sentence in our benchmark, against a quarter for Sahara. When Aide is running on the fallback, Pidgin, Yoruba, Igbo and Hausa speakers get a worse listener, which is the exact bias this project exists to reduce.
 - **The language preference is a guess about a person.** Asking once and remembering is a latency decision, and it will occasionally be wrong for a multilingual user. It is changeable by voice at any time, which mitigates but does not remove this.
-- **Our benchmark is four clips.** It is enough to expose reproducible failure patterns and not enough to make confident per-language claims. We have said so in the report rather than rounding it up.
+- **Our benchmark is small.** Four long conversations and 20 short clips, five per language. It is enough to expose reproducible failure patterns and not enough to make confident per-language claims. We have said so in the report rather than rounding it up.
+- **Sahara is not good at everything we measured.** On the short Yoruba clips it scores worse than Whisper large-v3 under strict WER (89.1% against 78.9%), partly because it writes tone marks the references leave out and partly because it drops words. A Yoruba speaker using Aide should expect more corrections than a Hausa speaker.
 - **Simulated clinical audio is not our users' audio.** AfriSwitchCare is doctor-patient consultations. Aide's real utterances are short job and payment commands. The failure modes should transfer; the exact numbers may not.
 - **No human evaluation.** Whether a Nigerian listener finds a synthesised voice acceptable, or trusts it with money, is not something round-trip WER can answer, and we have not asked them.

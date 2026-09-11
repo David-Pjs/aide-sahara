@@ -1,0 +1,1668 @@
+[
+  {
+    "wer": 0.34375,
+    "accuracy": 0.65625,
+    "transcriptLoss": 0.125,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.4375,
+    "werToneless": 0.34375,
+    "cer": 0.1259259259259259,
+    "latencyMs": 11565,
+    "clip": "afriswitch-hausa-1",
+    "languagePair": "Hausa-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.90625,
+    "accuracy": 0.09375,
+    "transcriptLoss": 0.21875,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Ya ce haraje haraje na Amurka a kan tarayya Turai za su kara rura wutar kalubalen da nahiyar tiri ke fama da su a cewarsa yakin kasuwancin da donald trump ya kaddamar"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.96875,
+    "werToneless": 0.90625,
+    "cer": 0.22962962962962963,
+    "latencyMs": 2164,
+    "clip": "afriswitch-hausa-1",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.96875,
+    "accuracy": 0.03125,
+    "transcriptLoss": 0.1875,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Ya ce haraje haraje na Amurka a kan tarayya Turai za su kara rura wutar kalubalen da nahiyar tiri ke fama da su a cewarsa yakin kasuwancin da donald trump ya kaddamar"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.96875,
+    "werToneless": 0.96875,
+    "cer": 0.7703703703703704,
+    "latencyMs": 1470,
+    "clip": "afriswitch-hausa-1",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.375,
+    "accuracy": 0.6875,
+    "transcriptLoss": 0.125,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.0625,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.375,
+    "werToneless": 0.375,
+    "cer": 0.2777777777777778,
+    "latencyMs": 3950,
+    "clip": "afriswitch-hausa-2",
+    "languagePair": "Hausa-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.9375,
+    "accuracy": 0.0625,
+    "transcriptLoss": 0.25,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Saboda yanzu abinda ake yi ana daukan yanzu kamar iskan gas cikon mota ana Taliya dashi"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 0.9375,
+    "cer": 0.4583333333333333,
+    "latencyMs": 554,
+    "clip": "afriswitch-hausa-2",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 1,
+    "accuracy": 0,
+    "transcriptLoss": 0.375,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Saboda yanzu abinda ake yi ana daukan yanzu kamar iskan gas cikon mota ana Taliya dashi"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 1,
+    "cer": 1,
+    "latencyMs": 763,
+    "clip": "afriswitch-hausa-2",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.125,
+    "accuracy": 0.90625,
+    "transcriptLoss": 0.03125,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.03125,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.125,
+    "werToneless": 0.125,
+    "cer": 0.01680672268907563,
+    "latencyMs": 5676,
+    "clip": "afriswitch-hausa-3",
+    "languagePair": "Hausa-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.875,
+    "accuracy": 0.125,
+    "transcriptLoss": 0.21875,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Don dole haka na zama mai bada shawara saboda haka har guri ne da nima yanzu duk wani mai matsala zai zo ya same ni ga matsalata ko macen ko namiji to"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.875,
+    "werToneless": 0.875,
+    "cer": 0.2773109243697479,
+    "latencyMs": 1833,
+    "clip": "afriswitch-hausa-3",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 1,
+    "accuracy": 0,
+    "transcriptLoss": 0.84375,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Don dole haka na zama mai bada shawara saboda haka har guri ne da nima yanzu duk wani mai matsala zai zo ya same ni ga matsalata ko macen ko namiji to"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 1,
+    "cer": 0.9327731092436975,
+    "latencyMs": 411,
+    "clip": "afriswitch-hausa-3",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.125,
+    "accuracy": 0.875,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.125,
+    "werToneless": 0.125,
+    "cer": 0.03333333333333333,
+    "latencyMs": 5302,
+    "clip": "afriswitch-hausa-4",
+    "languagePair": "Hausa-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.9375,
+    "accuracy": 0.0625,
+    "transcriptLoss": 0.25,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Maka ga gawan shi ma saduda amma ace kwana da kwanaki mutu a rasa inda yake"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 0.9375,
+    "cer": 0.2,
+    "latencyMs": 787,
+    "clip": "afriswitch-hausa-4",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.9375,
+    "accuracy": 0.0625,
+    "transcriptLoss": 0.25,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Maka ga gawan shi ma saduda amma ace kwana da kwanaki mutu a rasa inda yake"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 0.9375,
+    "cer": 0.18333333333333332,
+    "latencyMs": 419,
+    "clip": "afriswitch-hausa-4",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.09375,
+    "accuracy": 0.90625,
+    "transcriptLoss": 0.03125,
+    "segmentLoss": {
+      "total": 2,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.15625,
+    "werToneless": 0.09375,
+    "cer": 0.0392156862745098,
+    "latencyMs": 4175,
+    "clip": "afriswitch-hausa-5",
+    "languagePair": "Hausa-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.90625,
+    "accuracy": 0.09375,
+    "transcriptLoss": 0.03125,
+    "segmentLoss": {
+      "total": 2,
+      "lost": 2,
+      "rate": 1,
+      "lostSegments": [
+        "Sanya ganyayyaki, wake, man zaitun a cikin tsarin abincin mutum yakan kawo sauki da kuma taimakawa wajen kara lafiyar jiki.",
+        "Har ila yau, yawaita cin naman shanu yana kara zafin wannan ciwo."
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.90625,
+    "werToneless": 0.90625,
+    "cer": 0.28104575163398693,
+    "latencyMs": 686,
+    "clip": "afriswitch-hausa-5",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.96875,
+    "accuracy": 0.125,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 2,
+      "lost": 2,
+      "rate": 1,
+      "lostSegments": [
+        "Sanya ganyayyaki, wake, man zaitun a cikin tsarin abincin mutum yakan kawo sauki da kuma taimakawa wajen kara lafiyar jiki.",
+        "Har ila yau, yawaita cin naman shanu yana kara zafin wannan ciwo."
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0.09375,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.96875,
+    "werToneless": 0.96875,
+    "cer": 0.24183006535947713,
+    "latencyMs": 444,
+    "clip": "afriswitch-hausa-5",
+    "languagePair": "Hausa-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.5,
+    "accuracy": 0.5,
+    "transcriptLoss": 0.2692307692307692,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.5384615384615384,
+    "werToneless": 0.5,
+    "cer": 0.2631578947368421,
+    "latencyMs": 10421,
+    "clip": "afriswitch-igbo-1",
+    "languagePair": "Igbo-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.6153846153846154,
+    "accuracy": 0.4230769230769231,
+    "transcriptLoss": 0.38461538461538464,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.038461538461538464,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.6923076923076923,
+    "werToneless": 0.6153846153846154,
+    "cer": 0.3894736842105263,
+    "latencyMs": 575,
+    "clip": "afriswitch-igbo-1",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.5384615384615384,
+    "accuracy": 0.46153846153846156,
+    "transcriptLoss": 0.46153846153846156,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.6153846153846154,
+    "werToneless": 0.5384615384615384,
+    "cer": 0.37894736842105264,
+    "latencyMs": 442,
+    "clip": "afriswitch-igbo-1",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.4583333333333333,
+    "accuracy": 0.5416666666666666,
+    "transcriptLoss": 0.041666666666666664,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.4583333333333333,
+    "werToneless": 0.4583333333333333,
+    "cer": 0.24390243902439024,
+    "latencyMs": 4195,
+    "clip": "afriswitch-igbo-2",
+    "languagePair": "Igbo-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.5833333333333334,
+    "accuracy": 0.4166666666666667,
+    "transcriptLoss": 0.20833333333333334,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.8333333333333334,
+    "werToneless": 0.5833333333333334,
+    "cer": 0.4715447154471545,
+    "latencyMs": 579,
+    "clip": "afriswitch-igbo-2",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.625,
+    "accuracy": 0.4583333333333333,
+    "transcriptLoss": 0.125,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.08333333333333333,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.875,
+    "werToneless": 0.625,
+    "cer": 0.4146341463414634,
+    "latencyMs": 479,
+    "clip": "afriswitch-igbo-2",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.65,
+    "accuracy": 0.4,
+    "transcriptLoss": 0.3,
+    "segmentLoss": {
+      "total": 3,
+      "lost": 2,
+      "rate": 0.6666666666666666,
+      "lostSegments": [
+        "O nwenke iga asim na owu fada.",
+        "Nye onye ahu like"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0.05,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.75,
+    "werToneless": 0.6,
+    "cer": 0.5,
+    "latencyMs": 3910,
+    "clip": "afriswitch-igbo-3",
+    "languagePair": "Igbo-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.5,
+    "accuracy": 0.5,
+    "transcriptLoss": 0.35,
+    "segmentLoss": {
+      "total": 3,
+      "lost": 1,
+      "rate": 0.3333333333333333,
+      "lostSegments": [
+        "O nwenke iga asim na owu fada."
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 0.5,
+    "cer": 0.45714285714285713,
+    "latencyMs": 2033,
+    "clip": "afriswitch-igbo-3",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.55,
+    "accuracy": 0.45,
+    "transcriptLoss": 0.55,
+    "segmentLoss": {
+      "total": 3,
+      "lost": 2,
+      "rate": 0.6666666666666666,
+      "lostSegments": [
+        "O nwenke iga asim na owu fada.",
+        "Nye onye ahu like"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.65,
+    "werToneless": 0.55,
+    "cer": 0.5285714285714286,
+    "latencyMs": 435,
+    "clip": "afriswitch-igbo-3",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.8333333333333334,
+    "accuracy": 0.16666666666666666,
+    "transcriptLoss": 0.25,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "this December period, Ole ihe umu mmadu he me, this is wickedness"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.9166666666666666,
+    "werToneless": 0.6666666666666666,
+    "cer": 0.36538461538461536,
+    "latencyMs": 3760,
+    "clip": "afriswitch-igbo-4",
+    "languagePair": "Igbo-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 1,
+    "accuracy": 0,
+    "transcriptLoss": 0.16666666666666666,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "this December period, Ole ihe umu mmadu he me, this is wickedness"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 1,
+    "cer": 1,
+    "latencyMs": 562,
+    "clip": "afriswitch-igbo-4",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 1.1666666666666667,
+    "accuracy": 0.25,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.4166666666666667,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1.4166666666666667,
+    "werToneless": 1.1666666666666667,
+    "cer": 0.6538461538461539,
+    "latencyMs": 419,
+    "clip": "afriswitch-igbo-4",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.16666666666666666,
+    "accuracy": 0.8333333333333334,
+    "transcriptLoss": 0.08333333333333333,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.16666666666666666,
+    "werToneless": 0.08333333333333333,
+    "cer": 0.12195121951219512,
+    "latencyMs": 3821,
+    "clip": "afriswitch-igbo-5",
+    "languagePair": "Igbo-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.75,
+    "accuracy": 0.25,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.75,
+    "werToneless": 0.75,
+    "cer": 0.34146341463414637,
+    "latencyMs": 548,
+    "clip": "afriswitch-igbo-5",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.75,
+    "accuracy": 0.25,
+    "transcriptLoss": 0.08333333333333333,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.75,
+    "werToneless": 0.75,
+    "cer": 0.4146341463414634,
+    "latencyMs": 427,
+    "clip": "afriswitch-igbo-5",
+    "languagePair": "Igbo-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.5,
+    "accuracy": 0.6,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.1,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.8,
+    "werToneless": 0.5,
+    "cer": 0.2127659574468085,
+    "latencyMs": 10683,
+    "clip": "afriswitch-pidgin-1",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.5,
+    "accuracy": 0.6,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.1,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.7,
+    "werToneless": 0.5,
+    "cer": 0.2553191489361702,
+    "latencyMs": 594,
+    "clip": "afriswitch-pidgin-1",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.6,
+    "accuracy": 0.5,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.1,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.8,
+    "werToneless": 0.6,
+    "cer": 0.2765957446808511,
+    "latencyMs": 401,
+    "clip": "afriswitch-pidgin-1",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.6785714285714286,
+    "accuracy": 0.6428571428571429,
+    "transcriptLoss": 0.03571428571428571,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.32142857142857145,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.75,
+    "werToneless": 0.6785714285714286,
+    "cer": 0.47863247863247865,
+    "latencyMs": 3971,
+    "clip": "afriswitch-pidgin-2",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.6428571428571429,
+    "accuracy": 0.6428571428571429,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.2857142857142857,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.8571428571428571,
+    "werToneless": 0.6428571428571429,
+    "cer": 0.4358974358974359,
+    "latencyMs": 640,
+    "clip": "afriswitch-pidgin-2",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.5714285714285714,
+    "accuracy": 0.6428571428571429,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.21428571428571427,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.8214285714285714,
+    "werToneless": 0.5714285714285714,
+    "cer": 0.36752136752136755,
+    "latencyMs": 421,
+    "clip": "afriswitch-pidgin-2",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.3,
+    "accuracy": 0.825,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.125,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.425,
+    "werToneless": 0.3,
+    "cer": 0.27439024390243905,
+    "latencyMs": 3803,
+    "clip": "afriswitch-pidgin-3",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.475,
+    "accuracy": 0.7,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.175,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.625,
+    "werToneless": 0.475,
+    "cer": 0.3780487804878049,
+    "latencyMs": 804,
+    "clip": "afriswitch-pidgin-3",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.475,
+    "accuracy": 0.7,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.175,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.6,
+    "werToneless": 0.475,
+    "cer": 0.3719512195121951,
+    "latencyMs": 439,
+    "clip": "afriswitch-pidgin-3",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.5,
+    "accuracy": 0.5714285714285714,
+    "transcriptLoss": 0.07142857142857142,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.07142857142857142,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.5,
+    "werToneless": 0.5,
+    "cer": 0.48717948717948717,
+    "latencyMs": 3966,
+    "clip": "afriswitch-pidgin-4",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 1.2142857142857142,
+    "accuracy": 0,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "alistic angnder we put it out there because him respectable durs and specbible polypolities"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0.21428571428571427,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1.2857142857142858,
+    "werToneless": 1.2142857142857142,
+    "cer": 1,
+    "latencyMs": 2269,
+    "clip": "afriswitch-pidgin-4",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.7142857142857143,
+    "accuracy": 0.5714285714285714,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.2857142857142857,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.7142857142857143,
+    "werToneless": 0.7142857142857143,
+    "cer": 0.48717948717948717,
+    "latencyMs": 417,
+    "clip": "afriswitch-pidgin-4",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.8333333333333334,
+    "accuracy": 0.4583333333333333,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.2916666666666667,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.9166666666666666,
+    "werToneless": 0.8333333333333334,
+    "cer": 0.49,
+    "latencyMs": 4108,
+    "clip": "afriswitch-pidgin-5",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.7916666666666666,
+    "accuracy": 0.4166666666666667,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.20833333333333334,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.9583333333333334,
+    "werToneless": 0.7916666666666666,
+    "cer": 0.42,
+    "latencyMs": 605,
+    "clip": "afriswitch-pidgin-5",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.75,
+    "accuracy": 0.4583333333333333,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.20833333333333334,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.9583333333333334,
+    "werToneless": 0.75,
+    "cer": 0.38,
+    "latencyMs": 435,
+    "clip": "afriswitch-pidgin-5",
+    "languagePair": "Nigerian Pidgin-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 1,
+    "accuracy": 0,
+    "transcriptLoss": 0.3,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Ermmm, actually Emi o ri nkan to bad Ninu pe"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 0.5,
+    "cer": 0.6764705882352942,
+    "latencyMs": 3783,
+    "clip": "afriswitch-yoruba-1",
+    "languagePair": "Yoruba-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.7,
+    "accuracy": 0.4,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.1,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.9,
+    "werToneless": 0.7,
+    "cer": 0.3235294117647059,
+    "latencyMs": 562,
+    "clip": "afriswitch-yoruba-1",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.8,
+    "accuracy": 0.2,
+    "transcriptLoss": 0.5,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 0.8,
+    "cer": 0.5882352941176471,
+    "latencyMs": 402,
+    "clip": "afriswitch-yoruba-1",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.6285714285714286,
+    "accuracy": 0.4,
+    "transcriptLoss": 0.34285714285714286,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.02857142857142857,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.7142857142857143,
+    "werToneless": 0.6,
+    "cer": 0.35398230088495575,
+    "latencyMs": 3886,
+    "clip": "afriswitch-yoruba-2",
+    "languagePair": "Yoruba-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.7428571428571429,
+    "accuracy": 0.2571428571428571,
+    "transcriptLoss": 0.4,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.8571428571428571,
+    "werToneless": 0.7428571428571429,
+    "cer": 0.40707964601769914,
+    "latencyMs": 2762,
+    "clip": "afriswitch-yoruba-2",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.7142857142857143,
+    "accuracy": 0.2857142857142857,
+    "transcriptLoss": 0.2571428571428571,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.8285714285714286,
+    "werToneless": 0.7142857142857143,
+    "cer": 0.39823008849557523,
+    "latencyMs": 431,
+    "clip": "afriswitch-yoruba-2",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.9,
+    "accuracy": 0.3,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.2,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 0.9,
+    "cer": 0.6041666666666666,
+    "latencyMs": 3751,
+    "clip": "afriswitch-yoruba-3",
+    "languagePair": "Yoruba-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.7,
+    "accuracy": 0.3,
+    "transcriptLoss": 0.6,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.8,
+    "werToneless": 0.7,
+    "cer": 0.8333333333333334,
+    "latencyMs": 545,
+    "clip": "afriswitch-yoruba-3",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 0.8,
+    "accuracy": 0.2,
+    "transcriptLoss": 0.6,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.9,
+    "werToneless": 0.8,
+    "cer": 0.7708333333333334,
+    "latencyMs": 415,
+    "clip": "afriswitch-yoruba-3",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 1,
+    "accuracy": 0.2,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0.2,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 0.75,
+    "cer": 0.37662337662337664,
+    "latencyMs": 3839,
+    "clip": "afriswitch-yoruba-4",
+    "languagePair": "Yoruba-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 0.8,
+    "accuracy": 0.2,
+    "transcriptLoss": 0.05,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 0,
+      "rate": 0,
+      "lostSegments": []
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.85,
+    "werToneless": 0.8,
+    "cer": 0.42857142857142855,
+    "latencyMs": 601,
+    "clip": "afriswitch-yoruba-4",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 1,
+    "accuracy": 0,
+    "transcriptLoss": 0,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Gbogbo nkan to so yan koti'e wa ni any meaning sami sotiye e because gbogbo oro to ti'e so n'gbayan"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 1,
+    "cer": 0.7922077922077922,
+    "latencyMs": 426,
+    "clip": "afriswitch-yoruba-4",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  },
+  {
+    "wer": 0.9285714285714286,
+    "accuracy": 0.07142857142857142,
+    "transcriptLoss": 0.8571428571428571,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Kilode to han Why you dey han, you dey mess Wo,dada ole JA o"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 0.9285714285714286,
+    "werToneless": 0.9285714285714286,
+    "cer": 0.8666666666666667,
+    "latencyMs": 3953,
+    "clip": "afriswitch-yoruba-5",
+    "languagePair": "Yoruba-English",
+    "provider": "Sahara v2.5"
+  },
+  {
+    "wer": 1,
+    "accuracy": 0,
+    "transcriptLoss": 0.14285714285714285,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Kilode to han Why you dey han, you dey mess Wo,dada ole JA o"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 1,
+    "cer": 0.7777777777777778,
+    "latencyMs": 560,
+    "clip": "afriswitch-yoruba-5",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3 (Groq)"
+  },
+  {
+    "wer": 1,
+    "accuracy": 0,
+    "transcriptLoss": 0.14285714285714285,
+    "segmentLoss": {
+      "total": 1,
+      "lost": 1,
+      "rate": 1,
+      "lostSegments": [
+        "Kilode to han Why you dey han, you dey mess Wo,dada ole JA o"
+      ]
+    },
+    "hallucination": {
+      "insertionRate": 0,
+      "maxRepeat": 1,
+      "loopPhrase": null,
+      "loopedShare": 0,
+      "loopedTokens": 0,
+      "hasLoop": false,
+      "severe": false
+    },
+    "werUnnorm": 1,
+    "werToneless": 1,
+    "cer": 0.8,
+    "latencyMs": 416,
+    "clip": "afriswitch-yoruba-5",
+    "languagePair": "Yoruba-English",
+    "provider": "OpenAI Whisper large-v3-turbo (Groq)"
+  }
+]

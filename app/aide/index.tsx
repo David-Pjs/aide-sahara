@@ -7,7 +7,10 @@ import { api } from "../../convex/_generated/api";
 import { VoiceEngine, type VoiceState } from "./voice-engine";
 import { matchLanguageAnswer, matchLanguageCommand, setSaharaLanguage, hasSaharaLanguagePreference } from "./sahara-recognizer";
 
-const STT_PROVIDER = process.env.NEXT_PUBLIC_STT_PROVIDER || "browser";
+// Anything but "browser" means utterances are transcribed on the server, where
+// a language hint improves accuracy, so the language question and the spoken
+// switch notice apply. Mirrors the default in voice-engine.ts.
+const SERVER_STT = process.env.NEXT_PUBLIC_STT_PROVIDER !== "browser";
 import { streamAgentReply, type Msg } from "./agent-stream";
 import { spokenClientError } from "../../lib/spoken-error";
 
@@ -324,7 +327,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         // verb for short utterances (see sahara-recognizer.ts), saying just
         // "Yoruba" already works. The instruction now matches that: one word
         // to remember instead of a fixed phrase to get exactly right.
-        const switchNotice = STT_PROVIDER === "sahara" ? " Say Yoruba, Igbo, or Hausa any time to change my language." : "";
+        const switchNotice = SERVER_STT ? " Say Yoruba, Igbo, or Hausa any time to change my language." : "";
         // First-ever visit on Sahara: ask which language once, right in the
         // greeting, instead of silently guessing Pidgin for everyone. The
         // answer is captured by the very next thing the user says (see
@@ -332,7 +335,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         // Placed right after `base`, not after tapNotice/switchNotice: this
         // is the one line in the whole greeting an impatient tap must not be
         // allowed to cut off before it's heard.
-        const askLanguage = STT_PROVIDER === "sahara" && !hasSaharaLanguagePreference();
+        const askLanguage = SERVER_STT && !hasSaharaLanguagePreference();
         const languageQuestion = askLanguage ? "Which language do you speak? English, Pidgin, Yoruba, Igbo, or Hausa." : "";
         // On the first-ever visit, languageQuestion already puts language
         // front of mind, so switchNotice (the recurring reminder) is skipped
