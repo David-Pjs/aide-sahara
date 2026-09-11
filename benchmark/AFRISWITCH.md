@@ -45,7 +45,7 @@ Two failure modes showed up that WER alone understates:
 
 Sahara wrote no non-Latin script on any of its 20 transcripts (checked by Unicode script property across every output), and none of the Sahara transcripts we reviewed replaced speech with a translation.
 
-## What is staged
+## What is in the set
 
 20 clips, 5 per language pair, 4.6 to 15.3 seconds each.
 
@@ -74,7 +74,7 @@ The smallest shard per language was used: Hausa `test-00003`, Igbo `test-00000`,
 
 ## Finding 1: the Hausa audio carries the wrong sample rate
 
-Every Hausa WAV header declares 16000 Hz. Four of the five staged clips actually contain 48000 Hz audio, and one contains 44100 Hz audio. Played as labelled, the speech runs roughly three times too slow and far too low.
+Every Hausa WAV header declares 16000 Hz. Four of the five selected clips actually contain 48000 Hz audio, and one contains 44100 Hz audio. Played as labelled, the speech runs roughly three times too slow and far too low.
 
 Unrepaired, every model would score badly on Hausa for a reason that has nothing to do with the models, and the Hausa row of any comparison would measure a data defect.
 
@@ -92,7 +92,7 @@ As labelled, the speakers talk at about one word a second in a voice below the a
 
 **Repair.** `benchmark/wav_rate.py` infers the true rate from the dataset's own duration field, snaps it to the nearest standard audio rate only when it lands within 3% of one, and resamples by that exact rational ratio to a correct 16000 Hz file. It passes a synthetic self-test: a one-second 200 Hz tone written at 44100 Hz or 48000 Hz and mislabelled as 16000 Hz comes back as exactly 1.000 s at 200 Hz.
 
-**A mistake caught along the way.** The first version assumed the true rate was always a whole multiple and decimated every Hausa clip by 3. That is correct for 48000 Hz and wrong for hausa-3, which came out 9% fast at 3.70 words per second. The speaking-rate check exposed it. The corrected repair is the one committed, and after it all 20 staged clips match the dataset's listed durations to within 0.0%.
+**A mistake caught along the way.** The first version assumed the true rate was always a whole multiple and decimated every Hausa clip by 3. That is correct for 48000 Hz and wrong for hausa-3, which came out 9% fast at 3.70 words per second. The speaking-rate check exposed it. The corrected repair is the one committed, and after it all 20 clips match the dataset's listed durations to within 0.0%.
 
 ## Finding 2: speaker labels inside a reference transcript
 
@@ -104,8 +104,8 @@ Two Nigerian Pidgin references contain tokens that look like transcription error
 
 ## Finding 4: the Hausa clips barely code-switch
 
-Every one of the 15 rows in the Hausa shard used here has a code-mix index of 6.25, against 50.0 for every staged Igbo, Nigerian Pidgin and Yoruba clip. They do switch, at least twice each, but lightly. A Hausa result from this set should not be read as a result on dense code-switching. The larger Hausa shards (187 to 259 MB each) may contain more heavily mixed speech; they were not downloaded, because the build machine had under 2 GB of free disk.
+Every one of the 15 rows in the Hausa shard used here has a code-mix index of 6.25, against 50.0 for every selected Igbo, Nigerian Pidgin and Yoruba clip. They do switch, at least twice each, but lightly. A Hausa result from this set should not be read as a result on dense code-switching. The larger Hausa shards (187 to 259 MB each) may contain more heavily mixed speech; they were not downloaded, because the build machine had under 2 GB of free disk.
 
 ## Licensing
 
-AfriSwitch is published by Intron Health under CC BY-NC-SA 4.0. It is used here for non-commercial benchmarking with attribution. The staged clips are Intron's audio, resampled to a correct 16000 Hz where the header was wrong, with no other modification. Each clip's original source filename is recorded in `benchmark/afriswitch_manifest.json`.
+AfriSwitch is published by Intron Health under CC BY-NC-SA 4.0. It is used here for non-commercial benchmarking with attribution. The clips are Intron's audio, resampled to a correct 16000 Hz where the header was wrong, with no other modification. Each clip's original source filename is recorded in `benchmark/afriswitch_manifest.json`.

@@ -15,8 +15,6 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 
 ### Averages across the 4 fully scored clips
 
-> 4 further clip(s) are extracted and in the manifest but not yet scored by every model, so they are excluded here. Averaging a model over clips its competitors were never run on would compare an easy set against a hard one. Pending: afriswitchcare-igbo-2, afriswitchcare-yoruba-2, afriswitchcare-hausa-2, afriswitchcare-pidgin-2.
-
 | Model | WER | WER (unnormalised) | Accuracy | Transcript loss | Segment loss | Hallucination (insertion rate) | Runaway loops |
 |---|---|---|---|---|---|---|---|
 | Sahara v2.5 | 46.1% | 56.2% | 56.5% | 20.6% | 25.9% | 2.6% | 0 of 4 |
