@@ -157,6 +157,7 @@ Measured, not estimated.
 | Speech synthesis, edge-tts (in production) | ~3.0s per line |
 | Speech synthesis, Sahara TTS (benchmarked, not wired in) | ~10.2s warm, 64.3s first call |
 | Sahara ASR, multi-minute conversation | ~17.4s |
+| Live `/api/stt` on production, 3-second Pidgin utterance, round trip from a home connection | ~2.6s warm, ~12s on the first call after a deploy |
 
 The TTS row is why `app/api/tts/sahara/route.ts` exists but is not connected. See [`benchmark/tts/report.md`](benchmark/tts/report.md).
 

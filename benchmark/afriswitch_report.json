@@ -20,7 +20,10 @@
         "sr": 16000,
         "secs": 9.95
       },
-      "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 29.86s vs dataset 9.95s, implied 48000 Hz); resampled 48000 to 16000 Hz"
+      "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 29.86s vs dataset 9.95s, implied 48000 Hz); resampled 48000 to 16000 Hz",
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -67,7 +70,10 @@
         "sr": 16000,
         "secs": 5.87
       },
-      "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 17.62s vs dataset 5.87s, implied 48000 Hz); resampled 48000 to 16000 Hz"
+      "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 17.62s vs dataset 5.87s, implied 48000 Hz); resampled 48000 to 16000 Hz",
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -114,7 +120,10 @@
         "sr": 16000,
         "secs": 9.41
       },
-      "sampleRateRepair": "header declared 16000 Hz but audio is 44100 Hz (header length 25.94s vs dataset 9.41s, implied 44100 Hz); resampled 44100 to 16000 Hz"
+      "sampleRateRepair": "header declared 16000 Hz but audio is 44100 Hz (header length 25.94s vs dataset 9.41s, implied 44100 Hz); resampled 44100 to 16000 Hz",
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -161,7 +170,10 @@
         "sr": 16000,
         "secs": 8.96
       },
-      "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 26.89s vs dataset 8.96s, implied 48000 Hz); resampled 48000 to 16000 Hz"
+      "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 26.89s vs dataset 8.96s, implied 48000 Hz); resampled 48000 to 16000 Hz",
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -208,7 +220,10 @@
         "sr": 16000,
         "secs": 11.58
       },
-      "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 34.75s vs dataset 11.58s, implied 48000 Hz); resampled 48000 to 16000 Hz"
+      "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 34.75s vs dataset 11.58s, implied 48000 Hz); resampled 48000 to 16000 Hz",
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -255,7 +270,10 @@
         "secs": 9.61
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -302,7 +320,10 @@
         "secs": 14.42
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -349,7 +370,10 @@
         "secs": 13.47
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -396,7 +420,10 @@
         "secs": 7.9
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -443,7 +470,10 @@
         "secs": 4.62
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -489,7 +519,10 @@
         "sr": 16000,
         "secs": 4.86
       },
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -535,7 +568,10 @@
         "sr": 16000,
         "secs": 9.55
       },
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -581,7 +617,10 @@
         "sr": 16000,
         "secs": 12.66
       },
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -627,7 +666,10 @@
         "sr": 16000,
         "secs": 8.99
       },
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -673,7 +715,10 @@
         "sr": 16000,
         "secs": 15.26
       },
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -720,7 +765,10 @@
         "secs": 4.98
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -767,7 +815,10 @@
         "secs": 12.06
       },
       "sampleRateRepair": null,
-      "referenceCleaning": "removed speaker labels, which are not spoken content"
+      "referenceCleaning": "removed speaker labels, which are not spoken content",
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -814,7 +865,10 @@
         "secs": 9.96
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -861,7 +915,10 @@
         "secs": 7.04
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {
@@ -908,7 +965,10 @@
         "secs": 5.86
       },
       "sampleRateRepair": null,
-      "referenceCleaning": null
+      "referenceCleaning": null,
+      "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+      "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+      "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
     },
     "results": [
       {

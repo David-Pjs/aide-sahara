@@ -22,6 +22,17 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | OpenAI Whisper large-v3-turbo | 63.7% | 74.2% | 39.1% | 21.4% | 52.9% | 2.8% | 0 of 4 |
 | Qwen3-ASR-1.7B (Alibaba) | 55.6% | 72.3% | 50.2% | 7.0% | 44.0% | 5.8% | 0 of 4 |
 
+### How sure are these averages
+
+With 4 clips, an average can move a lot depending on which clips happened to be chosen. Each interval below comes from resampling the clips with replacement 10,000 times (fixed seed, so it regenerates exactly). The gap column resamples the per-clip difference against Sahara v2.5, so both models are always compared on the same clips. A gap interval that stays above zero means the difference survives the small sample; one that crosses zero means it may not.
+
+| Model | Average WER | 95% interval | WER gap over Sahara v2.5 | 95% interval of the gap | Clips where Sahara v2.5 is better |
+|---|---|---|---|---|---|
+| Sahara v2.5 | 46.1% | 31.7% to 56.4% | | | |
+| OpenAI Whisper large-v3 | 68.6% | 49.8% to 82.8% | 22.5% | 2.5% to 40.7% | 3 of 4 |
+| OpenAI Whisper large-v3-turbo | 63.7% | 43.5% to 83.9% | 17.6% | -1.7% to 30.1% | 3 of 4 |
+| Qwen3-ASR-1.7B (Alibaba) | 55.6% | 33.7% to 79.0% | 9.6% | -10.1% to 33.6% | 3 of 4 |
+
 ### Per clip
 
 **afriswitchcare-igbo** (Igbo-English)

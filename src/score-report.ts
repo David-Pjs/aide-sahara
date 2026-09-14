@@ -122,6 +122,55 @@ for (const p of providers) {
   );
 }
 lines.push("");
+
+// How sure are these averages? A handful of clips can make one model look
+// better by luck of the draw, so every average gets a 95% bootstrap interval
+// (resampling clips with replacement), and every gap against the first model
+// is resampled as a paired difference on the same clips. The seed is fixed so
+// the published intervals regenerate exactly.
+{
+  let seed = 20260915;
+  const rand = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 2 ** 32);
+  const DRAWS = 10000;
+  const interval = (values: number[]) => {
+    const means: number[] = [];
+    for (let b = 0; b < DRAWS; b++) {
+      let sum = 0;
+      for (let i = 0; i < values.length; i++) sum += values[Math.floor(rand() * values.length)];
+      means.push(sum / values.length);
+    }
+    means.sort((a, b) => a - b);
+    return [means[Math.floor(0.025 * (DRAWS - 1))], means[Math.floor(0.975 * (DRAWS - 1))]];
+  };
+  const werOn = (p: string, clip: string) => scored.find((r) => r.provider === p && r.clip === clip)?.wer ?? 1;
+  const ids = complete.map((i) => i.entry.id);
+  const first = providers[0];
+  lines.push("### How sure are these averages");
+  lines.push("");
+  lines.push(
+    `With ${ids.length} clips, an average can move a lot depending on which clips happened to be chosen. ` +
+      "Each interval below comes from resampling the clips with replacement 10,000 times (fixed seed, so it regenerates exactly). " +
+      `The gap column resamples the per-clip difference against ${first}, so both models are always compared on the same clips. ` +
+      "A gap interval that stays above zero means the difference survives the small sample; one that crosses zero means it may not.",
+  );
+  lines.push("");
+  lines.push(`| Model | Average WER | 95% interval | WER gap over ${first} | 95% interval of the gap | Clips where ${first} is better |`);
+  lines.push("|---|---|---|---|---|---|");
+  for (const p of providers) {
+    const own = ids.map((c) => werOn(p, c));
+    const [lo, hi] = interval(own);
+    if (p === first) {
+      lines.push(`| ${p} | ${pct(mean(own))} | ${pct(lo)} to ${pct(hi)} | | | |`);
+      continue;
+    }
+    const gaps = ids.map((c) => werOn(p, c) - werOn(first, c));
+    const [glo, ghi] = interval(gaps);
+    const better = gaps.filter((g) => g > 0).length;
+    lines.push(`| ${p} | ${pct(mean(own))} | ${pct(lo)} to ${pct(hi)} | ${pct(mean(gaps))} | ${pct(glo)} to ${pct(ghi)} | ${better} of ${ids.length} |`);
+  }
+  lines.push("");
+}
+
 if (IS_AFRISWITCH) {
   // Twenty clips spread over several languages: a single average hides which
   // language a model fails on, which is the question a reader actually has.

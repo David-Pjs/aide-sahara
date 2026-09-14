@@ -9,7 +9,7 @@ required.
 
 [![CI](https://github.com/David-Pjs/Aide/actions/workflows/ci.yml/badge.svg)](https://github.com/David-Pjs/Aide/actions/workflows/ci.yml)
 
-[**Live demo →** aide-ng.vercel.app](https://aide-ng.vercel.app) · Open in Chrome and just talk.
+[**Live demo →** aide-ng.vercel.app](https://aide-ng.vercel.app) · Open it in any browser, on a phone or a laptop, and just talk.
 
 ## Sahara CodeSwitch Africa Challenge submission
 

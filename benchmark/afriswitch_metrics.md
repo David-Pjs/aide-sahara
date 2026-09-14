@@ -21,6 +21,16 @@ The challenge asks for hallucination, transcript loss, segment loss, WER and acc
 | OpenAI Whisper large-v3 (Groq) | 77.9% | 89.3% | 27.7% | 16.4% | 41.7% | 5.6% | 0 of 20 |
 | OpenAI Whisper large-v3-turbo (Groq) | 79.7% | 89.3% | 28.2% | 21.9% | 38.3% | 7.9% | 0 of 20 |
 
+### How sure are these averages
+
+With 20 clips, an average can move a lot depending on which clips happened to be chosen. Each interval below comes from resampling the clips with replacement 10,000 times (fixed seed, so it regenerates exactly). The gap column resamples the per-clip difference against Sahara v2.5, so both models are always compared on the same clips. A gap interval that stays above zero means the difference survives the small sample; one that crosses zero means it may not.
+
+| Model | Average WER | 95% interval | WER gap over Sahara v2.5 | 95% interval of the gap | Clips where Sahara v2.5 is better |
+|---|---|---|---|---|---|
+| Sahara v2.5 | 54.7% | 41.8% to 67.4% | | | |
+| OpenAI Whisper large-v3 (Groq) | 77.9% | 69.7% to 86.3% | 23.2% | 7.6% to 39.2% | 13 of 20 |
+| OpenAI Whisper large-v3-turbo (Groq) | 79.7% | 71.0% to 88.1% | 25.0% | 10.3% to 41.1% | 14 of 20 |
+
 ### By language pair
 
 Each cell is strict WER, then in brackets WER with tone marks and under-dots ignored. The AfriSwitch references spell Yoruba and Igbo without tone marks, so a model writing standard orthography ("Èmi ò rí" for the reference "Emi o ri") loses words it heard correctly under the strict figure. Both are computed for every model by the same code.

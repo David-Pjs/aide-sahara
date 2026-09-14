@@ -19,7 +19,10 @@
       "sr": 16000,
       "secs": 9.95
     },
-    "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 29.86s vs dataset 9.95s, implied 48000 Hz); resampled 48000 to 16000 Hz"
+    "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 29.86s vs dataset 9.95s, implied 48000 Hz); resampled 48000 to 16000 Hz",
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-hausa-2",
@@ -41,7 +44,10 @@
       "sr": 16000,
       "secs": 5.87
     },
-    "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 17.62s vs dataset 5.87s, implied 48000 Hz); resampled 48000 to 16000 Hz"
+    "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 17.62s vs dataset 5.87s, implied 48000 Hz); resampled 48000 to 16000 Hz",
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-hausa-3",
@@ -63,7 +69,10 @@
       "sr": 16000,
       "secs": 9.41
     },
-    "sampleRateRepair": "header declared 16000 Hz but audio is 44100 Hz (header length 25.94s vs dataset 9.41s, implied 44100 Hz); resampled 44100 to 16000 Hz"
+    "sampleRateRepair": "header declared 16000 Hz but audio is 44100 Hz (header length 25.94s vs dataset 9.41s, implied 44100 Hz); resampled 44100 to 16000 Hz",
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-hausa-4",
@@ -85,7 +94,10 @@
       "sr": 16000,
       "secs": 8.96
     },
-    "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 26.89s vs dataset 8.96s, implied 48000 Hz); resampled 48000 to 16000 Hz"
+    "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 26.89s vs dataset 8.96s, implied 48000 Hz); resampled 48000 to 16000 Hz",
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-hausa-5",
@@ -107,7 +119,10 @@
       "sr": 16000,
       "secs": 11.58
     },
-    "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 34.75s vs dataset 11.58s, implied 48000 Hz); resampled 48000 to 16000 Hz"
+    "sampleRateRepair": "header declared 16000 Hz but audio is 48000 Hz (header length 34.75s vs dataset 11.58s, implied 48000 Hz); resampled 48000 to 16000 Hz",
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-igbo-1",
@@ -120,7 +135,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), MaZ8vvT78P8_chunk_4224464-4240956_493.wav",
     "durationSeconds": 9.612000465393066,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 2,
     "wav": {
       "ch": 1,
@@ -129,7 +144,10 @@
       "secs": 9.61
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-igbo-2",
@@ -142,7 +160,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), gx-neGaedNI_chunk_579008-593424_58.wav",
     "durationSeconds": 14.416000366210938,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 9,
     "wav": {
       "ch": 1,
@@ -151,7 +169,10 @@
       "secs": 14.42
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-igbo-3",
@@ -164,7 +185,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), az2CHZoVAI0_chunk_1608228-1621696_163.wav",
     "durationSeconds": 13.468000411987305,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 3,
     "wav": {
       "ch": 1,
@@ -173,7 +194,10 @@
       "secs": 13.47
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-igbo-4",
@@ -186,7 +210,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), GtZC1XeYwKw_chunk_318656-326172_25.wav",
     "durationSeconds": 7.89900016784668,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 2,
     "wav": {
       "ch": 1,
@@ -195,7 +219,10 @@
       "secs": 7.9
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-igbo-5",
@@ -208,7 +235,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), qCZ0G1BEAQE_chunk_210800-215424_27.wav",
     "durationSeconds": 4.624000072479248,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 4,
     "wav": {
       "ch": 1,
@@ -217,7 +244,10 @@
       "secs": 4.62
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-pidgin-1",
@@ -230,7 +260,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), 83VmUMseT88_chunk_1302944-1307808_131.wav",
     "durationSeconds": 4.863999843597412,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 2,
     "wav": {
       "ch": 1,
@@ -238,7 +268,10 @@
       "sr": 16000,
       "secs": 4.86
     },
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-pidgin-2",
@@ -251,7 +284,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), ubzZNbsX8bI_chunk_289968-299520_34.wav",
     "durationSeconds": 9.552000045776367,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 5,
     "wav": {
       "ch": 1,
@@ -259,7 +292,10 @@
       "sr": 16000,
       "secs": 9.55
     },
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-pidgin-3",
@@ -272,7 +308,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), wBoXuEZ35gI_chunk_85056-97712_9.wav",
     "durationSeconds": 12.656000137329102,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 5,
     "wav": {
       "ch": 1,
@@ -280,7 +316,10 @@
       "sr": 16000,
       "secs": 12.66
     },
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-pidgin-4",
@@ -293,7 +332,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), fefpt1Ncqlc_chunk_1260656-1269648_131.wav",
     "durationSeconds": 8.991999626159668,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 4,
     "wav": {
       "ch": 1,
@@ -301,7 +340,10 @@
       "sr": 16000,
       "secs": 8.99
     },
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-pidgin-5",
@@ -314,7 +356,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), FGHSh8WCBDg_chunk_1205696-1220960_145.wav",
     "durationSeconds": 15.263999938964844,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 9,
     "wav": {
       "ch": 1,
@@ -322,7 +364,10 @@
       "sr": 16000,
       "secs": 15.26
     },
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-yoruba-1",
@@ -335,7 +380,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), seQtFINOcJg_chunk_3040016-3044992_323.wav",
     "durationSeconds": 4.97599983215332,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 3,
     "wav": {
       "ch": 1,
@@ -344,7 +389,10 @@
       "secs": 4.98
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-yoruba-2",
@@ -357,7 +405,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), jXTiGOGyL88_chunk_1095232-1107296_125.wav",
     "durationSeconds": 12.064000129699707,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 8,
     "wav": {
       "ch": 1,
@@ -366,7 +414,10 @@
       "secs": 12.06
     },
     "sampleRateRepair": null,
-    "referenceCleaning": "removed speaker labels, which are not spoken content"
+    "referenceCleaning": "removed speaker labels, which are not spoken content",
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-yoruba-3",
@@ -379,7 +430,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), yW1hMV6SLac_chunk_124288-131772_2.wav",
     "durationSeconds": 9.956000328063965,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 3,
     "wav": {
       "ch": 1,
@@ -388,7 +439,10 @@
       "secs": 9.96
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-yoruba-4",
@@ -401,7 +455,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), kIHkAlLdKeE_chunk_3121344-3128384_273.wav",
     "durationSeconds": 7.039999961853027,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 7,
     "wav": {
       "ch": 1,
@@ -410,7 +464,10 @@
       "secs": 7.04
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   },
   {
     "id": "afriswitch-yoruba-5",
@@ -423,7 +480,7 @@
     "domain": "natural speech (broadcast and conversation)",
     "source": "Intron AfriSwitch (huggingface.co/datasets/intronhealth/AfriSwitch), UAc8sAKQoTs_chunk_5234660-5252432_410.wav",
     "durationSeconds": 5.860000133514404,
-    "codeMixIndex": 50.0,
+    "codeMixIndex": 50,
     "numSwitchPoints": 5,
     "wav": {
       "ch": 1,
@@ -432,6 +489,9 @@
       "secs": 5.86
     },
     "sampleRateRepair": null,
-    "referenceCleaning": null
+    "referenceCleaning": null,
+    "accentCountry": "Nigerian languages (Hausa, Igbo, Yoruba, Nigerian Pidgin); speaker country not stated per clip by the dataset",
+    "deviceType": "not stated by the dataset; chunks of longer broadcast and conversational recordings, 16 kHz mono after repair",
+    "noiseCondition": "natural, uncontrolled (broadcast and conversation), not studio-clean"
   }
 ]
