@@ -162,6 +162,14 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         // agent-stream clears navigateTo when it has, so this fires just for a
         // destination that arrived only in the final event.
         if (result.navigateTo && !result.navigated) goTo(result.navigateTo);
+        // Understood from natural phrasing by the model itself (see
+        // switch_language/switch_voice in lib/agent/tools.ts), not the
+        // instant keyword match above, this is the flexible fallback for
+        // anything a blind user might actually say that a fixed phrase list
+        // was never going to predict. Applied quietly: the model's own
+        // reply this turn already confirms the switch out loud.
+        if (result.switchLanguage) setSaharaLanguage(result.switchLanguage);
+        if (result.switchVoice) setTtsPath(result.switchVoice === "sahara" ? SAHARA_TTS_PATH : null);
       } catch (e) {
         const msg = (e as Error).message;
         setError(msg);

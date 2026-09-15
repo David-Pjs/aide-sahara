@@ -5,6 +5,11 @@ describe("spoken language switch", () => {
   it("switches on the language name itself", () => {
     expect(matchLanguageCommand("Pidgin")?.code).toBe("pcm");
     expect(matchLanguageCommand("Naija")?.code).toBe("pcm");
+    // "Broken" (as in "broken English") is how Pidgin is actually named in
+    // everyday Nigerian speech, more natural than the word "Pidgin" itself.
+    expect(matchLanguageCommand("Broken")?.code).toBe("pcm");
+    expect(matchLanguageCommand("Broken English")?.code).toBe("pcm");
+    expect(matchLanguageCommand("talk broken to me")?.code).toBe("pcm");
     expect(matchLanguageCommand("Yoruba")?.code).toBe("yo");
     expect(matchLanguageCommand("Igbo")?.code).toBe("ig");
     expect(matchLanguageCommand("Hausa")?.code).toBe("ha");
@@ -23,6 +28,14 @@ describe("spoken language switch", () => {
   it("does not hijack ordinary requests that mention a language", () => {
     expect(matchLanguageCommand("find me transcription work for Yoruba speakers in Lagos please")).toBeNull();
     expect(matchLanguageCommand("find me house cleaning work")).toBeNull();
+  });
+
+  it("does not treat a complaint that something is broken as a switch to Pidgin", () => {
+    // "Broken" alone is a deliberate command, but it is also an ordinary
+    // English word someone frustrated with the app might easily say.
+    expect(matchLanguageCommand("it's broken")).toBeNull();
+    expect(matchLanguageCommand("this thing is broken")).toBeNull();
+    expect(matchLanguageCommand("the app is broken again")).toBeNull();
   });
 
   it("switches on a close mishearing the alias list was never written for", () => {
@@ -49,6 +62,10 @@ describe("spoken voice switch (which voice Aide speaks with, not which language 
     expect(matchVoiceCommand("use Nigerian voice")).toBe("sahara");
     expect(matchVoiceCommand("Sahara voice please")).toBe("sahara");
     expect(matchVoiceCommand("switch to native voice")).toBe("sahara");
+    // "Naija voice" mirrors "Naija" for language; "real voice" is the
+    // plainest possible way to ask for it.
+    expect(matchVoiceCommand("Naija voice")).toBe("sahara");
+    expect(matchVoiceCommand("use the real voice")).toBe("sahara");
   });
 
   it("switches back to the fast voice on its own trigger words", () => {

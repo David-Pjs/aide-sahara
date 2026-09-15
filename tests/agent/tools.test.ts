@@ -342,3 +342,17 @@ describe("navigation", () => {
     expect(r).toMatchObject({ ok: true, page: "payments", section: "history" });
   });
 });
+
+describe("switching language and voice by natural phrasing, not a fixed command word", () => {
+  it("passes the requested listening language through for the browser to apply", async () => {
+    const r = await run(worker, "switch_language", { language: "yo" });
+    expect(r).toMatchObject({ ok: true, language: "yo" });
+  });
+
+  it("passes the requested speaking voice through for the browser to apply", async () => {
+    const sahara = await run(worker, "switch_voice", { voice: "sahara" });
+    expect(sahara).toMatchObject({ ok: true, voice: "sahara" });
+    const fast = await run(worker, "switch_voice", { voice: "default" });
+    expect(fast).toMatchObject({ ok: true, voice: "default" });
+  });
+});

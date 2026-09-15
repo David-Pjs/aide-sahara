@@ -103,7 +103,9 @@ export function isSaharaVoiceActive(): boolean {
 // Deliberately worded away from the language-switch words above ("Yoruba",
 // "English") so the two commands can never be confused for each other, one
 // changes what Aide listens for, this changes what Aide sounds like.
-const VOICE_ON_WORDS = /\b(nigerian voice|sahara voice|native voice)\b/i;
+// "Naija voice" mirrors "Naija" for language, one word to remember for both.
+// "Real voice" is the plainest possible way to ask for it.
+const VOICE_ON_WORDS = /\b(nigerian voice|sahara voice|native voice|naija voice|real voice)\b/i;
 const VOICE_OFF_WORDS = /\b(fast voice|normal voice|regular voice|default voice)\b/i;
 
 export function matchVoiceCommand(text: string): "sahara" | "default" | null {
@@ -158,8 +160,28 @@ function normalize(text: string): string {
   return text.normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
+// "Broken" (as in "broken English") is how Pidgin is actually named in
+// everyday Nigerian speech, more natural to say than "Pidgin" itself. But
+// unlike "Pidgin" or "Yoruba", "broken" is an ordinary English word someone
+// frustrated with the app itself might easily say ("it's broken", "this
+// thing is broken"), so it does NOT get the same free pass every other
+// short utterance gets. It only counts as a switch when it is essentially
+// the WHOLE message ("Broken", "Broken English"), or paired with an actual
+// switch-intent verb ("talk broken to me", "switch to broken").
+const BROKEN_ALONE = /^broken(\s+english)?[.!?]?$/i;
+
+function matchBroken(normalized: string): { code: string; label: string } | null {
+  const trimmed = normalized.trim();
+  const isJustBroken = BROKEN_ALONE.test(trimmed);
+  const hasIntent = SWITCH_INTENT.test(trimmed) && /\bbroken\b/i.test(trimmed);
+  if (!isJustBroken && !hasIntent) return null;
+  return SAHARA_LANGUAGE_OPTIONS.find((o) => o.code === "pcm") ?? null;
+}
+
 export function matchLanguageCommand(text: string): { code: string; label: string } | null {
   const normalized = normalize(text);
+  const broken = matchBroken(normalized);
+  if (broken) return broken;
   const isShort = normalized.trim().split(/\s+/).length <= SHORT_UTTERANCE_WORDS;
   if (!isShort && !SWITCH_INTENT.test(normalized)) return null;
   return matchLanguageAnswer(normalized);
@@ -199,6 +221,11 @@ const LANGUAGE_NAMES: { code: string; name: string }[] = [
 // "which language do you speak?" during first-visit onboarding.
 export function matchLanguageAnswer(text: string): { code: string; label: string } | null {
   const normalized = normalize(text);
+  // A direct answer to "which language do you speak?" is a low-risk place
+  // for "broken" to count on its own, unlike an ordinary short utterance
+  // where it is far more likely to be a complaint about the app itself.
+  const broken = matchBroken(normalized);
+  if (broken) return broken;
   for (const { code, words } of LANGUAGE_ALIASES) {
     if (words.test(normalized)) {
       const opt = SAHARA_LANGUAGE_OPTIONS.find((o) => o.code === code);

@@ -24,6 +24,31 @@ export function makeTools(account: Account) {
       execute: async ({ page, section }) => ({ ok: true, page, section }),
     }),
 
+    // A blind user cannot be expected to remember an exact magic phrase, and
+    // a keyword matcher can only ever catch phrasing that was anticipated in
+    // advance. This is the flexible path: understand what they actually
+    // meant, in whatever words they used, and act on it. It runs alongside a
+    // fast, instant client-side match on the handful of exact common phrases
+    // (see app/aide/sahara-recognizer.ts); this tool is what catches
+    // everything that fast path was never going to predict.
+    switch_language: tool({
+      description:
+        "Change which language Aide listens for when the user asks to hear or speak to them in Pidgin, Yoruba, Igbo, Hausa, Swahili or plain English, in ANY natural phrasing: 'talk pidgin to me', 'I dey speak Yoruba', 'switch am to Igbo', 'listen for Hausa', 'change my language', 'use Swahili'. This changes what Aide HEARS, not what it speaks, Aide always replies in English regardless.",
+      parameters: z.object({
+        language: z.enum(["pcm", "yo", "ig", "ha", "sw", "en"]).describe(
+          "pcm=Nigerian Pidgin, yo=Yoruba, ig=Igbo, ha=Hausa, sw=Swahili, en=English only",
+        ),
+      }),
+      execute: async ({ language }) => ({ ok: true, language }),
+    }),
+
+    switch_voice: tool({
+      description:
+        "Change which voice Aide SPEAKS with, in ANY natural phrasing that asks for a more Nigerian, native, or authentic-sounding voice, or asks to go back to normal: 'use the real Nigerian voice', 'you sound too foreign, talk proper', 'switch to the native voice', 'I want to hear the Sahara voice', 'go back to normal', 'use the fast voice'. 'sahara' is Sahara's own Nigerian-accented voice (genuinely speaks Yoruba, Igbo, Hausa, not just English, but takes several seconds longer per reply, say that plainly when switching to it). 'default' is the fast Microsoft voice Aide normally uses.",
+      parameters: z.object({ voice: z.enum(["sahara", "default"]) }),
+      execute: async ({ voice }) => ({ ok: true, voice }),
+    }),
+
     filter_jobs: tool({
       description:
         "Filter the jobs page for the worker, by keyword (e.g. 'virtual assistant', 'transcription'), pay range in Naira, and whether an assessment is required. The jobs page opens with the filters applied; the worker can also adjust them on screen. Use when they ask things like 'show VA jobs paying between 12 and 20 thousand'.",
