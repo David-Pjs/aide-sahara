@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { VoiceEngine, type VoiceState } from "./voice-engine";
-import { matchLanguageAnswer, matchLanguageCommand, setSaharaLanguage, hasSaharaLanguagePreference, matchVoiceCommand, setTtsPath, SAHARA_TTS_PATH } from "./sahara-recognizer";
+import { matchLanguageAnswer, matchLanguageCommand, setSaharaLanguage, hasSaharaLanguagePreference, matchVoiceCommand, setTtsPath, SAHARA_TTS_PATH, isSaharaVoiceActive } from "./sahara-recognizer";
 
 // Anything but "browser" means utterances are transcribed on the server, where
 // a language hint improves accuracy, so the language question and the spoken
@@ -40,6 +40,8 @@ type AideContextValue = {
   interrupt: () => void;
   beginCapture: (onText: (t: string) => void) => void;
   endCapture: () => void;
+  usingSaharaVoice: boolean;
+  toggleVoice: () => void;
 };
 
 const AideContext = createContext<AideContextValue | null>(null);
@@ -97,6 +99,14 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<Msg[]>([]);
   // This browser's account id, used to subscribe to its own reactive event feed.
   const [accountId, setAccountId] = useState<string | null>(null);
+  // A visible, clickable twin of the spoken "sahara voice" / "fast voice"
+  // commands. The spoken versions are the real accessible control, this is
+  // for the demo and for anyone who wants to see and prove the switch
+  // happened, not have to trust that a spoken confirmation was heard right.
+  const [usingSaharaVoice, setUsingSaharaVoice] = useState(false);
+  useEffect(() => {
+    setUsingSaharaVoice(isSaharaVoiceActive());
+  }, []);
 
   const engineRef = useRef<VoiceEngine | null>(null);
   const thinkingRef = useRef(false);
@@ -113,6 +123,16 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
 
   const speak = useCallback((text: string) => engineRef.current?.speak(text), []);
   const interrupt = useCallback(() => engineRef.current?.interrupt(), []);
+  const toggleVoice = useCallback(() => {
+    const next = !usingSaharaVoice;
+    setTtsPath(next ? SAHARA_TTS_PATH : null);
+    setUsingSaharaVoice(next);
+    speak(
+      next
+        ? "Switching to Sahara's own Nigerian voice. Replies will take a few seconds longer."
+        : "Back to the fast voice.",
+    );
+  }, [usingSaharaVoice, speak]);
 
   const send = useCallback(
     async (text: string) => {
@@ -437,6 +457,8 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         interrupt,
         beginCapture,
         endCapture,
+        usingSaharaVoice,
+        toggleVoice,
       }}
     >
       {children}
@@ -476,7 +498,8 @@ function PaymentAlerts({
 // The small Aide that follows the user onto every other screen. It glows
 // while talking and pulses while listening; tapping it interrupts Aide.
 function MiniAide() {
-  const { listening, speaking, thinking, capturing, muted, interim, messages, interrupt } = useAide();
+  const { listening, speaking, thinking, capturing, muted, interim, messages, interrupt, usingSaharaVoice, toggleVoice } =
+    useAide();
   const lastAide = [...messages].reverse().find((m) => m.role === "assistant")?.content;
   // Held beats everything below it. Announcing "Aide is listening" while the
   // user has deliberately closed the mic is the one lie that matters here.
@@ -514,6 +537,21 @@ function MiniAide() {
           />
         )}
         <span className="relative">Aide</span>
+      </button>
+      {/* A visible twin of the spoken "sahara voice" / "fast voice" commands,
+          for anyone who wants to see the switch happen, not just hear it,
+          e.g. proving on camera that this is genuinely Sahara's voice. */}
+      <button
+        onClick={toggleVoice}
+        aria-pressed={usingSaharaVoice}
+        aria-label={
+          usingSaharaVoice
+            ? "Using Sahara's Nigerian voice. Tap to switch to the fast voice."
+            : "Using the fast voice. Tap to switch to Sahara's Nigerian voice."
+        }
+        className="dark-surface rounded-full bg-[var(--panel)] px-4 py-2 text-sm font-semibold text-[var(--panel-ink)] shadow-lg"
+      >
+        {usingSaharaVoice ? "🇳🇬 Sahara voice" : "⚡ Fast voice"}
       </button>
       <p aria-live="polite" className="sr-only">
         {status}
