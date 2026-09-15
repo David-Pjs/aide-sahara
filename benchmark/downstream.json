@@ -1,0 +1,710 @@
+{
+  "afriswitchcare-igbo": {
+    "set": "AfriSwitchCare (4 long conversations)",
+    "languagePair": "Igbo-English",
+    "facts": [
+      "Patient is 28 years old",
+      "Patient works in a salon doing hair",
+      "Patient is unmarried",
+      "Patient is Christian and Igbo",
+      "Patient came to the hospital because of abdominal pain",
+      "The pain started 3 days ago",
+      "The pain is an aching pain that started suddenly",
+      "The pain does not radiate to other parts of the body",
+      "Patient rates the pain 8 out of 10",
+      "Patient has fever",
+      "Patient has no vomiting, no diarrhea, and no pain when urinating",
+      "Patient has had vaginal discharge for 5 days that has a bad smell and is green in color"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false
+      ],
+      "OpenAI Whisper large-v3": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "Qwen3-ASR-1.7B (Alibaba)": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true
+      ]
+    }
+  },
+  "afriswitchcare-yoruba": {
+    "set": "AfriSwitchCare (4 long conversations)",
+    "languagePair": "Yoruba-English",
+    "facts": [
+      "Patient's name is Múrí Ọ̀kánlàwọ́n",
+      "Patient is 60 years old",
+      "Patient is a retired traffic coordinator",
+      "Patient has two wives",
+      "Patient complains of pain in both knees",
+      "Knee pain started about two weeks ago",
+      "Pain started gradually and has become worse",
+      "Patient rates the pain 6 out of 10",
+      "Pain is only in the knees and does not spread to other parts of the body",
+      "Pain is usually present on waking and reduces as the day goes on",
+      "Knees are not swollen and there is no history of falls or wounds",
+      "Patient has been taking Ibuprofen occasionally, which relieves pain only a little"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3": [
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo": [
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "Qwen3-ASR-1.7B (Alibaba)": [
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true
+      ]
+    }
+  },
+  "afriswitchcare-hausa": {
+    "set": "AfriSwitchCare (4 long conversations)",
+    "languagePair": "Hausa-English",
+    "facts": [
+      "The patient's name is Yakubu.",
+      "The patient is 52 years old.",
+      "The patient came to the hospital because he was told his blood pressure was high at an outreach.",
+      "The patient has a headache.",
+      "The patient feels palpitations.",
+      "The patient does not sleep well.",
+      "The patient has no chest pain.",
+      "The patient has no leg swelling.",
+      "The patient has no difficulty breathing.",
+      "The patient has no back pain.",
+      "The patient has no family history of hypertension or diabetes.",
+      "On examination, pulse rate is 86 bpm and blood pressure is 162/100 mmHg; heart sounds are S1 and S2 only."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true
+      ],
+      "OpenAI Whisper large-v3": [
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo": [
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "Qwen3-ASR-1.7B (Alibaba)": [
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    }
+  },
+  "afriswitchcare-pidgin": {
+    "set": "AfriSwitchCare (4 long conversations)",
+    "languagePair": "Nigerian Pidgin-English",
+    "facts": [
+      "Patient reports low mood for about two months.",
+      "Patient's low mood started after losing his only daughter about two weeks ago.",
+      "Patient has not been sleeping well since his daughter's death.",
+      "Patient's appetite has reduced lately.",
+      "Patient has lost interest in usual activities and prefers to be alone.",
+      "Patient experiences auditory hallucinations, hearing voices as if someone is talking to him.",
+      "Patient also experiences visual hallucinations, seeing people that others cannot see.",
+      "Patient has occasional thoughts of ending his life to join his deceased daughter.",
+      "Patient is hypertensive, diagnosed about six months ago.",
+      "Patient does not take his hypertension medication regularly.",
+      "Patient does not smoke and drinks alcohol only occasionally at parties.",
+      "On mental state examination, patient appears clinically depressed, speech is irrational, comprehension is slow, insight is absent, and auditory and visual hallucinations are present."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo": [
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "Qwen3-ASR-1.7B (Alibaba)": [
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "afriswitch-hausa-1": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Hausa-English",
+    "facts": [
+      "He said the US tariffs on the European Union will worsen the challenges the continent is facing",
+      "He said this regarding the trade war launched by Donald Trump"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false,
+        false
+      ]
+    }
+  },
+  "afriswitch-hausa-2": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Hausa-English",
+    "facts": [
+      "Compressed natural gas is now being used to fill vehicles",
+      "It is being measured in Taliya"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        false
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false,
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false,
+        false
+      ]
+    }
+  },
+  "afriswitch-hausa-3": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Hausa-English",
+    "facts": [
+      "I have become an advisor, so anyone with a problem comes to me with their problem, whether man or woman."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false
+      ]
+    }
+  },
+  "afriswitch-hausa-4": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Hausa-English",
+    "facts": [
+      "The person has been missing for several days."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false
+      ]
+    }
+  },
+  "afriswitch-hausa-5": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Hausa-English",
+    "facts": [
+      "Adding vegetables, beans, and olive oil to a person's diet often brings relief and helps improve body health.",
+      "Eating too much beef increases the pain of this condition."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false,
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        true,
+        true
+      ]
+    }
+  },
+  "afriswitch-igbo-1": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Igbo-English",
+    "facts": [
+      "The speaker is from this place.",
+      "One leg is what helped Promise.",
+      "Go and renew your relationship with them."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        false,
+        false,
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false,
+        false,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        true,
+        false,
+        true
+      ]
+    }
+  },
+  "afriswitch-igbo-2": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Igbo-English",
+    "facts": [
+      "People are scrambling for the American dollar.",
+      "Everyone is looking for the dollar coming down from America."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        true,
+        true
+      ]
+    }
+  },
+  "afriswitch-igbo-3": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Igbo-English",
+    "facts": [
+      "My friend shut up and go watch that video",
+      "Give that person a like"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        false
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        true,
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        true,
+        false
+      ]
+    }
+  },
+  "afriswitch-igbo-4": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Igbo-English",
+    "facts": [
+      "People are doing wicked things during this December period"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false
+      ]
+    }
+  },
+  "afriswitch-igbo-5": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Igbo-English",
+    "facts": [
+      "Igbo people have a place where their relatives live"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false
+      ]
+    }
+  },
+  "afriswitch-pidgin-1": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Nigerian Pidgin-English",
+    "facts": [
+      "The speaker is from the People's Democratic Party."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        true
+      ]
+    }
+  },
+  "afriswitch-pidgin-2": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Nigerian Pidgin-English",
+    "facts": [
+      "This is the first time we have really talked about menstruation issues.",
+      "Maxine talked about fashion, culture and style."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        false,
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false,
+        true
+      ]
+    }
+  },
+  "afriswitch-pidgin-3": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Nigerian Pidgin-English",
+    "facts": [
+      "Today, besides discussing lung management, we will also talk about other issues.",
+      "We have seen many people lose good friends, good relationships, and good marriages."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false,
+        true
+      ]
+    }
+  },
+  "afriswitch-pidgin-4": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Nigerian Pidgin-English",
+    "facts": [],
+    "judged": {
+      "Sahara v2.5": [],
+      "OpenAI Whisper large-v3 (Groq)": [],
+      "OpenAI Whisper large-v3-turbo (Groq)": []
+    }
+  },
+  "afriswitch-pidgin-5": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Nigerian Pidgin-English",
+    "facts": [
+      "They still need all the seven things",
+      "The cooker has bought meat",
+      "The cooker has bought bread"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        false,
+        false,
+        false
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false,
+        false,
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "afriswitch-yoruba-1": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Yoruba-English",
+    "facts": [
+      "I saw something bad in it"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        false
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false
+      ]
+    }
+  },
+  "afriswitch-yoruba-2": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Yoruba-English",
+    "facts": [
+      "You cannot just destroy what we built together",
+      "It is not possible",
+      "You have already destroyed it"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        true,
+        true,
+        true
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "afriswitch-yoruba-3": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Yoruba-English",
+    "facts": [
+      "Akintunde is disciplined",
+      "We need a chopper"
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        false,
+        false
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false,
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false,
+        false
+      ]
+    }
+  },
+  "afriswitch-yoruba-4": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Yoruba-English",
+    "facts": [],
+    "judged": {
+      "Sahara v2.5": [],
+      "OpenAI Whisper large-v3 (Groq)": [],
+      "OpenAI Whisper large-v3-turbo (Groq)": []
+    }
+  },
+  "afriswitch-yoruba-5": {
+    "set": "AfriSwitch (20 short clips)",
+    "languagePair": "Yoruba-English",
+    "facts": [
+      "The speaker is asking why the person is showing off or misbehaving.",
+      "The speaker is telling the person to stop messing around."
+    ],
+    "judged": {
+      "Sahara v2.5": [
+        true,
+        false
+      ],
+      "OpenAI Whisper large-v3 (Groq)": [
+        false,
+        false
+      ],
+      "OpenAI Whisper large-v3-turbo (Groq)": [
+        false,
+        false
+      ]
+    }
+  }
+}

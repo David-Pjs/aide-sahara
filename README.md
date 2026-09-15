@@ -17,6 +17,7 @@ required.
 |---|---|
 | [`SOLUTION.md`](SOLUTION.md) | Problem, users, solution, and the key technical decisions |
 | [`benchmark/report.md`](benchmark/report.md) | Speech recognition: 4 models, 3 vendors, 5 metrics, full transcripts |
+| [`benchmark/Aide-benchmark-report.pdf`](benchmark/Aide-benchmark-report.pdf) | The 3-page benchmark report: per-language WER/CER, downstream key-fact recall, qualitative findings |
 | [`benchmark/tts/report.md`](benchmark/tts/report.md) | Speech synthesis: 3 systems, round-trip intelligibility |
 | [`benchmark/AFRISWITCH.md`](benchmark/AFRISWITCH.md) | 20 short natural-speech clips from AfriSwitch scored across 3 models, per language and per code-switched span, and a sample-rate defect found in the source data |
 | [`ETHICS.md`](ETHICS.md) | Consent, privacy, bias, dignity, and where we are still exposed |

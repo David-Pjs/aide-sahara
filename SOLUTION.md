@@ -10,6 +10,7 @@
 |---|---|
 | [`benchmark/report.md`](benchmark/report.md) | 4 models, 3 vendors, 4 long code-switched conversations, every transcript in full |
 | [`benchmark/AFRISWITCH.md`](benchmark/AFRISWITCH.md) | 3 models on 20 short clips, scored per language and inside the switch itself |
+| [`benchmark/Aide-benchmark-report.pdf`](benchmark/Aide-benchmark-report.pdf) | The 3-page benchmark report: models, data, metrics, per-language WER/CER, downstream task, qualitative findings |
 | [`benchmark/tts/report.md`](benchmark/tts/report.md) | Speech synthesis: Sahara TTS against two general voices |
 | [`ETHICS.md`](ETHICS.md) | Consent, privacy, bias, dignity, and where we are still exposed |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Speech pipeline, measured latency, security mechanisms |
@@ -52,6 +53,10 @@ Sources: Adigun and Mngomezulu, *Exploring the lived experiences of (un)employme
 **How many people.** The Nigeria National Blindness and Visual Impairment Survey (15,375 participants aged 40 and over) found blindness prevalence of **4.2%** (95% CI 3.8 to 4.6) plus a further **1.5%** severely visually impaired. Extrapolated nationally that is roughly **1.13 million blind** and about **4.25 million blind or visually impaired** Nigerian adults aged 40 and over, with **84% of the blindness avoidable**: most of these people lost their sight to something treatable and were earning before they did. A companion paper, *Poverty and Blindness in Nigeria*, describes the loop Aide tries to break: losing your sight costs you your income, and losing your income makes the sight loss harder to treat.
 
 Two honest notes on that figure. It counts adults 40 and over, so it is a floor for a working-age product, not a count of our users. And it counts Nigeria alone.
+
+**Across all ages and the region.** The Global Burden of Disease vision loss analysis for Sub-Saharan Africa estimates that in 2020, **5.08 million people were blind and 20.4 million more had moderate to severe vision impairment**: about **25.5 million people of all ages**, with the highest age-standardised blindness prevalence of any world region (0.99%, nearly double the world average). In Nigeria, the National Commission for Persons with Disabilities plans around a WHO-based estimate of **35.5 million people with disabilities**, a figure the Commission itself treats as an estimate pending better data. And Aide's voice-first design does not stop at sight: any worker who cannot read a screen uses it the same way.
+
+Sources: Vision Loss Expert Group of the Global Burden of Disease Study, *Prevalence of Blindness and Visual Impairment in Sub-Saharan Africa in 2020*, Ophthalmic Epidemiology, 2026 ([PMID 40127261](https://pubmed.ncbi.nlm.nih.gov/40127261/)); National Commission for Persons with Disabilities, as reported by Leadership Newspaper.
 
 Sources: Kyari F et al., *Prevalence of Blindness and Visual Impairment in Nigeria*, IOVS 2009; Rabiu MM et al., *Review of the publications of the Nigeria national blindness survey*, 2012 ([PMID 22684129](https://pubmed.ncbi.nlm.nih.gov/22684129/)).
 
@@ -101,6 +106,8 @@ Every AfriSwitch reference tags its English spans with `[[EN]]`. So every refere
 
 On English, the three models are within 7 points of each other. On the Hausa, Igbo, Yoruba and Pidgin around it, Whisper keeps about one word in seven and Sahara keeps more than half. **A general model hears the English inside a code-switched sentence and loses the language it switched from.** This is the most direct measurement of code-switching we could build, and it is the reason Aide listens through Sahara.
 
+One weighting to be clear about: Hausa supplies 120 of the 252 Nigerian-language words, and Sahara is strongest on Hausa. Leaving Hausa out entirely, Sahara still keeps 34.8% of the Nigerian-language words against 21.2% and 20.5% for the two Whisper builds.
+
 ### Result 2: short utterances
 
 | Model | WER | 95% interval | Accuracy | Segment loss | Runaway loops |
@@ -130,6 +137,17 @@ On English, the three models are within 7 points of each other. On the Hausa, Ig
 Sahara is the only model whose worst conversation stays under 60% WER (58.5%), against 85.2%, 87.1% and 93.9% for the others. For a product that reads a transcript to someone who cannot check it, the worst case matters more than the average.
 
 We are careful about what four clips can prove. Sahara's lead over Whisper large-v3 survives resampling (interval 2.5 to 40.7 points). Its leads over turbo (-1.7 to 30.1) and Qwen (-10.1 to 33.6) do not: Sahara is better on 3 of 4 conversations against each, but four conversations cannot rule out chance. That is why the 20-clip set exists.
+
+### Result 4: the downstream task, what an agent can still act on
+
+Aide's transcript is never read by a person first; it goes straight into the agent. So we measured what the agent can still get out of it. deepseek-chat, the model that drives Aide, lists the key facts in each human reference transcript (requests, symptoms, amounts, names, answers), then judges fact by fact whether each model's transcript still states them. Same judge for every model, temperature 0, cached in `benchmark/downstream.json` (`src/downstream-eval.ts`).
+
+| Key facts recovered | Sahara v2.5 | Whisper large-v3 | Whisper large-v3-turbo | Qwen3-ASR-1.7B |
+|---|---|---|---|---|
+| Long conversations (48 facts) | **83.3%** | 58.3% | 52.1% | 62.5% |
+| Short clips (33 facts) | **63.6%** | 42.4% | 39.4% | not run |
+
+The downstream view sharpens the WER one. On the Igbo conversation, where Sahara has the worst WER of the four models, its transcript still carries the most facts (7 of 12, against 3 to 5). WER weighs every word equally; an agent needs the few words that carry the request. Per-language cells rest on few facts, so they are indicative; the full per-language table is in the benchmark PDF.
 
 ### What the averages hide: failures a blind user cannot catch
 

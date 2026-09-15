@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Aide benchmark report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#161412; --muted:#5b554e; --rule:#d9d2c7; --accent:#8a3b12; --win:#f3e6d8; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"Atkinson Hyperlegible", Verdana, sans-serif; font-size:8.6pt; line-height:1.34; color:var(--ink); }
+  h1 { font-family:"Fraunces", Georgia, serif; font-size:17pt; line-height:1.1; margin:0 0 2mm; letter-spacing:-0.01em; }
+  h2 { font-family:"Fraunces", Georgia, serif; font-size:11pt; margin:3.2mm 0 1.2mm; color:var(--accent); break-after:avoid; }
+  h3 { font-size:8.8pt; margin:2mm 0 1mm; break-after:avoid; }
+  p { margin:0 0 1.6mm; }
+  .meta { color:var(--muted); font-size:8pt; margin-bottom:2.5mm; border-bottom:1.5pt solid var(--ink); padding-bottom:2mm; }
+  .lead { font-size:9.4pt; }
+  table { width:100%; border-collapse:collapse; margin:0.8mm 0 2mm; break-inside:avoid; }
+  th, td { text-align:left; padding:0.9mm 1.4mm; border-bottom:0.5pt solid var(--rule); vertical-align:top; }
+  th { font-size:7.8pt; color:var(--muted); font-weight:700; border-bottom:1pt solid var(--ink); }
+  td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  td.best { background:var(--win); font-weight:700; }
+  .small { font-size:7.8pt; color:var(--muted); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:4mm; }
+  ul { margin:0 0 1.6mm; padding-left:4mm; }
+  li { margin-bottom:0.6mm; }
+  .page { break-after:page; }
+  code { font-size:7.8pt; }
+</style>
+</head>
+<body>
+
+<div class="page">
+<h1>Does Sahara hear Nigerian code-switched speech better than the models developers reach for?</h1>
+<div class="meta">Aide benchmark report · Sahara CodeSwitch Africa Challenge · David Uhumagho and Dillon Ofili · September 2026 · Code, transcripts and scripts: github.com/David-Pjs/aide-sahara</div>
+
+<h2>1. Summary</h2>
+<p class="lead">Across two Intron datasets and four Nigerian language pairs, <b>Sahara v2.5 had the lowest word error rate overall on both sets</b> (46.1% on long conversations, 54.7% on short clips), produced <b>no runaway hallucination loop and no non-Latin script</b>, and kept far more of the Nigerian-language words inside code-switched sentences. It is not best everywhere: it loses the most English-heavy conversation and the short Yoruba clips, and it is the slowest.</p>
+
+<table>
+<tr><th style="width:17%">Model</th><th style="width:43%">Pros</th><th style="width:40%">Cons</th></tr>
+<tr><td><b>Sahara v2.5</b><br><span class="small">Intron, API</span></td>
+<td>Lowest WER on both sets; kept 56.7% of Nigerian-language words in switched speech vs 13 to 15% for Whisper; lowest insertion rate (2.6%) and zero runaway loops; only model under 60% WER on its worst conversation; strongest on Hausa and Pidgin.</td>
+<td>Last of four on the English-heavy Igbo conversation (50.1%); worse than Whisper large-v3 on short Yoruba (89.1% vs 78.9% strict); needs a language hint (no auto-detect); median 3.97 s on short clips.</td></tr>
+<tr><td><b>Whisper large-v3</b><br><span class="small">OpenAI, open weights</span></td>
+<td>Strong on long clean English dialogue; best of the three on short Yoruba under strict WER; fast when hosted on Groq (0.61 s median).</td>
+<td>Runaway loops on 2 of 4 conversations ("mwenye" x136); writes Nigerian speech in Bengali, Arabic or Gurmukhi script; keeps 15.1% of Nigerian-language words; invented a dialogue on the Igbo clip.</td></tr>
+<tr><td><b>Whisper large-v3-turbo</b><br><span class="small">OpenAI, open weights</span></td>
+<td>Fastest (0.43 s median on Groq); second best on the English-heavy Igbo conversation (38.8%).</td>
+<td>Translates Hausa into English instead of transcribing it ("We have to do this." for a 32-word sentence); 97.5% WER on short Hausa; keeps 13.1% of Nigerian-language words.</td></tr>
+<tr><td><b>Qwen3-ASR-1.7B</b><br><span class="small">Alibaba, open weights</span></td>
+<td>Lowest transcript loss (7.0%): rarely skips speech; wins the Igbo conversation on every metric (34.0%); zero segments lost on Pidgin.</td>
+<td>Collapses on Hausa (93.9% WER), writing Swahili-like words; second-highest insertion rate (5.8%). Long set only: not run on short clips (inference credit exhausted).</td></tr>
+</table>
+
+<h2>2. Data</h2>
+<table>
+<tr><th>Set</th><th>Source and licence</th><th>Languages</th><th class="n">Clips</th><th class="n">Audio</th><th>Domain and recording</th></tr>
+<tr><td><b>AfriSwitchCare</b></td><td>huggingface.co/datasets/intronhealth/AfriSwitchCare, CC BY-NC-SA 4.0</td><td>Igbo, Yoruba, Hausa, Nigerian Pidgin, each with English</td><td class="n">4</td><td class="n">18.6 min</td><td>Simulated doctor and patient consultations, no real patients; studio, 16 kHz mono, clean; 1.5 to 6.3 min each</td></tr>
+<tr><td><b>AfriSwitch</b></td><td>huggingface.co/datasets/intronhealth/AfriSwitch, CC BY-NC-SA 4.0</td><td>The same four pairs, 5 clips each</td><td class="n">20</td><td class="n">3.1 min</td><td>Natural broadcast and conversational speech, uncontrolled noise; 4.6 to 15.3 s each</td></tr>
+</table>
+<p><b>Selection.</b> AfriSwitch clips were chosen deterministically: 4 to 20 s long, at least 2 switch points, one clip per source recording, ranked by code-mix index. <b>Preprocessing.</b> (1) The Hausa AfriSwitch files declare 16 kHz but hold 48 kHz (4 files) or 44.1 kHz (1); confirmed by speaking rate against the dataset's durations and by voice pitch, then resampled by exact rational ratio to 16 kHz. Unrepaired, speech plays about three times too slow and every model's Hausa score measures a broken file. (2) Speaker-turn separators and one reference's written speaker labels ("[Spaeker 1]") were removed from references. (3) Reference typos ("7thingera") were left in place: a guessed correction puts our judgment in the answer key, and a typo costs every model equally. (4) Both sides are normalised with Intron's published pipeline before scoring. The two sets are never averaged together.</p>
+
+</div>
+
+<div class="page">
+<h2>3. Metrics and why they fit</h2>
+<table>
+<tr><th style="width:21%">Metric</th><th style="width:39%">Definition</th><th style="width:40%">Why it matters here</th></tr>
+<tr><td>WER, CER</td><td>Edits over reference words or characters, after Intron's normalisation</td><td>Standard, comparable with Intron's own results; CER credits near-misses in agglutinative words</td></tr>
+<tr><td>Accuracy, transcript loss</td><td>Correct words, and deleted words, over reference words</td><td>Separates "wrong" from "missing"; stays readable when WER exceeds 100%</td></tr>
+<tr><td>Segment loss</td><td>Sentences with under 20% of words surviving</td><td>A lost sentence is an instruction the agent never received</td></tr>
+<tr><td>Hallucination</td><td>Insertion rate plus a runaway-loop detector (10+ repeats)</td><td>A blind user cannot see invented text; fluent errors are the dangerous ones</td></tr>
+<tr><td>Code-switched span recall</td><td>Words kept, split by the dataset's own [[EN]] tags</td><td>Measures the switch itself, not the whole clip</td></tr>
+<tr><td>Key-fact recall (downstream)</td><td>Share of reference facts still stated in the transcript, judged by the LLM that drives Aide</td><td>Aide's transcript goes straight to an agent; what matters is what it can still act on</td></tr>
+</table>
+<p class="small">All word metrics come from one alignment per transcript (<code>src/metrics.ts</code>). A fairness guard averages only clips every model scored. Averages carry 95% bootstrap intervals (10,000 resamples, fixed seed). Sahara received its API's per-clip language hint; Whisper ran raw (no prompt, no language, temperature 0) because it has no code for Igbo, Pidgin or mixed speech.</p>
+<h2>4. Results per language</h2>
+<h3>Long conversations (AfriSwitchCare): WER / CER</h3>
+<table>
+<tr><th>Language pair</th><th class="n">Sahara v2.5</th><th class="n">Whisper large-v3</th><th class="n">Whisper large-v3-turbo</th><th class="n">Qwen3-ASR-1.7B</th></tr>
+<tr><td>Hausa-English</td><td class="n best">50.0 / 28.9</td><td class="n">87.1 / 64.2</td><td class="n">82.6 / 53.1</td><td class="n">93.9 / 56.0</td></tr>
+<tr><td>Igbo-English</td><td class="n">50.1 / 35.2</td><td class="n">41.0 / 28.5</td><td class="n">38.8 / 26.3</td><td class="n best">34.0 / 20.3</td></tr>
+<tr><td>Nigerian Pidgin-English</td><td class="n best">25.6 / 16.8</td><td class="n">69.9 / 61.5</td><td class="n">48.2 / 37.3</td><td class="n">33.4 / 19.9</td></tr>
+<tr><td>Yoruba-English</td><td class="n best">58.5 / 42.0</td><td class="n">76.3 / 64.3</td><td class="n">85.2 / 71.0</td><td class="n">61.1 / 43.7</td></tr>
+<tr><td><b>All (4 clips)</b></td><td class="n best">46.1 / 30.7</td><td class="n">68.6 / 54.6</td><td class="n">63.7 / 46.9</td><td class="n">55.6 / 35.0</td></tr>
+<tr><td class="small">95% interval of mean WER</td><td class="n small">31.7 to 56.4</td><td class="n small">49.8 to 82.8</td><td class="n small">43.5 to 83.9</td><td class="n small">33.7 to 79.0</td></tr>
+<tr><td class="small">Segment loss / runaway loops</td><td class="n small">25.9% / 0 of 4</td><td class="n small">53.0% / 2 of 4</td><td class="n small">52.9% / 0 of 4</td><td class="n small">44.0% / 0 of 4</td></tr>
+</table>
+<p class="small">With 4 clips, only Sahara's lead over Whisper large-v3 survives resampling (gap interval 2.5 to 40.7 points). Its leads over turbo (-1.7 to 30.1) and Qwen (-10.1 to 33.6) cross zero, so they are not established by this set alone.</p>
+
+<h3>Short clips (AfriSwitch): WER / CER, 5 clips per language</h3>
+<table>
+<tr><th>Language pair</th><th class="n">Sahara v2.5</th><th class="n">Whisper large-v3 (Groq)</th><th class="n">Whisper large-v3-turbo (Groq)</th></tr>
+<tr><td>Hausa-English</td><td class="n best">21.3 / 9.9</td><td class="n">91.3 / 28.9</td><td class="n">97.5 / 62.6</td></tr>
+<tr><td>Igbo-English</td><td class="n best">52.2 / 29.9</td><td class="n">69.0 / 53.2</td><td class="n">72.6 / 47.8</td></tr>
+<tr><td>Nigerian Pidgin-English</td><td class="n best">56.2 / 38.9</td><td class="n">72.5 / 49.8</td><td class="n">62.2 / 37.7</td></tr>
+<tr><td>Yoruba-English</td><td class="n">89.1 / 57.6 <span class="small">(73.6 tone marks ignored)</span></td><td class="n best">78.9 / 55.4</td><td class="n">86.3 / 67.0</td></tr>
+<tr><td><b>All (20 clips)</b></td><td class="n best">54.7 / 34.0</td><td class="n">77.9 / 46.8</td><td class="n">79.7 / 53.8</td></tr>
+<tr><td class="small">95% interval of mean WER</td><td class="n small">41.8 to 67.4</td><td class="n small">69.7 to 86.3</td><td class="n small">71.0 to 88.1</td></tr>
+</table>
+<p class="small">Sahara's lead survives resampling here: gap interval 7.6 to 39.2 points over large-v3 and 10.3 to 41.1 over turbo; Sahara is better on 13 and 14 of 20 clips.</p>
+
+<h3>Inside the switch: Nigerian-language words kept (English words kept in brackets)</h3>
+<table>
+<tr><th>Language pair</th><th class="n">Sahara v2.5</th><th class="n">Whisper large-v3 (Groq)</th><th class="n">Whisper large-v3-turbo (Groq)</th></tr>
+<tr><td>Hausa-English</td><td class="n best">80.8% (7/8)</td><td class="n">8.3% (2/8)</td><td class="n">5.0% (0/8)</td></tr>
+<tr><td>Igbo-English</td><td class="n best">27.7% (33/47)</td><td class="n">0.0% (34/47)</td><td class="n">2.1% (37/47)</td></tr>
+<tr><td>Nigerian Pidgin-English</td><td class="n best">53.4% (45/58)</td><td class="n">44.8% (36/58)</td><td class="n">44.8% (44/58)</td></tr>
+<tr><td>Yoruba-English</td><td class="n best">7.4% (6/27)</td><td class="n best">7.4% (9/27)</td><td class="n">0.0% (4/27)</td></tr>
+<tr><td><b>All</b></td><td class="n best">56.7% (65.0%)</td><td class="n">15.1% (57.9%)</td><td class="n">13.1% (60.7%)</td></tr>
+</table>
+<p class="small">19 of 20 clips (one reference had labels removed, so its tags no longer align). Hausa supplies 120 of the 252 Nigerian-language words, so it weighs heavily on the total; without Hausa, Sahara keeps 34.8% against 21.2% and 20.5%. English recall is similar across models, so the gap is specifically the non-English side of the switch.</p>
+
+</div>
+
+<div>
+<h3>Downstream task: key facts an agent can still act on</h3>
+<p class="small">deepseek-chat, the model that drives Aide's agent, lists the key facts in each human reference (requests, symptoms, amounts, names, answers; up to 12 per conversation, 3 per short clip), then judges fact by fact whether each model's transcript still states it. Temperature 0, same judge for every model, results cached in <code>benchmark/downstream.json</code>.</p>
+<table>
+<tr><th rowspan="2">Language pair</th><th colspan="4">Long conversations (12 facts each)</th><th colspan="3">Short clips (8 or 9 facts per language)</th></tr>
+<tr><th class="n">Sahara</th><th class="n">W-v3</th><th class="n">W-turbo</th><th class="n">Qwen3</th><th class="n">Sahara</th><th class="n">W-v3</th><th class="n">W-turbo</th></tr>
+<tr><td>Hausa-English</td><td class="n best">75.0%</td><td class="n">33.3%</td><td class="n">41.7%</td><td class="n">33.3%</td><td class="n best">87.5%</td><td class="n">25.0%</td><td class="n">25.0%</td></tr>
+<tr><td>Igbo-English</td><td class="n best">58.3%</td><td class="n">25.0%</td><td class="n">33.3%</td><td class="n">41.7%</td><td class="n best">66.7%</td><td class="n">44.4%</td><td class="n">55.6%</td></tr>
+<tr><td>Nigerian Pidgin-English</td><td class="n best">100.0%</td><td class="n best">100.0%</td><td class="n">75.0%</td><td class="n">91.7%</td><td class="n best">50.0%</td><td class="n best">50.0%</td><td class="n">37.5%</td></tr>
+<tr><td>Yoruba-English</td><td class="n best">100.0%</td><td class="n">75.0%</td><td class="n">58.3%</td><td class="n">83.3%</td><td class="n best">50.0%</td><td class="n best">50.0%</td><td class="n">37.5%</td></tr>
+<tr><td><b>All</b></td><td class="n best">83.3%</td><td class="n">58.3%</td><td class="n">52.1%</td><td class="n">62.5%</td><td class="n best">63.6%</td><td class="n">42.4%</td><td class="n">39.4%</td></tr>
+</table>
+<p class="small">The downstream picture sharpens the WER one: on the Igbo conversation, where Sahara has the worst WER of four, its transcript still carries the most facts (7 of 12, against 3 to 5): WER weighs every word equally, while an agent needs the few words that carry the request. Counts are small, especially on short clips (2 to 3 facts each), so treat per-language cells as indicative.</p>
+<h2>5. Qualitative findings per model and language</h2>
+<div class="grid2">
+<div>
+<h3>Sahara v2.5</h3>
+<ul>
+<li><b>Hausa:</b> best on both sets by a wide margin; near-verbatim on short clips (hausa-3: 12.5% WER).</li>
+<li><b>Pidgin:</b> best long conversation (25.6%); loses 1 of 18 sentences. Minor 4x "yes" repeat, plausibly real speech.</li>
+<li><b>Yoruba:</b> keeps producing both languages through switch points in the long conversation; on short clips writes correct tone marks the references omit, but dropped words on some clips (2 words for a 14-word reference).</li>
+<li><b>Igbo:</b> weakest where speech is mostly fast clinical English (last of four); faithful rather than invented errors.</li>
+</ul>
+<h3>Whisper large-v3</h3>
+<ul>
+<li><b>Pidgin:</b> 136-word "mwenye" loop, 22.4% of its output; on short Pidgin, wrote one clip in Bengali script.</li>
+<li><b>Yoruba:</b> 72x nonsense loop in the long conversation; best of three on short Yoruba under strict WER.</li>
+<li><b>Hausa:</b> renders speech as invented syllables ("E nao ni? A fia." for "Ina wuni lafiya"); fluent again once English resumes.</li>
+<li><b>Igbo:</b> good on the English, but invented a Q&amp;A ("My name is Ruslan Abayisi") and dropped all tagged Igbo words on short clips.</li>
+</ul>
+</div>
+<div>
+<h3>Whisper large-v3-turbo</h3>
+<ul>
+<li><b>Hausa:</b> translates instead of transcribing: "We have to do this." for a 32-word Hausa reference; Cyrillic output on one clip.</li>
+<li><b>Yoruba:</b> 85.2% on the long conversation, losing 50 of 66 sentences; repeated "We can take a photo of your knee" dozens of times.</li>
+<li><b>Pidgin:</b> competitive on short clips (62.2%); recovers the English well.</li>
+<li><b>Igbo:</b> second best on the long conversation; near zero Igbo words kept on short clips.</li>
+</ul>
+<h3>Qwen3-ASR-1.7B (long set only)</h3>
+<ul>
+<li><b>Igbo:</b> wins outright on every metric; strongest on the least code-switched clip.</li>
+<li><b>Pidgin:</b> 33.4%, loses no sentence; outputs something for every stretch of audio.</li>
+<li><b>Hausa:</b> collapses (93.9%), writing Swahili-like words such as "shukrani", "asibiti".</li>
+<li><b>Yoruba:</b> close to Sahara (61.1% vs 58.5%) without loops.</li>
+</ul>
+</div>
+</div>
+
+<h2>6. Limitations</h2>
+<ul>
+<li><b>Small samples:</b> 4 conversations and 20 clips; intervals above state how far that goes, and per-language figures are indicative.</li>
+<li><b>Hosts and coverage:</b> short-clip Whisper ran on Groq (same open weights, labelled); Qwen3-ASR is absent there because inference credit ran out.</li>
+<li><b>Hausa short clips barely code-switch</b> (code-mix index 6.25 vs 50.0 for the others) yet hold most Nigerian-language words in the span table.</li>
+<li><b>Key-fact recall uses an LLM judge,</b> the same model for every transcript; it measures what an agent can extract, not human understanding.</li>
+<li><b>Benchmark audio is not Aide users' audio:</b> real commands are short, on personal phones, in real rooms. No human listening evaluation yet.</li>
+</ul>
+<p class="small">Reproduce without API calls: <code>npx tsx src/score-report.ts</code>, <code>npx tsx src/score-report.ts --set afriswitch</code>, <code>npx tsx src/downstream-eval.ts --report</code>. Full per-clip tables and transcripts: benchmark/report.md, benchmark/AFRISWITCH.md.</p>
+</div>
+
+</body>
+</html>
