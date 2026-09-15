@@ -25,6 +25,20 @@ describe("spoken language switch", () => {
     expect(matchLanguageCommand("find me house cleaning work")).toBeNull();
   });
 
+  it("switches on a close mishearing the alias list was never written for", () => {
+    // Live-tested: "Naija" came back as "Naja", one letter short, and no
+    // hardcoded regex will ever predict every possible mishearing.
+    expect(matchLanguageCommand("Naja")?.code).toBe("pcm");
+    expect(matchLanguageCommand("Yorba")?.code).toBe("yo");
+    expect(matchLanguageCommand("Housa")?.code).toBe("ha");
+  });
+
+  it("stays quiet on an ordinary short utterance that is nowhere near a language name", () => {
+    expect(matchLanguageCommand("I no wan chop")).toBeNull();
+    expect(matchLanguageCommand("start my assessment")).toBeNull();
+    expect(matchLanguageCommand("yes please")).toBeNull();
+  });
+
   it("accepts a bare answer to the language question", () => {
     expect(matchLanguageAnswer("I speak peagon")?.code).toBe("pcm");
   });

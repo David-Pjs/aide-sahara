@@ -117,6 +117,35 @@ export function matchLanguageCommand(text: string): { code: string; label: strin
   return matchLanguageAnswer(normalized);
 }
 
+// Standard edit distance. Used below so a mishearing the hardcoded alias list
+// was never written for still switches, instead of every new one needing its
+// own regex entry added after the fact.
+function editDistance(a: string, b: string): number {
+  const dp: number[][] = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  return dp[a.length][b.length];
+}
+
+// One canonical spelling per language, for the fuzzy fallback below. Kept
+// separate from LANGUAGE_ALIASES: the alias list is the fast, exact path for
+// mishearings already seen live; this is the catch-all for the ones that
+// haven't been.
+const LANGUAGE_NAMES: { code: string; name: string }[] = [
+  { code: "pcm", name: "naija" },
+  { code: "pcm", name: "pidgin" },
+  { code: "yo", name: "yoruba" },
+  { code: "ig", name: "igbo" },
+  { code: "ha", name: "hausa" },
+  { code: "sw", name: "swahili" },
+  { code: "en", name: "english" },
+];
+
 // Looser match with no required intent verb, for the one moment a bare
 // language name IS the whole answer: right after Aide has directly asked
 // "which language do you speak?" during first-visit onboarding.
@@ -127,6 +156,27 @@ export function matchLanguageAnswer(text: string): { code: string; label: string
       const opt = SAHARA_LANGUAGE_OPTIONS.find((o) => o.code === code);
       if (opt) return opt;
     }
+  }
+  // Fuzzy fallback: the exact list above only knows mishearings already
+  // caught live ("Pidgin" as "peagon"). Live-tested: "Naija" came back as
+  // "Naja", one letter short, which no regex written in advance can predict.
+  // Checked word by word against the whole utterance, not as one long string,
+  // so "please switch to naja abeg" still matches on its own word. Distance
+  // is capped tightly (1 for short names, 2 for longer ones) so an unrelated
+  // short sentence cannot accidentally land close enough to misfire.
+  const words = normalized.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+  let best: { code: string; distance: number } | null = null;
+  for (const word of words) {
+    for (const { code, name } of LANGUAGE_NAMES) {
+      if (Math.abs(word.length - name.length) > 2) continue; // cheap skip before the real distance
+      const distance = editDistance(word, name);
+      const threshold = name.length <= 5 ? 1 : 2;
+      if (distance <= threshold && (!best || distance < best.distance)) best = { code, distance };
+    }
+  }
+  if (best) {
+    const opt = SAHARA_LANGUAGE_OPTIONS.find((o) => o.code === best.code);
+    if (opt) return opt;
   }
   return null;
 }

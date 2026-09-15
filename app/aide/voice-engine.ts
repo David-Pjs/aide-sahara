@@ -220,6 +220,16 @@ const PREFETCH_AHEAD = 2;
 const MIC_SILENT_WARNING =
   "I can't hear your microphone. It may be muted or turned off. Please check your microphone, then talk to me again. You can also type to me in the box on the screen.";
 
+// Falling back to the browser's own recognition is a real, silent quality
+// drop for exactly the users this product is for: it is English-only and
+// far weaker on Nigerian accents and code-switching than Sahara. Before this
+// the switch was logged to the console only, which a blind user cannot read,
+// so it looked like the app had simply started mishearing everything, with
+// no way to know why or that reloading the page would restore Sahara.
+const SWITCHED_TO_BROWSER_NOTICE =
+  "My main speech service is not answering right now, so I've switched to this browser's own voice recognition for a moment. It understands Nigerian languages and accents less well. Reloading the page will try my main service again.";
+const SWITCHED_TO_SERVER_NOTICE = "I'm back on my main speech service now.";
+
 export class VoiceEngine {
   private handlers: VoiceEngineHandlers;
 
@@ -811,6 +821,10 @@ export class VoiceEngine {
   private switchSttMode(mode: SttMode, why: string): void {
     if (this.sttMode === mode) return;
     console.warn(`Aide mic: switching to ${mode} speech recognition, because ${why}.`);
+    // A blind user cannot see this in devtools, and the quality change is
+    // real, so it is said aloud, not just logged.
+    if (mode === "browser") this.speak(SWITCHED_TO_BROWSER_NOTICE);
+    else if (mode === "server") this.speak(SWITCHED_TO_SERVER_NOTICE);
     this.sttMode = mode;
     this.rapidEnds = 0;
     this.serverFailures = 0;
