@@ -115,9 +115,11 @@ export async function POST(req: Request) {
   }
 
   let messages: Msg[];
+  let saharaVoice = false;
   try {
-    const body = (await req.json()) as { messages: Msg[] };
+    const body = (await req.json()) as { messages: Msg[]; saharaVoice?: boolean };
     messages = body.messages;
+    saharaVoice = body.saharaVoice === true;
   } catch (e) {
     return Response.json({ error: "invalid json payload" }, { status: 400 });
   }
@@ -146,9 +148,21 @@ export async function POST(req: Request) {
       ? `\n- Things ${account.name} has asked you to remember: ${saved.map((p) => `"${p}"`).join("; ")}.`
       : "\n- You have nothing saved about this user yet.";
 
+  // The core Language rule (in SYSTEM_PROMPT) keeps Aide in English because
+  // Microsoft's voice cannot pronounce Nigerian languages. When the user has
+  // switched to Sahara's own voice, which genuinely can, that reason is gone
+  // for Nigerian Pidgin specifically (close enough to English that the model
+  // renders it reliably). Scoped to Pidgin only, not Yoruba, Igbo or Hausa,
+  // which carry more translation and mispronunciation risk for freely
+  // generated text rather than a hand-checked line. Purely additive, so it
+  // cannot change how Aide behaves on the default voice.
+  const voiceNote = saharaVoice
+    ? "\n- Voice: the user has switched you to Sahara's own Nigerian voice, which can genuinely speak Nigerian Pidgin. If they are speaking Pidgin to you, you may reply in natural Pidgin instead of English for this turn. Still reply in English for Yoruba, Igbo or Hausa, and for anything financial or exact, amounts, account details, confirmations, keep those parts in plain English so nothing is ambiguous."
+    : "";
+
   const result = streamText({
     model: aideModel(),
-    system: `${SYSTEM_PROMPT}\n- The current user is ${account.name}, signed in with a ${account.role} account.${memory}`,
+    system: `${SYSTEM_PROMPT}\n- The current user is ${account.name}, signed in with a ${account.role} account.${memory}${voiceNote}`,
     messages,
     tools: makeTools(account),
     maxSteps: 6,

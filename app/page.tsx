@@ -161,9 +161,9 @@ export default function AidePage() {
               ? "Using Sahara's Nigerian voice. Tap to switch to the fast voice."
               : "Using the fast voice. Tap to switch to Sahara's Nigerian voice."
           }
-          className="rounded-full bg-[var(--panel)] px-4 py-2 text-sm font-semibold text-[var(--ink)] shadow"
+          className="dark-surface rounded-full bg-[var(--panel)] px-4 py-2 text-sm font-semibold text-[var(--panel-ink)] shadow"
         >
-          {usingSaharaVoice ? "🇳🇬 Sahara voice" : "⚡ Fast voice"}
+          {usingSaharaVoice ? "Using: Sahara voice" : "Using: Fast voice"}
         </button>
 
         <p aria-live="polite" className="min-h-6 text-lg font-bold text-[var(--ink-soft)]">

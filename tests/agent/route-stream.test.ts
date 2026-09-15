@@ -155,6 +155,25 @@ describe("streaming a normal reply", () => {
     expect(captured).toContain("I can only work mornings");
   });
 
+  it("tells the model Sahara's voice is active only when the client says so", async () => {
+    // Purely additive: on the default voice, nothing about Pidgin replies
+    // should appear in the prompt at all.
+    let captured = "";
+    model.impl = (opts) => {
+      captured = opts.system;
+      return streamOf(["ok"], Promise.resolve([]));
+    };
+    await drain(await ask({ messages: [{ role: "user", content: "hi" }], saharaVoice: true }));
+    expect(captured).toContain("Sahara's own Nigerian voice");
+    expect(captured).toContain("Pidgin");
+
+    await drain(await ask({ messages: [{ role: "user", content: "hi" }], saharaVoice: false }));
+    expect(captured).not.toContain("Sahara's own Nigerian voice");
+
+    await drain(await ask({ messages: [{ role: "user", content: "hi" }] }));
+    expect(captured).not.toContain("Sahara's own Nigerian voice");
+  });
+
   it("tells the browser which page to open", async () => {
     model.impl = () =>
       streamOf(["Opening that."], Promise.resolve([

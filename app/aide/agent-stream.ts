@@ -69,11 +69,20 @@ export function extractSentences(buffer: string): { sentences: string[]; rest: s
   return { sentences, rest };
 }
 
-export async function streamAgentReply(messages: Msg[], handlers: AgentStreamHandlers): Promise<AgentStreamResult> {
+export async function streamAgentReply(
+  messages: Msg[],
+  handlers: AgentStreamHandlers,
+  opts?: { saharaVoice?: boolean },
+): Promise<AgentStreamResult> {
   const res = await fetch("/api/agent", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages }),
+    // saharaVoice: whether the reply is about to be SPOKEN through Sahara's
+    // own voice, which can genuinely pronounce Pidgin, rather than
+    // Microsoft's English-only one. Purely advisory, changes only which
+    // language the model is allowed to reply in, never a security or money
+    // decision, so a client sending the wrong value costs nothing but tone.
+    body: JSON.stringify({ messages, saharaVoice: opts?.saharaVoice ?? false }),
   });
   if (!res.ok || !res.body) {
     const data = await res.json().catch(() => null);

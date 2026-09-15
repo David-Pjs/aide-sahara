@@ -160,11 +160,15 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
           }
         };
 
-        const result = await streamAgentReply(next, {
-          onDelta: (full) => setMessages([...next, { role: "assistant", content: full }]),
-          onSentence: (s) => engineRef.current?.queueSpeak(s),
-          onNavigate: goTo,
-        });
+        const result = await streamAgentReply(
+          next,
+          {
+            onDelta: (full) => setMessages([...next, { role: "assistant", content: full }]),
+            onSentence: (s) => engineRef.current?.queueSpeak(s),
+            onNavigate: goTo,
+          },
+          { saharaVoice: isSaharaVoiceActive() },
+        );
         loggedOut = !!result.loggedOut;
 
         if (result.newUserId) {
@@ -551,7 +555,7 @@ function MiniAide() {
         }
         className="dark-surface rounded-full bg-[var(--panel)] px-4 py-2 text-sm font-semibold text-[var(--panel-ink)] shadow-lg"
       >
-        {usingSaharaVoice ? "🇳🇬 Sahara voice" : "⚡ Fast voice"}
+        {usingSaharaVoice ? "Using: Sahara voice" : "Using: Fast voice"}
       </button>
       <p aria-live="polite" className="sr-only">
         {status}
