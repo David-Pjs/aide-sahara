@@ -845,7 +845,16 @@ export class VoiceEngine {
     // otherwise quietly undo a hold the user asked for.
     if (!this.active || this.muted || typeof window === "undefined") return;
 
-    if (!this.sttMode) this.sttMode = initialSttMode(STT_CONFIGURED, saharaSttSupported(), webSpeechAvailable());
+    if (!this.sttMode) {
+      this.sttMode = initialSttMode(STT_CONFIGURED, saharaSttSupported(), webSpeechAvailable());
+      // The configured, preferred path is Sahara. If the very FIRST pick
+      // already lands on the browser's own recognizer instead, this is not a
+      // runtime failure switchSttMode() would catch and announce, it is this
+      // browser being unable to run Sahara's recorder at all (no
+      // MediaRecorder/getUserMedia). Silent here looked identical to Aide
+      // just being bad at Nigerian speech from the first word.
+      if (this.sttMode === "browser" && STT_CONFIGURED === "server") this.speak(SWITCHED_TO_BROWSER_NOTICE);
+    }
     if (!this.sttMode) return;
 
     let rec: SR;
