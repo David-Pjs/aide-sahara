@@ -103,7 +103,7 @@ from Convex's `_id`, so cookies, wallet references, and Monnify customer records
 ## The speech pipeline
 
 ```
-                      microphone (always open, interruptible)
+                      microphone (paused while Aide talks; a tap interrupts)
                                |
                                v
         +----------------------------------------------+

@@ -46,7 +46,7 @@ We also report Sahara's own weaknesses: it loses the Igbo clip to all three comp
 
 Beyond that:
 
-- Aide is **interruptible**. The microphone stays open while it speaks. Forcing someone to wait out a paragraph before they can correct you is a small daily indignity.
+- Aide is **interruptible**. A tap stops it mid-sentence. Forcing someone to wait out a paragraph before they can correct you is a small daily indignity.
 - Errors are spoken as sentences a person can act on, never as raw runtime text.
 - The screen is designed for the low-vision users who are not blind: Atkinson Hyperlegible at an 18px base, and no status signalled by colour alone.
 - Aide reads the amount and the **bank-verified account name** back before moving money, so the confirmation is something you can hear rather than something you have to see.

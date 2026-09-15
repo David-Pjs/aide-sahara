@@ -212,7 +212,7 @@ Aide gives the model **34 tools** (`lib/agent/tools.ts`) and a real multi-step l
 - **Asked once, changeable by voice.** Sahara has no auto-detect, so on first visit Aide asks: *"Which language do you speak? English, Pidgin, Yoruba, Igbo, or Hausa."* It remembers the answer, and saying "Yoruba", "Igbo" or "Hausa" at any point switches it.
 - **Every browser, every phone.** The browser's built-in recogniser only really works in Chrome. Aide records each utterance itself (Opus on Android and desktop, AAC on iPhone) and sends it to `/api/stt`, so the same Sahara path serves Safari, Firefox, Brave and iPhone browsers, not only Chrome. Verified against the live endpoint: a Pidgin utterance came back from Sahara as *"I no wan chop i just wan work"*, round trip about 2.6 seconds warm.
 - **A deaf app is the failure we designed against.** If Sahara cannot answer (no credit, a timeout, an outage), the same request falls through to Whisper on Groq. A provider out of credit is skipped for 10 minutes so it costs one attempt, not every utterance. Whisper's known silence hallucinations ("Thank you for watching") and repetition loops are stripped, with spoken digits exempt so an account number is never shortened.
-- **Interruptible.** The microphone stays open while Aide speaks. Nobody should have to wait out a paragraph to correct a machine.
+- **Interruptible.** A tap stops Aide mid-sentence. The microphone pauses while Aide talks so it never transcribes its own voice as a command, and nobody has to wait out a paragraph to correct a machine.
 
 ### Built for the people who can see a little, too
 
