@@ -4,7 +4,7 @@
 // "aide stop talking" voice interrupt, and tab-visibility arbitration.
 // The React provider in ./index.tsx is a thin wrapper over this class.
 
-import { SaharaRecognizer, saharaSttSupported, getTtsPath } from "./sahara-recognizer";
+import { SaharaRecognizer, saharaSttSupported, getTtsPath, DEFAULT_TTS_PATH } from "./sahara-recognizer";
 
 type SR = any; // Web Speech API isn't in lib.dom
 
@@ -436,10 +436,14 @@ export class VoiceEngine {
   // Streamed model replies are different and DO go sentence by sentence, but
   // only because their sentences genuinely arrive over time. There is nothing
   // to overlap when the full text is already in hand.
-  speak(text: string): void {
+  // forceDefaultVoice: for a fixed, system-level notice (the slow-processing
+  // filler), which must stay fast even when the user has chosen Sahara's
+  // slower voice for actual replies, waiting several extra seconds just to
+  // be told a wait is happening defeats the notice's entire purpose.
+  speak(text: string, opts?: { forceDefaultVoice?: boolean }): void {
     this.discardQueue(); // primed sentences from the old reply must not play
     this.lastReplyParts = [text];
-    this.speakNow(text);
+    this.speakNow(text, undefined, opts?.forceDefaultVoice);
   }
 
   // A double tap asks for exactly this: everything said in the last reply,
@@ -930,7 +934,7 @@ export class VoiceEngine {
       rec.onslow = () => {
         console.info("Aide mic: still waiting on speech recognition");
         onState({ micStatus: "still working on that…" });
-        if (!this.speaking) this.speak(STILL_WORKING_ON_IT);
+        if (!this.speaking) this.speak(STILL_WORKING_ON_IT, { forceDefaultVoice: true });
       };
     }
 
@@ -1146,9 +1150,10 @@ export class VoiceEngine {
   // stalled mid-sentence whenever synthesis fell behind the playback cursor,
   // the audible symptom was Aide stopping mid-word and resuming many seconds
   // later. A fully buffered clip always plays gapless.
-  private async fetchSpeech(text: string): Promise<string | null> {
+  private async fetchSpeech(text: string, forceDefaultVoice?: boolean): Promise<string | null> {
     try {
-      const res = await fetch(`${getTtsPath()}?text=${encodeURIComponent(forSpeech(text))}`);
+      const path = forceDefaultVoice ? DEFAULT_TTS_PATH : getTtsPath();
+      const res = await fetch(`${path}?text=${encodeURIComponent(forSpeech(text))}`);
       if (!res.ok) return null;
       const blob = await res.blob();
       return blob.size > 0 ? URL.createObjectURL(blob) : null;
@@ -1178,7 +1183,7 @@ export class VoiceEngine {
     this.queue = [];
   }
 
-  private async speakNow(text: string, prefetched?: Promise<string | null>): Promise<void> {
+  private async speakNow(text: string, prefetched?: Promise<string | null>, forceDefaultVoice?: boolean): Promise<void> {
     if (typeof window === "undefined") return;
     // Claim the speaker BEFORE the first await. Everything below this line
     // takes seconds, and a sentence arriving in the meantime must queue rather
@@ -1213,7 +1218,7 @@ export class VoiceEngine {
     try {
       // Either this sentence was already being synthesized while the previous
       // one played, or it starts now.
-      const pending = prefetched ?? this.fetchSpeech(text);
+      const pending = prefetched ?? this.fetchSpeech(text, forceDefaultVoice);
 
       // The moment we know what is playing, start fetching what comes next.
       this.primeQueue();

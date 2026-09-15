@@ -77,7 +77,23 @@ function MicMeter({ closed }: { closed: boolean }) {
 // Aide's home: two halves. Left, Aide itself, always listening, glowing
 // while it speaks. Right, the running transcript of this session.
 export default function AidePage() {
-  const { active, listening, speaking, dormant, muted, thinking, supported, interim, micStatus, error, messages, send, interrupt } = useAide();
+  const {
+    active,
+    listening,
+    speaking,
+    dormant,
+    muted,
+    thinking,
+    supported,
+    interim,
+    micStatus,
+    error,
+    messages,
+    send,
+    interrupt,
+    usingSaharaVoice,
+    toggleVoice,
+  } = useAide();
   const logRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -131,6 +147,23 @@ export default function AidePage() {
             />
           )}
           <span className="relative">{status}</span>
+        </button>
+
+        {/* Visible twin of the spoken "sahara voice" / "fast voice" commands,
+            same preference, same switch, just also reachable by tap and
+            visible on screen, useful for anyone demonstrating the switch
+            rather than only saying it. */}
+        <button
+          onClick={toggleVoice}
+          aria-pressed={usingSaharaVoice}
+          aria-label={
+            usingSaharaVoice
+              ? "Using Sahara's Nigerian voice. Tap to switch to the fast voice."
+              : "Using the fast voice. Tap to switch to Sahara's Nigerian voice."
+          }
+          className="rounded-full bg-[var(--panel)] px-4 py-2 text-sm font-semibold text-[var(--ink)] shadow"
+        >
+          {usingSaharaVoice ? "🇳🇬 Sahara voice" : "⚡ Fast voice"}
         </button>
 
         <p aria-live="polite" className="min-h-6 text-lg font-bold text-[var(--ink-soft)]">

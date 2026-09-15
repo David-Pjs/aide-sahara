@@ -74,7 +74,11 @@ export function setSaharaLanguage(code: string): void {
 // Persisted the same way as the language preference, per browser, no server
 // round trip to read or write it.
 const TTS_PATH_STORAGE_KEY = "aide-tts-path";
-const DEFAULT_TTS_PATH = process.env.NEXT_PUBLIC_TTS_PATH || "/api/tts";
+// Exported so a fixed, system-level notice (see STILL_WORKING_ON_IT in
+// voice-engine.ts) can be spoken on the fast voice even while the user has
+// chosen Sahara's slower one, an "I'm still here" reassurance has no reason
+// to make the wait it is announcing longer.
+export const DEFAULT_TTS_PATH = process.env.NEXT_PUBLIC_TTS_PATH || "/api/tts";
 export const SAHARA_TTS_PATH = "/api/tts/sahara";
 
 export function getTtsPath(): string {
