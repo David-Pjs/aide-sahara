@@ -18,9 +18,13 @@ export const maxDuration = 40;
 // the identical audio both through production (11+ s) and directly against
 // Sahara's endpoint from a machine with ordinary connectivity (2-3s). Every
 // request here makes an outbound call to Sahara (and, on fallback, Groq),
-// neither hosted in the US, so this function has nothing to gain from
-// running there and real seconds to lose. fra1 is the closest Vercel region
-// with strong connectivity to both.
+// neither hosted in the US, so this function had nothing to gain from
+// running there and real seconds to lose. The route segment config below is
+// the documented mechanism for Edge functions; for this Node.js runtime, the
+// region that actually takes effect is set in vercel.json's `functions`
+// block instead, confirmed live (x-vercel-id moved from iad1 to fra1, and
+// round trip dropped from 11+ seconds to 2.5-2.7 across three repeated
+// runs). Kept here too since it costs nothing and documents the intent.
 export const preferredRegion = "fra1";
 
 // Receives one finished utterance, recorded in the browser by

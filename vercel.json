@@ -2,6 +2,9 @@
   "functions": {
     "api/speak.py": {
       "maxDuration": 30
+    },
+    "app/api/stt/route.ts": {
+      "regions": ["fra1"]
     }
   }
 }
