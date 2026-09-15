@@ -242,6 +242,12 @@ const MIN_BLOB_BYTES = 4_000;
 // tuned: no legitimate single utterance in this app needs to run longer.
 const MAX_RECORDING_MS = 8_000;
 
+// Live-measured against production: most Sahara calls land in 2-3s, but real
+// utterances have taken past 10s while still succeeding. Set above the fast
+// path so the filler never fires on an ordinary turn, well below Sahara's own
+// 20s budget so it fires before a user has any reason to think Aide is dead.
+const SLOW_PROCESSING_MS = 3_500;
+
 // Reused across recognizer instances (voice-engine.ts creates a fresh one per
 // restart cycle) so the mic is acquired once, not re-prompted/re-opened every
 // time the recognizer is torn down and rebuilt.
@@ -271,6 +277,12 @@ export class SaharaRecognizer {
   onresult: AnyHandler = null;
   onend: AnyHandler = null;
   onerror: AnyHandler = null;
+  // Fired once if transcription is still waiting on a provider past
+  // SLOW_PROCESSING_MS. Sahara's real latency varies (live-measured: usually
+  // 2-3s, sometimes 10+), and a blind user hearing nothing for that long has
+  // no way to tell "still working" from "broken", which is exactly what a
+  // 12-20s silent wait looks like from the outside.
+  onslow: AnyHandler = null;
 
   private stopped = false;
   private stream: MediaStream | null = null;
@@ -466,6 +478,10 @@ export class SaharaRecognizer {
       this.uploading = false;
       return;
     }
+    // Live-measured: a real utterance to production can take past 10 seconds
+    // to come back even on a successful Sahara call. Cleared the moment the
+    // request settles, so the happy path (usually 2-3s) never hears it.
+    const slowTimer = setTimeout(() => this.onslow?.({}), SLOW_PROCESSING_MS);
     try {
       const form = new FormData();
       // The filename's extension is what tells Sahara's upload endpoint how
@@ -501,6 +517,7 @@ export class SaharaRecognizer {
       console.warn("Aide speech upload failed:", err);
       this.onerror?.({ error: "stt-unavailable", message: String(err) });
     } finally {
+      clearTimeout(slowTimer);
       this.uploading = false;
     }
   }

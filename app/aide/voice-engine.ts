@@ -230,6 +230,10 @@ const SWITCHED_TO_BROWSER_NOTICE =
   "My main speech service is not answering right now, so I've switched to this browser's own voice recognition for a moment. It understands Nigerian languages and accents less well. Reloading the page will try my main service again.";
 const SWITCHED_TO_SERVER_NOTICE = "I'm back on my main speech service now.";
 
+// Fixed string, like the other notices, so it hits the TTS cache and comes
+// back instantly rather than making a slow wait even slower.
+const STILL_WORKING_ON_IT = "Mm, still working on that.";
+
 export class VoiceEngine {
   private handlers: VoiceEngineHandlers;
 
@@ -914,6 +918,19 @@ export class VoiceEngine {
       this.armFinalDispatch();
       onState({ micStatus: "hearing speech…" });
     };
+    if (this.sttMode === "server") {
+      // Sahara's real latency is uneven: usually 2-3s, live-measured past
+      // 10s on a real utterance that still succeeded. A blind user hearing
+      // nothing that long has no way to tell "still working" from "broken",
+      // and the timeout that gives Sahara room to actually finish (20s) makes
+      // that silent stretch longer, not shorter. One short, cheap-to-cache
+      // line, spoken at most once per utterance, closes that gap.
+      rec.onslow = () => {
+        console.info("Aide mic: still waiting on speech recognition");
+        onState({ micStatus: "still working on that…" });
+        if (!this.speaking) this.speak(STILL_WORKING_ON_IT);
+      };
+    }
 
     rec.onresult = (e: any) => {
       // Belt and braces: the recognizer is stopped before Aide speaks, but a
