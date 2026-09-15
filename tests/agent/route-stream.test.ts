@@ -183,24 +183,6 @@ describe("streaming a normal reply", () => {
     const { events } = await drain(await ask());
     expect(events.at(-1)?.loggedOut).toBe(true);
   });
-
-  it("passes through a language switch the model recognised from natural phrasing", async () => {
-    model.impl = () =>
-      streamOf(["Okay, I'll listen for Yoruba from now on."], Promise.resolve([
-        { toolResults: [{ toolName: "switch_language", result: { ok: true, language: "yo" } }] },
-      ]));
-    const { events } = await drain(await ask());
-    expect(events.at(-1)?.switchLanguage).toBe("yo");
-  });
-
-  it("passes through a voice switch the model recognised from natural phrasing", async () => {
-    model.impl = () =>
-      streamOf(["Switching to the Nigerian voice."], Promise.resolve([
-        { toolResults: [{ toolName: "switch_voice", result: { ok: true, voice: "sahara" } }] },
-      ]));
-    const { events } = await drain(await ask());
-    expect(events.at(-1)?.switchVoice).toBe("sahara");
-  });
 });
 
 describe("request validation", () => {

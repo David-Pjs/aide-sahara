@@ -227,18 +227,6 @@ export async function POST(req: Request) {
         // POST /api/auth/logout and restarts when it sees this flag.
         const loggedOut = !!toolResults.find((t) => t.toolName === "log_out" && t.result?.ok);
 
-        // Language and voice switches: both are per-browser preferences
-        // (localStorage), never server state, so the tool itself does
-        // nothing but confirm the request, the client applies it on seeing
-        // this. Lets the model catch a switch phrased any natural way,
-        // alongside the instant client-side match on common exact phrases.
-        const switchLanguage = (toolResults.find((t) => t.toolName === "switch_language" && t.result?.ok)?.result as
-          | { language?: string }
-          | undefined)?.language;
-        const switchVoice = (toolResults.find((t) => t.toolName === "switch_voice" && t.result?.ok)?.result as
-          | { voice?: string }
-          | undefined)?.voice;
-
         const streamedAt = Date.now();
         const state = await snapshot(account.id);
         const doneAt = Date.now();
@@ -247,7 +235,7 @@ export async function POST(req: Request) {
         console.log(
           `[agent] first token ${firstTokenAt ? firstTokenAt - t0 : -1}ms · stream ${streamedAt - t0}ms · ` +
             `snapshot ${doneAt - streamedAt}ms · total ${doneAt - t0}ms`);
-        emit(controller, { t: "done", navigateTo, newUserId, loggedOut, switchLanguage, switchVoice, state });
+        emit(controller, { t: "done", navigateTo, newUserId, loggedOut, state });
       } catch (e) {
         emit(controller, { t: "error", message: spokenError(e as Error) });
       }

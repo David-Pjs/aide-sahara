@@ -12,11 +12,6 @@ export type AgentStreamResult = {
   // not push the same route a second time.
   navigated?: boolean;
   newUserId?: string;
-  // Set when the model itself recognised a request to change what Aide
-  // hears or speaks with, understood from natural phrasing rather than an
-  // exact keyword match. See app/aide/index.tsx for where these are applied.
-  switchLanguage?: string;
-  switchVoice?: string;
 };
 
 export type AgentStreamHandlers = {
@@ -132,8 +127,6 @@ export async function streamAgentReply(messages: Msg[], handlers: AgentStreamHan
       }
       result.newUserId = ev.newUserId;
       result.loggedOut = ev.loggedOut;
-      result.switchLanguage = ev.switchLanguage;
-      result.switchVoice = ev.switchVoice;
     } else if (ev.t === "error") {
       throw new Error(ev.message || "Aide had a problem.");
     }
