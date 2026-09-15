@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { VoiceEngine, type VoiceState } from "./voice-engine";
-import { matchLanguageAnswer, matchLanguageCommand, setSaharaLanguage, hasSaharaLanguagePreference } from "./sahara-recognizer";
+import { matchLanguageAnswer, matchLanguageCommand, setSaharaLanguage, hasSaharaLanguagePreference, matchVoiceCommand, setTtsPath, SAHARA_TTS_PATH } from "./sahara-recognizer";
 
 // Anything but "browser" means utterances are transcribed on the server, where
 // a language hint improves accuracy, so the language question and the spoken
@@ -265,6 +265,29 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
           if (langCommand) {
             setSaharaLanguage(langCommand.code);
             engineRef.current?.speak(`Okay, I'll listen for ${langCommand.label} from now on.`);
+            return;
+          }
+          // Same reasoning as the language switch above: instant, no model
+          // round trip. Which voice Aide SPEAKS with is a separate choice
+          // from which language it LISTENS for, on purpose worded so the two
+          // commands can never be confused for each other.
+          const voiceCommand = matchVoiceCommand(text);
+          if (voiceCommand === "sahara") {
+            // Spoken BEFORE the switch, deliberately: fetchSpeech reads the
+            // TTS path synchronously the moment speak() is called, so saying
+            // this first means the confirmation itself still comes back fast,
+            // and only the reply after it carries the new, slower voice. The
+            // reverse order would make the user wait several silent seconds
+            // just to be told that they are about to wait several seconds.
+            engineRef.current?.speak(
+              "Switching to Sahara's own Nigerian voice. Replies will take a few seconds longer. Say fast voice any time to switch back.",
+            );
+            setTtsPath(SAHARA_TTS_PATH);
+            return;
+          }
+          if (voiceCommand === "default") {
+            setTtsPath(null);
+            engineRef.current?.speak("Back to the fast voice.");
             return;
           }
           // Words from the fallback recogniser are marked so the agent reads

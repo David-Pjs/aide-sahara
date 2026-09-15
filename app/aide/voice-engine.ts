@@ -4,7 +4,7 @@
 // "aide stop talking" voice interrupt, and tab-visibility arbitration.
 // The React provider in ./index.tsx is a thin wrapper over this class.
 
-import { SaharaRecognizer, saharaSttSupported } from "./sahara-recognizer";
+import { SaharaRecognizer, saharaSttSupported, getTtsPath } from "./sahara-recognizer";
 
 type SR = any; // Web Speech API isn't in lib.dom
 
@@ -76,11 +76,13 @@ const SILENT_CYCLES_BEFORE_WARNING = 2;
 // Only a recognizer that actually ran a full window counts as "silent", an
 // instant death (aliveMs < this) is a network problem, handled separately.
 const MIC_SILENT_MIN_MS = 3000;
-// Where neural speech comes from. Locally that's the Node route, which keeps a
-// warm Python subprocess for speed; on Vercel a serverless function can't own a
-// long-lived child process, so NEXT_PUBLIC_TTS_PATH points at the native Python
-// function (/api/speak) instead. Either way the browser voice is the fallback.
-const TTS_PATH = process.env.NEXT_PUBLIC_TTS_PATH || "/api/tts";
+// Where neural speech comes from BY DEFAULT. Locally that's the Node route,
+// which keeps a warm Python subprocess for speed; on Vercel a serverless
+// function can't own a long-lived child process, so NEXT_PUBLIC_TTS_PATH
+// points at the native Python function (/api/speak) instead. Either way the
+// browser voice is the fallback. A user can switch to Sahara's own voice at
+// runtime (see getTtsPath in sahara-recognizer.ts), so this is read fresh on
+// every utterance rather than fixed once at module load.
 
 // Spoken cover for a wait. Two sets, because the right words depend entirely on
 // whether Aide has said anything yet this turn: "Still working on that" is
@@ -1146,7 +1148,7 @@ export class VoiceEngine {
   // later. A fully buffered clip always plays gapless.
   private async fetchSpeech(text: string): Promise<string | null> {
     try {
-      const res = await fetch(`${TTS_PATH}?text=${encodeURIComponent(forSpeech(text))}`);
+      const res = await fetch(`${getTtsPath()}?text=${encodeURIComponent(forSpeech(text))}`);
       if (!res.ok) return null;
       const blob = await res.blob();
       return blob.size > 0 ? URL.createObjectURL(blob) : null;

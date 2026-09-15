@@ -65,6 +65,54 @@ export function setSaharaLanguage(code: string): void {
   }
 }
 
+// Which voice Aide SPEAKS with, separate from and unrelated to which
+// language it LISTENS for above. Default is Microsoft's Nigerian English
+// voice (fast, English only). Sahara has its own voice that can actually
+// speak Yoruba, Igbo and Hausa, not just English, but round-trip latency
+// live-tested at 7-12s a line against edge-tts's ~1-2s, so it stays opt-in
+// rather than the default: every reply would carry that wait otherwise.
+// Persisted the same way as the language preference, per browser, no server
+// round trip to read or write it.
+const TTS_PATH_STORAGE_KEY = "aide-tts-path";
+const DEFAULT_TTS_PATH = process.env.NEXT_PUBLIC_TTS_PATH || "/api/tts";
+export const SAHARA_TTS_PATH = "/api/tts/sahara";
+
+export function getTtsPath(): string {
+  if (typeof window === "undefined") return DEFAULT_TTS_PATH;
+  try {
+    return localStorage.getItem(TTS_PATH_STORAGE_KEY) || DEFAULT_TTS_PATH;
+  } catch {
+    return DEFAULT_TTS_PATH;
+  }
+}
+
+// Pass null to clear the preference and fall back to DEFAULT_TTS_PATH.
+export function setTtsPath(path: string | null): void {
+  try {
+    if (path) localStorage.setItem(TTS_PATH_STORAGE_KEY, path);
+    else localStorage.removeItem(TTS_PATH_STORAGE_KEY);
+  } catch {
+    /* private browsing / storage disabled, falls back to the default every load */
+  }
+}
+
+export function isSaharaVoiceActive(): boolean {
+  return getTtsPath() === SAHARA_TTS_PATH;
+}
+
+// Deliberately worded away from the language-switch words above ("Yoruba",
+// "English") so the two commands can never be confused for each other, one
+// changes what Aide listens for, this changes what Aide sounds like.
+const VOICE_ON_WORDS = /\b(nigerian voice|sahara voice|native voice)\b/i;
+const VOICE_OFF_WORDS = /\b(fast voice|normal voice|regular voice|default voice)\b/i;
+
+export function matchVoiceCommand(text: string): "sahara" | "default" | null {
+  const normalized = normalize(text);
+  if (VOICE_ON_WORDS.test(normalized)) return "sahara";
+  if (VOICE_OFF_WORDS.test(normalized)) return "default";
+  return null;
+}
+
 // A blind user cannot use a mouse-driven dropdown to change this, the whole
 // product's premise is "no screen required." So this is the real control:
 // spoken commands, matched BEFORE the text ever reaches the LLM agent (see
