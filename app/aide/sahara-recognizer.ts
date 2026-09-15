@@ -74,10 +74,15 @@ export function setSaharaLanguage(code: string): void {
 // here should be near-zero, and these phrases are unambiguous enough that a
 // small pattern set is more reliable AND faster than a model call.
 const LANGUAGE_ALIASES: { code: string; words: RegExp }[] = [
-  { code: "pcm", words: /\b(pidgin|naija)\b/i },
-  { code: "yo", words: /\byoruba\b/i },
-  { code: "ig", words: /\bigbo\b/i },
-  { code: "ha", words: /\bhausa\b/i },
+  // The language name is the one word a recogniser set to a different language
+  // is most likely to mishear, and a switch that cannot be spoken can never be
+  // turned on. Live-tested: "Pidgin" came back as "peagon". So each name also
+  // matches its common mishearings, kept to words nobody says to a job app
+  // for any other reason ("house" is deliberately not a Hausa alias).
+  { code: "pcm", words: /\b(pidgin|pigin|pijin|pidjin|pidgen|pidgeon|pigeon|peagon|pegion|pidging|naija|naijah)\b/i },
+  { code: "yo", words: /\b(yoruba|yorooba|yaruba|yoroba|yorba)\b/i },
+  { code: "ig", words: /\b(igbo|ibo|eebo|eegbo)\b/i },
+  { code: "ha", words: /\b(hausa|housa|hawsa|ausa)\b/i },
   { code: "sw", words: /\bswahili\b/i },
   { code: "en", words: /\benglish( only)?\b/i },
 ];

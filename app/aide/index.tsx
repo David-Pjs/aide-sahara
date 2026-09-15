@@ -327,7 +327,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
         // verb for short utterances (see sahara-recognizer.ts), saying just
         // "Yoruba" already works. The instruction now matches that: one word
         // to remember instead of a fixed phrase to get exactly right.
-        const switchNotice = SERVER_STT ? " Say Yoruba, Igbo, or Hausa any time to change my language." : "";
+        const switchNotice = SERVER_STT ? " Say Naija, Yoruba, Igbo, or Hausa any time to change my language." : "";
         // First-ever visit on Sahara: ask which language once, right in the
         // greeting, instead of silently guessing Pidgin for everyone. The
         // answer is captured by the very next thing the user says (see
