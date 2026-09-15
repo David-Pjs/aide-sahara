@@ -61,5 +61,8 @@ describe("the prompt forbids what a blind user cannot do", () => {
 
   it("limits the covering opener to once per turn", () => {
     expect(SYSTEM_PROMPT).toMatch(/ONCE per turn/);
+    // The voice cannot pronounce Yoruba, Igbo or Hausa, so replies stay English
+    // even when the user code-switches.
+    expect(SYSTEM_PROMPT).toMatch(/Always reply in clear, simple English/);
   });
 });
