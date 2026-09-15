@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   LONG_COOLDOWN_MS,
+  PROVIDER_TIMEOUT_MS,
   SHORT_COOLDOWN_MS,
   SpeechUnavailableError,
   classifyFailure,
@@ -38,6 +39,33 @@ const SAHARA_EMPTY = 'Sahara STT failed (400): {"data":{},"message":"insufficien
 const GROQ_EMPTY = 'Groq STT failed (402): {"error":"You have depleted your monthly included credits."}';
 
 beforeEach(() => resetCooldowns());
+
+describe("per-provider timeout", () => {
+  // Sahara's own real-world latency legitimately runs past ten seconds
+  // (production logs showed repeated real utterances finishing at 10-12s,
+  // right where the old flat 12s budget cut them off), so it gets a longer
+  // budget than Groq, which almost always answers in under a second and
+  // should fail over fast rather than sit through a long timeout when it is
+  // genuinely down.
+  it("gives Sahara more time than Groq", () => {
+    expect(PROVIDER_TIMEOUT_MS.sahara).toBeGreaterThan(PROVIDER_TIMEOUT_MS.groq);
+    expect(PROVIDER_TIMEOUT_MS.sahara).toBeGreaterThanOrEqual(18_000);
+  });
+
+  it("uses Sahara's longer default budget, not Groq's, when no override is given", async () => {
+    // A provider that answers just past Groq's 12s budget but well within
+    // Sahara's 20s one must still succeed on Sahara, not fall through.
+    const slowButReal: Transcriber = () => new Promise((resolve) => setTimeout(() => resolve("from sahara, slow"), 15));
+    const withoutOverride = {
+      order: ["sahara"] as SpeechProviderName[],
+      transcribers: { sahara: slowButReal, groq: ok("from groq") },
+      hasKey: () => true,
+    };
+    const r = await transcribeWithFallback(audio, "u.webm", "pcm", withoutOverride);
+    expect(r.provider).toBe("sahara");
+    expect(r.transcript).toBe("from sahara, slow");
+  });
+});
 
 describe("provider order", () => {
   it("tries Sahara first by default", () => {

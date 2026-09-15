@@ -237,7 +237,7 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
           ...patch }));
           if (patch.error !== undefined) setError(patch.error);
         },
-        onFinal: (text) => {
+        onFinal: (text, meta) => {
           if (captureRef.current) {
             captureRef.current(text);
             return;
@@ -267,7 +267,9 @@ export function AideProvider({ children }: { children: React.ReactNode }) {
             engineRef.current?.speak(`Okay, I'll listen for ${langCommand.label} from now on.`);
             return;
           }
-          if (!thinkingRef.current) sendRef.current(text);
+          // Words from the fallback recogniser are marked so the agent reads
+          // them back before acting: a blind user cannot see a mishearing.
+          if (!thinkingRef.current) sendRef.current(meta?.fallback ? `(backup recogniser) ${text}` : text);
         },
       }));
     engineRef.current = engine;

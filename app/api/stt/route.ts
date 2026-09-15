@@ -9,7 +9,10 @@ import {
 } from "@/lib/speech/providers";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+// Sahara's own budget is 20s and Groq's fallback attempt after it can add up
+// to another 12s in the worst case (Sahara times out, then Groq also stalls),
+// so this must comfortably outlast both timeouts combined, not just one.
+export const maxDuration = 40;
 
 // Receives one finished utterance, recorded in the browser by
 // app/aide/sahara-recognizer.ts, and returns its transcript. Recording in the

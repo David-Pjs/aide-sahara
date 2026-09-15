@@ -63,7 +63,9 @@ export type VoiceEngineHandlers = {
   // Partial state updates for the UI (orb, status lines).
   onState: (patch: Partial<VoiceState>) => void;
   // A finished user utterance, heard while Aide was NOT talking.
-  onFinal: (text: string) => void;
+  // meta.fallback is true when the words did not come from Sahara (the backup
+  // recogniser, or the browser's own), so Aide can confirm before acting.
+  onFinal: (text: string, meta?: { fallback: boolean }) => void;
 };
 
 // A mic that opens but only ever delivers silence, almost always an OS or
@@ -321,6 +323,9 @@ export class VoiceEngine {
   // only become a turn once the room has been quiet for FINAL_QUIET_MS.
   private finalQuietTimer: ReturnType<typeof setTimeout> | null = null;
   private pendingFinalText = "";
+  // Set when any part of the buffered turn was heard by something other than
+  // Sahara. Erring towards true only costs one spoken confirmation.
+  private pendingFromFallback = false;
   // When the user was last heard making any sound we accepted. Lets the
   // thinking-filler stay honest about how long they have actually waited.
   private lastHeardAt = 0;
@@ -773,8 +778,10 @@ export class VoiceEngine {
     this.finalQuietTimer = setTimeout(() => {
       this.finalQuietTimer = null;
       const full = this.pendingFinalText.trim();
+      const fallback = this.pendingFromFallback;
       this.pendingFinalText = "";
-      if (full) this.handlers.onFinal(full);
+      this.pendingFromFallback = false;
+      if (full) this.handlers.onFinal(full, { fallback });
     }, FINAL_QUIET_MS);
   }
 
@@ -895,7 +902,11 @@ export class VoiceEngine {
       let interimText = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const t = e.results[i][0].transcript;
-        if (e.results[i].isFinal) finalText += t;
+        if (e.results[i].isFinal) {
+          finalText += t;
+          const provider = e.results[i].provider as string | undefined;
+          if (this.sttMode === "browser" || (provider && provider !== "sahara")) this.pendingFromFallback = true;
+        }
         else interimText += t;
       }
 

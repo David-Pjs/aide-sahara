@@ -64,5 +64,8 @@ describe("the prompt forbids what a blind user cannot do", () => {
     // The voice cannot pronounce Yoruba, Igbo or Hausa, so replies stay English
     // even when the user code-switches.
     expect(SYSTEM_PROMPT).toMatch(/Always reply in clear, simple English/);
+    // Fallback transcripts are read back before any action.
+    expect(SYSTEM_PROMPT).toMatch(/\(backup recogniser\)/);
+    expect(SYSTEM_PROMPT).toMatch(/Act only after they confirm/);
   });
 });

@@ -424,7 +424,7 @@ export class SaharaRecognizer {
       form.append("audio", blob, `utterance.${extensionFor(blob.type)}`);
       form.append("language", getSaharaLanguage());
       const res = await fetch("/api/stt", { method: "POST", body: form });
-      const json = (await res.json().catch(() => ({}))) as { transcript?: string; error?: string };
+      const json = (await res.json().catch(() => ({}))) as { transcript?: string; provider?: string; error?: string };
       if (!res.ok) {
         // A failed REQUEST is not the same as a silent user, and used to be
         // treated as one: the upload failed, this returned, and nothing was
@@ -440,6 +440,10 @@ export class SaharaRecognizer {
       }
       const entry: any = [{ transcript: json.transcript }];
       entry.isFinal = true;
+      // Which recogniser actually heard this. Anything other than Sahara is
+      // the fallback, which mishears code-switched speech far more often, so
+      // the engine uses this to make Aide read the words back before acting.
+      entry.provider = json.provider;
       this.onresult?.({ resultIndex: 0, results: [entry] });
     } catch (err) {
       // No response at all (offline, or the request was cut off). Same as a

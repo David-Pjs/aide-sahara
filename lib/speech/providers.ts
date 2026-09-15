@@ -38,11 +38,21 @@ export class SpeechUnavailableError extends Error {
 
 export const LONG_COOLDOWN_MS = 10 * 60_000;
 export const SHORT_COOLDOWN_MS = 20_000;
-// A live turn cannot wait on a provider that has stopped answering. Groq
-// usually returns in well under a second; Sahara with LLM corrections off in
-// about two. Twelve seconds is generous for both and still short enough that
-// falling through to the next provider is worth it.
-export const PROVIDER_TIMEOUT_MS = 12_000;
+// A live turn cannot wait on a provider that has stopped answering, but the
+// two providers have very different real-world latency and a wrong mishearing
+// is worse for a blind user than a few extra seconds of silence. Sahara's own
+// docs describe processing that can legitimately run well past ten seconds
+// (their sync endpoint documents falling back to a 503-plus-poll pattern up
+// to 120s), and production logs show real utterances repeatedly finishing at
+// 10 to 12 seconds, right where a flat 12s cutoff was cutting them off and
+// routing to Groq, which our own benchmark shows keeps far fewer of the
+// Nigerian-language words in code-switched speech. Groq itself answers in
+// under a second almost always, so its own timeout barely matters and stays
+// short so a genuinely dead Groq fails over fast.
+export const PROVIDER_TIMEOUT_MS: Record<SpeechProviderName, number> = {
+  sahara: 20_000,
+  groq: 12_000,
+};
 
 const cooldownUntil = new Map<SpeechProviderName, number>();
 
@@ -108,7 +118,7 @@ export async function transcribeWithFallback(
       // be heard), so it returns rather than falling through.
       const transcript = await withTimeout(
         deps.transcribers[provider](audio, filename, language),
-        deps.timeoutMs ?? PROVIDER_TIMEOUT_MS,
+        deps.timeoutMs ?? PROVIDER_TIMEOUT_MS[provider],
       );
       cooldownUntil.delete(provider);
       attempts.push({ provider, outcome: "ok", ms: now() - started });
