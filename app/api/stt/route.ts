@@ -76,7 +76,13 @@ export async function POST(req: Request) {
       transcribers,
       hasKey,
     });
-    if (result.attempts.length > 1) console.info("[stt] served after fallback:", JSON.stringify(result.attempts));
+    // One line per utterance, success included. Only fallbacks used to be
+    // logged, which hid the evidence needed to explain them: how big the audio
+    // was and how long each provider took when it did answer.
+    console.info(
+      "[stt]",
+      JSON.stringify({ bytes: audio.size, type: audio.type, language, provider: result.provider, attempts: result.attempts }),
+    );
     return Response.json({ transcript: result.transcript, provider: result.provider });
   } catch (err) {
     if (err instanceof SpeechUnavailableError) {
