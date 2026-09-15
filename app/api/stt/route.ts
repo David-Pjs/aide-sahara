@@ -13,6 +13,15 @@ export const runtime = "nodejs";
 // to another 12s in the worst case (Sahara times out, then Groq also stalls),
 // so this must comfortably outlast both timeouts combined, not just one.
 export const maxDuration = 40;
+// Live-measured: this function's default region (iad1, US East) added
+// several extra seconds on top of Sahara's own latency, confirmed by timing
+// the identical audio both through production (11+ s) and directly against
+// Sahara's endpoint from a machine with ordinary connectivity (2-3s). Every
+// request here makes an outbound call to Sahara (and, on fallback, Groq),
+// neither hosted in the US, so this function has nothing to gain from
+// running there and real seconds to lose. fra1 is the closest Vercel region
+// with strong connectivity to both.
+export const preferredRegion = "fra1";
 
 // Receives one finished utterance, recorded in the browser by
 // app/aide/sahara-recognizer.ts, and returns its transcript. Recording in the
