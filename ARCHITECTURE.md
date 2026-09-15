@@ -157,9 +157,11 @@ Measured, not estimated.
 | Speech synthesis, edge-tts (in production) | ~3.0s per line |
 | Speech synthesis, Sahara TTS (benchmarked, not wired in) | ~10.2s warm, 64.3s first call |
 | Sahara ASR, multi-minute conversation | ~17.4s |
-| Live `/api/stt` on production, 3-second Pidgin utterance, round trip from a home connection | ~2.6s warm, ~12s on the first call after a deploy |
+| Live `/api/stt` on production, 3-second Pidgin utterance, round trip | ~2.5-2.7s, measured over three repeated runs, after moving this function to `fra1` (see below) |
 
 The TTS row is why `app/api/tts/sahara/route.ts` exists but is not connected. See [`benchmark/tts/report.md`](benchmark/tts/report.md).
+
+`/api/stt` runs in `fra1` (Frankfurt) rather than the platform default `iad1` (US East), set in `vercel.json`, because every request it makes goes to Sahara or Groq, neither hosted in the US. Confirmed live: the same request through `iad1` measured 11+ seconds; through `fra1`, 2.5 to 2.7 seconds across three repeated runs.
 
 Every route that talks to the bank sets `maxDuration = 30`, because provisioning a reserved account and then reading its transactions is several sequential calls and the platform default was short enough to kill the request before our own 8s per-call timeout could report why.
 
