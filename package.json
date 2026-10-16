@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@ai-sdk/deepseek": "^0.2.16",
-    "ai": "^4.3.0",
+    "ai": "^7.0.93",
     "convex": "^1.42.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
